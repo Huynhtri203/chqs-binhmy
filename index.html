@@ -139,6 +139,32 @@ body::before {
 }
 .dropdown a:hover { background: rgba(68, 58, 58, 0.05); color: var(--text-main); }
 
+/* ── Mobile menu toggle ── */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  margin-left: 8px;
+}
+.menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--text-main);
+  border-radius: 999px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.menu-toggle.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
 /* ── Auth box (phải) ── */
 #header-auth-box {
   display: flex;
@@ -197,7 +223,9 @@ body::before {
   font-weight: 900; line-height: 1.3; padding-top: 12px; padding-bottom: 12px;
   letter-spacing: -0.04em; margin-bottom: 24px;
   background: linear-gradient(180deg, #e01c1c 0%, #bcce54 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   clip-path: inset(0 100% 0 0);
   animation: smoothTypewriter 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
 }
@@ -340,7 +368,9 @@ body::before {
   gap: 1rem;
   font-size: 0.8rem; color: var(--text-muted);
 }
-.footer-bottom-copy { /* cột trái */ }
+.footer-bottom-copy {
+  color: inherit;
+}
 .footer-bottom-links {
   display: flex; gap: 0; align-items: center;
   /* cột giữa */
@@ -378,10 +408,57 @@ body::before {
 @media (max-width: 768px) {
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: 1fr; gap: 16px; }
-  .nav-menu { display: none; }
+
+  .menu-toggle { display: flex; }
+  .nav-menu {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px 16px 20px;
+    background: var(--surface-solid);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  }
+  .nav-menu.mobile-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .nav-item {
+    width: 100%;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .dropdown {
+    position: static;
+    display: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    border: none;
+    padding: 8px 0 0 12px;
+    background: transparent;
+    box-shadow: none;
+  }
+  .nav-item.open .dropdown { display: block; }
+
   /* Header mobile: brand trái, auth phải (gọn) */
   .header-inner {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto 1fr auto;
     gap: 0;
   }
   #header-auth-box {
@@ -403,7 +480,12 @@ body::before {
       <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Logo">
       <span data-i18n="brand_name">BAN CHQS BÌNH MỸ</span>
     </a>
-    <nav class="nav-menu">
+    <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="main-nav">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav id="main-nav" class="nav-menu">
       <a href="index.html" class="nav-item" data-i18n="nav_home">Trang chủ</a>
       <a href="gioi-thieu.html" class="nav-item" data-i18n="nav_intro">Giới thiệu</a>
       <a href="tin-tuc.html" class="nav-item" data-i18n="nav_news">Tin tức</a>
@@ -490,7 +572,7 @@ body::before {
     </div>
     <div class="glass-card hover-glow video-card-transparent">
       <div class="media-placeholder">
-        <video src="images/Video1.mp4" controls playsinline></video>
+        <video src="images/video1.mp4" controls playsinline></video>
       </div>
       <h3 class="card-title">Hội thao Quốc phòng</h3>
       <p class="card-desc">Đội dân quân xã Bình Mỹ xuất sắc đạt giải Nhì toàn đoàn tại Hội thao Quốc phòng.</p>
@@ -846,6 +928,55 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
 </script>
 
 <script src="theme.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById('menu-toggle');
+    const navMenu = document.getElementById('main-nav');
+    const serviceItem = document.querySelector('.nav-item .dropdown')?.parentElement;
+
+    function closeMenu() {
+      if (!navMenu || !menuToggle) return;
+      navMenu.classList.remove('mobile-open');
+      menuToggle.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      if (serviceItem) serviceItem.classList.remove('open');
+    }
+
+    function openMenu() {
+      if (!navMenu || !menuToggle) return;
+      navMenu.classList.add('mobile-open');
+      menuToggle.classList.add('active');
+      menuToggle.setAttribute('aria-expanded', 'true');
+    }
+
+    if (menuToggle && navMenu) {
+      menuToggle.addEventListener('click', () => {
+        const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+        if (expanded) closeMenu();
+        else openMenu();
+      });
+
+      navMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) closeMenu();
+        });
+      });
+    }
+
+    if (serviceItem) {
+      serviceItem.addEventListener('click', (event) => {
+        if (window.innerWidth <= 768) {
+          event.preventDefault();
+          serviceItem.classList.toggle('open');
+        }
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) closeMenu();
+    });
+  });
+</script>
 <script src="lang.js"></script>
 <script src="main.js"></script>
 </body>
