@@ -965,7 +965,9 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
 
     if (serviceItem) {
       serviceItem.addEventListener('click', (event) => {
-        if (window.innerWidth <= 768) {
+        const clickedInsideDropdown = event.target.closest('.dropdown');
+
+        if (window.innerWidth <= 768 && !clickedInsideDropdown) {
           event.preventDefault();
           serviceItem.classList.toggle('open');
         }
