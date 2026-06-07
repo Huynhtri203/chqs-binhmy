@@ -88,7 +88,7 @@ const translations = {
 
     // ════════════ FOOTER CHUNG ════════════
     footer_title: "BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ",
-    footer_desc: "Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Lực lượng vũ trang Nhân dân xã Bình Mỹ, huyện Củ Chi, TP. Hồ Chí Minh.",
+    footer_desc: "Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Lực lượng vũ trang Nhân dân xã Bình Mỹ TP. Hồ Chí Minh.",
     footer_copyright: "Chịu trách nhiệm nội dung: Ban Chỉ huy Quân sự xã Bình Mỹ",
     footer_links_title: "Liên Kết Nhanh",
     footer_contact_title: "Thông Tin Đường Dây Nóng"
