@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sơ Đồ Cổng Thông Tin - Ban CHQS Xã Bình Mỹ</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════ 1. DESIGN SYSTEM TRANQUIL & CYBER ═══════════════════ */
+    :root {
+      --bg-gradient: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+      --card-bg: rgba(255, 255, 255, 0.75);
+      --card-border: rgba(15, 23, 42, 0.08);
+      --text-primary: #0f172a;
+      --text-muted: #64748b;
+      --primary-red: #8B1A1A;
+      --accent-gold: #C9A227;
+      --node-hover: rgba(139, 26, 26, 0.05);
+      --radius: 16px;
+      --font-stack: 'Be Vietnam Pro', system-ui, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #0f172a 0%, #020617 100%);
+      --card-bg: rgba(15, 23, 42, 0.55);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary-red: #E50914;
+      --accent-gold: #F0C040;
+      --node-hover: rgba(229, 9, 20, 0.1);
+    }
+
+    /* ═══════════════════ 2. RESET & NỀN TẢNG ĐỒ HỌA ═══════════════════ */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-stack); }
+    html, body { min-height: 100vh; background: var(--bg-gradient); color: var(--text-primary); transition: background 0.3s, color 0.3s; -webkit-font-smoothing: antialiased; }
+    
+    /* Hiệu ứng lưới tọa độ quân sự chìm phía sau nền */
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.02;
+      background-image: linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    [data-theme="dark"] body::before { opacity: 0.05; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 110px 24px 60px; }
+
+    /* ═══════════════════ 3. HEADER ĐỒNG BỘ ĐỘC LẬP ═══════════════════ */
+    .header {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+      background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+    }
+    [data-theme="dark"] .header { background: rgba(2, 6, 23, 0.7); border-color: var(--card-border); }
+    .header-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 70px; display: flex; align-items: center; justify-content: space-between; }
+    
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .brand img { width: 38px; height: 38px; }
+    .brand-text h1 { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; color: var(--primary-red); }
+    .brand-text p { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+    
+    .theme-toggle { background: none; border: none; cursor: pointer; font-size: 18px; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+    [data-theme="dark"] .theme-toggle:hover { background: rgba(255,255,255,0.08); }
+
+    /* ═══════════════════ 4. HERO SECTION ═══════════════════ */
+    .hero { text-align: center; margin-bottom: 50px; }
+    .map-badge {
+      display: inline-flex; align-items: center; gap: 6px; background: rgba(201, 162, 39, 0.1);
+      color: var(--accent-gold); border: 1px solid rgba(201, 162, 39, 0.2); padding: 5px 12px;
+      border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px;
+    }
+    .hero h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 12px; }
+    .hero p { font-size: 14.5px; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+    /* ═══════════════════ 5. KIẾN TRÚC MẠNG LƯỚI SƠ ĐỒ (MAP GRID) ═══════════════════ */
+    /* Gốc trung tâm: Cổng thông tin chính */
+    .root-node-card {
+      background: var(--card-bg); border: 2px solid var(--primary-red); border-radius: var(--radius);
+      padding: 24px; text-align: center; max-width: 360px; margin: 0 auto 48px;
+      position: relative; box-shadow: 0 10px 30px rgba(139, 26, 26, 0.05);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    }
+    .root-node-card h3 { font-size: 16px; font-weight: 800; color: var(--primary-red); text-transform: uppercase; letter-spacing: 0.02em; }
+    .root-node-card p { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+    
+    /* Đường line kết nối dọc từ nút gốc đi xuống */
+    .root-node-card::after {
+      content: ''; position: absolute; top: 100%; left: 50%; width: 2px; height: 48px;
+      background: linear-gradient(to bottom, var(--primary-red), var(--accent-gold));
+    }
+
+    /* Khung lưới chứa các phân hệ chính sách/thủ tục */
+    .sitemap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; position: relative; }
+
+    /* Cột phân hệ (Mỗi cột là 1 luồng hệ thống) */
+    .system-column { position: relative; display: flex; flex-direction: column; gap: 16px; }
+    
+    /* Tiêu đề phân hệ chính */
+    .system-header {
+      background: rgba(15, 23, 42, 0.04); border: 1px dashed var(--card-border);
+      padding: 12px 16px; border-radius: 10px; text-align: center; font-size: 13px;
+      font-weight: 700; text-transform: uppercase; color: var(--text-primary); letter-spacing: 0.03em; margin-bottom: 8px;
+    }
+    [data-theme="dark"] .system-header { background: rgba(255, 255, 255, 0.03); }
+
+    /* Các nút liên kết trang con (Nodes) */
+    .page-node {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px;
+      padding: 18px 20px; text-decoration: none; color: inherit; display: flex; align-items: flex-start; gap: 14px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; opacity: 0; transform: translateY(20px);
+    }
+    
+    /* Trạng thái kích hoạt hiệu ứng cuộn/xuất hiện */
+    .page-node.revealed { opacity: 1; transform: translateY(0); }
+
+    /* Hiệu ứng Hover mượt mà cao cấp */
+    .page-node:hover {
+      transform: translateX(4px) translateY(-2px);
+      border-color: var(--primary-red); background: var(--node-hover);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    }
+    [data-theme="dark"] .page-node:hover { box-shadow: 0 8px 24px rgba(255, 255, 255, 0.02); }
+
+    /* Icon phân lớp trang */
+    .node-icon {
+      width: 36px; height: 36px; background: rgba(139, 26, 26, 0.06); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+    [data-theme="dark"] .node-icon { background: rgba(255, 255, 255, 0.05); }
+    .page-node:hover .node-icon { transform: scale(1.1) rotate(4deg); color: var(--primary-red); }
+
+    /* Nội dung chi tiết trong Node */
+    .node-info { flex-grow: 1; }
+    .node-info h4 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; transition: color 0.2s; }
+    .page-node:hover .node-info h4 { color: var(--primary-red); }
+    .node-info p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    
+    /* Mũi tên chỉ hướng góc phải */
+    .node-arrow {
+      font-size: 11px; color: var(--text-muted); opacity: 0; transform: translateX(-6px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); align-self: center;
+    }
+    .page-node:hover .node-arrow { opacity: 1; transform: translateX(0); color: var(--primary-red); }
+
+    /* ═══════════════════ 6. ĐÁP ỨNG RESPONSIVE CHUẨN HOÁ ═══════════════════ */
+    @media (max-width: 960px) {
+      .sitemap-grid { grid-template-columns: 1fr; gap: 24px; }
+      .root-node-card::after { display: none; } /* Ẩn tuyến kết nối dọc trên mobile */
+      .system-column { border-left: 2px dashed var(--card-border); padding-left: 16px; }
+      .system-header { text-align: left; background: none; border: none; padding: 0; margin-bottom: 4px; color: var(--accent-gold); }
+    }
+    @media (max-width: 480px) {
+      .container { padding-top: 94px; padding-left: 16px; padding-right: 16px; }
+      .page-node { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc Huy">
+        <div class="brand-text">
+          <h1>BAN CHQS XÃ BÌNH MỸ</h1>
+          <p>Sơ đồ cấu trúc cổng thông tin</p>
+        </div>
+      </a>
+      <button class="theme-toggle" id="theme-btn" aria-label="Đổi giao diện">☀️</button>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <section class="hero">
+      <div class="map-badge">Index / Sitemap Architecture</div>
+      <h2>Kiến Trúc Cổng Thông Tin</h2>
+      <p>Bản đồ trực quan hóa toàn bộ phân hệ chức năng, các biểu mẫu dịch vụ hành chính công trực tuyến và các cổng liên kết dữ liệu an sinh quốc phòng của cơ sở.</p>
+    </section>
+
+    <div class="root-node-card">
+      <h3>Cổng Thông Tin Điện Tử</h3>
+      <p>MILITARY PORTAL CORE V2.06</p>
+    </div>
+
+    <div class="sitemap-grid">
+      
+      <div class="system-column">
+        <div class="system-header">I. Thông tin & Tư liệu</div>
+        
+        <a href="index.html" class="page-node">
+          <div class="node-icon">🏠</div>
+          <div class="node-info">
+            <h4>Trang Chủ Trung Tâm</h4>
+            <p>Giao diện tổng hợp, tin tức hoạt động và hộp thư tiếp nhận phản ánh.</p>
+          </div>
+          <div class="node-arrow">➔</div>
+        </a>
+
+        <a href="gioi-thieu.html" class="page-node">
+          <div class="node-icon">📋</div>
+          <div class="node-info">
+            <h4>Giới Thiệu Đơn Vị</h4>
+            <p>Chức năng nhiệm vụ, sơ đồ tổ chức bộ máy Ban CHQS xã Bình Mỹ.</p>
+          </div>
+          <div class="node-arrow">➔</div>
+        </a>
+
+        <a href="chinh-sach-bao-mat.html" class="page-node">
+          <div class="node-icon">🔐</div>
+          <div class="node-info">
+            <h4>Chính Sách Bảo Mật</h4>
+            <p>Quy trình mã hóa an ninh thông tin định danh hồ sơ công dân.</p>
+          </div>
+          <div class="node-arrow">➔</div>
+        </a>
+      </div>
+
+      <div class="system-column">
+        <div class="system-header">II. Hành chính công trực tuyến</div>
+        
+        <a href="dang-ky-DQTV.html" class="page-node">
+          <div class="node-icon">🛡️</div>
+          <div class="node-info">
+            <h4>Đăng Ký Dân Quân Tự Vệ</h4>
+            <p>Hệ thống nộp đơn xét tuyển tham gia lực lượng DQTV cơ sở trực tuyến.</p>
+          </div>
+          <div class="node-arrow">➔</div>
+        </a>
+
+        <a href="tuyen-quan.html" class="page-node">
+          <div class="node-icon">⭐</div>
+          <div class="node-info">
+            <h4>Đăng Ký Nghĩa Vụ Quân Sự</h4>
+            <p>Khai báo thông tin, rà soát công tác tuyển quân hàng năm trực tuyến.</p>
+          </div>
+          <div class="node-arrow">➔</div>
+        </a>
+
+        <a href="tuyen-sinh.html" class="page-node">
+          <div class="node-icon">🎓</div>
+          <div class="node-info">
+            <h4>Tuyển Sinh Quân Sự</h4>
+            <p>Đăng ký xét tuyển vào các học viện, trường Đại học Quân đội.</p>
+          </div>
+          <div class="node-arrow">➔</div>
+        </a>
+      </div>
+
+      <div class="system-column">
+        <div class="system-header">III. Chế độ & Tra cứu dữ liệu</div>
+        
+        <a href="chinh-sach-hau-phuong.html" class="page-node">
+          <div class="node-icon">🎖️</div>
+          <div class="node-info">
+            <h4>Chính Sách Hậu Phương</h4>
+            <p>Tổng hợp các chế độ an sinh quốc phòng ưu đãi thân nhân, chiến sĩ.</p>
+          </div>
+          <div class="node-arrow">➔</div>
+        </a>
+
+        <a href="chinh-sach-hau-phuong.html#tra-cuu-bhyt" class="page-node">
+          <div class="node-icon">💳</div>
+          <div class="node-info">
+            <h4>Cổng Tra Cứu Thẻ BHYT</h4>
+            <p>Liên kết cổng dịch vụ công quốc gia, tra cứu thời hạn thẻ BHYT.</p>
+          </div>
+          <div class="node-arrow">➔</div>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // 1. Hiệu ứng Staggered Entry Animation (Hiện tuần tự cực mượt cho các thẻ Node)
+    document.addEventListener("DOMContentLoaded", () => {
+      const nodes = document.querySelectorAll('.page-node');
+      nodes.forEach((node, index) => {
+        setTimeout(() => {
+          node.classList.add('revealed');
+        }, index * 80); // Mỗi node xuất hiện cách nhau 80ms tạo nhịp điệu sóng cuốn
+      });
+    });
+
+    // 2. Logic điều khiển Dark Mode đồng bộ lưu trạng thái qua LocalStorage
+    const themeBtn = document.getElementById('theme-btn');
+    
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeBtn.innerText = '🌙';
+    }
+
+    themeBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      if (currentTheme === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        themeBtn.innerText = '☀️';
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeBtn.innerText = '🌙';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+  </script>
+</body>
+</html>

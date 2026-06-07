@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ban CHQS Xã Bình Mỹ - Cổng Thông Tin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ═══════════════════ DESIGN TOKENS (SÁNG / TỐI) ═══════════════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255, 255, 255, 0.8);
+  --surface-solid: #ffffff;
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.3);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-invert: #ffffff;
+  --accent: #E50914; 
+  --accent-hover: #ff1e2a;
+  --input-bg: #f1f5f9;
+  --input-border: #cbd5e1;
+  --input-text: #0f172a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(10, 10, 10, 0.8);
+  --surface-solid: #0a0a0a;
+  --surface-hover: #141414;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.5);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+  --text-invert: #000000;
+  --input-bg: #111111;
+  --input-border: #333333;
+  --input-text: #ffffff;
+}
+
+/* Nút tìm kiếm nhanh trên Header */
+.btn-search-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(229, 9, 20, 0.1);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(229, 9, 20, 0.2);
+  transition: all 0.2s ease;
+}
+.btn-search-nav:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ═══════════════════ RESET & GLOBAL ═══════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-family: var(--font-main); }
+body {
+  overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  background: var(--bg-color);
+  color: var(--text-main);
+  transition: background 0.45s cubic-bezier(0.4,0,0.2,1), color 0.45s cubic-bezier(0.4,0,0.2,1);
+}
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1;
+  background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.12) 0%, transparent 55%);
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+/* ═══════════════════ STICKY HEADER & BLUR GLASS ═══════════════════ */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(247, 242, 242, 0.72);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-color);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+[data-theme="dark"] .header { background: rgba(8, 8, 8, 0.82); }
+
+.header-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0;
+}
+
+/* ── Brand ── */
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 15px; letter-spacing: -0.02em;
+  white-space: nowrap; flex-shrink: 0;
+}
+.brand img { width: 36px; height: 36px; filter: drop-shadow(0 0 8px rgba(210, 219, 105, 0.45)); }
+
+/* ── Nav (giữa) ── */
+.nav-menu {
+  display: flex; align-items: center; justify-content: center;
+  gap: 4px;
+}
+.nav-item {
+  position: relative; font-size: 13.5px; font-weight: 500;
+  color: var(--text-muted); transition: color 0.2s;
+  padding: 20px 12px; border-radius: 6px;
+  white-space: nowrap;
+}
+.nav-item:hover { color: var(--text-main); }
+.nav-item:hover { background: transparent; }
+
+.dropdown {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(10px);
+  background: var(--surface-solid); backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color); border-radius: var(--radius);
+  padding: 8px; min-width: 200px;
+  opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+.nav-item:hover .dropdown { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.dropdown a {
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+  border-radius: 8px; font-size: 14px; color: var(--text-muted); transition: all 0.2s;
+}
+.dropdown a:hover { background: rgba(68, 58, 58, 0.05); color: var(--text-main); }
+
+/* ── Auth box (phải) ── */
+#header-auth-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.header-divider {
+  width: 1px; height: 20px;
+  background: var(--border-color);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* Icon buttons (theme, lang) */
+.btn-icon-header {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px;
+  background: none; color: var(--text-main);
+  font-size: 18px; transition: background 0.2s;
+  flex-shrink: 0;
+}
+.btn-icon-header:hover { background: var(--surface-hover); }
+
+/* Lang pill */
+.btn-lang-header {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 32px; padding: 0 10px; border-radius: 8px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
+  background: var(--surface-hover); color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+}
+.btn-lang-header:hover { color: var(--text-main); border-color: rgba(0,0,0,0.2); }
+
+.btn-saas {
+  background: var(--surface-hover); color: var(--text-main);
+  padding: 0 14px; height: 32px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; transition: all 0.2s;
+  border: 1px solid var(--border-color);
+  white-space: nowrap; flex-shrink: 0;
+  display: inline-flex; align-items: center;
+}
+.btn-saas:hover { background: var(--border-color); }
+.btn-primary { background: var(--accent); color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(229,9,20,0.3); }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+/* ═══════════════════ HERO BANNER ═══════════════════ */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; padding: 0 24px; position: relative;
+}
+.hero-title {
+  font-size: clamp(3rem, 8vw, 6.5rem); 
+  font-weight: 900; line-height: 1.3; padding-top: 12px; padding-bottom: 12px;
+  letter-spacing: -0.04em; margin-bottom: 24px;
+  background: linear-gradient(180deg, #e01c1c 0%, #bcce54 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  clip-path: inset(0 100% 0 0);
+  animation: smoothTypewriter 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
+}
+
+@keyframes smoothTypewriter {
+  0% { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.25rem); color: var(--text-muted); max-width: 600px;
+  line-height: 1.6; margin-bottom: 40px;
+}
+
+/* ═══════════════════ LAYOUT RỘNG ═══════════════════ */
+.container { max-width: 1200px; margin: 0 auto; padding: 100px 24px; }
+.section-title { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 40px; }
+
+.reveal { opacity: 0; transform: translateY(40px); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════ THEME TRANSITION TOÀN TRANG ═══════════════════ */
+.glass-card, .stat-card, .saas-footer, .footer-bottom,
+.btn-saas, .btn-lang-header, .auth-form, .form-input,
+.dropdown, .nav-item, .section-title, .card-title, .card-desc {
+  transition-property: background, background-color, border-color, color, box-shadow;
+  transition-duration: 0.45s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* giữ nguyên transition riêng của hover/animation các card */
+.glass-card { transition-property: background, background-color, border-color, color, box-shadow, transform; }
+.press-card { transition: none; } /* antigravity animation tự xử lý */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 100px; }
+.stat-card {
+  background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius);
+  padding: 40px 24px; text-align: center; transition: all 0.3s;
+}
+.stat-card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-5px); }
+.stat-num { font-size: 3.5rem; font-weight: 900; color: var(--accent); line-height: 1; margin-bottom: 10px; }
+.stat-label { font-size: 14px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ═══════════════════ CARD DESIGN KÍNH MỜ & 3D TILT ═══════════════════ */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+.glass-card {
+  background: var(--surface-color); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color); border-radius: var(--radius); padding: 32px; 
+  transition: transform 0.1s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  position: relative; transform-style: preserve-3d; will-change: transform;
+}
+.video-card-transparent { background: transparent !important; backdrop-filter: none !important; border: none !important; box-shadow: none !important; }
+.glass-card:hover { border-color: rgba(229, 9, 20, 0.5); box-shadow: 0 0 30px rgba(229, 9, 20, 0.15); }
+
+.glass-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.glass-card:hover::before { opacity: 1; }
+
+.card-icon, .card-title, .card-desc, .media-placeholder { transform: translateZ(30px); transition: transform 0.3s ease; }
+.card-icon { font-size: 2rem; margin-bottom: 20px; display: inline-block; }
+.card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
+.card-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+.press-card { animation: antigravity 4s ease-in-out infinite; }
+.press-card:nth-child(2) { animation-delay: 1s; }
+.press-card:nth-child(3) { animation-delay: 2s; }
+@keyframes antigravity {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.press-card:hover { animation-play-state: paused; transform: translateY(-12px) scale(1.02); }
+
+.media-placeholder {
+  width: 100%; aspect-ratio: 16/9; background: transparent; border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: none; margin-bottom: 20px; color: var(--text-muted); overflow: hidden; position: relative;
+}
+.media-placeholder img, .media-placeholder video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ═══════════════════ VIDEO INTRO SECTION ═══════════════════ */
+.section-video-intro { margin-top: 20px; width: 100%; }
+.video-intro-container { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+.video-intro-left { display: flex; flex-direction: column; align-items: flex-start; }
+.video-badge { background: rgba(229, 9, 20, 0.1); color: var(--accent); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+.video-title { font-size: 2rem; font-weight: 800; color: var(--text-main); line-height: 1.3; margin-bottom: 16px; letter-spacing: -0.02em; }
+.video-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
+.video-meta { display: flex; gap: 24px; font-size: 14px; color: var(--text-muted); }
+.video-block-wrapper { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); background: #000; }
+.video-block-wrapper video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ═══════════════════ MODAL OVERLAY ═══════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+  z-index: 2000; display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: 0.3s;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.auth-form {
+  background: var(--surface-solid); border: 1px solid var(--border-color); border-radius: var(--radius);
+  padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 24px 80px rgba(229,9,20,0.2);
+  transform: translateY(20px); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-overlay.active .auth-form { transform: translateY(0); }
+.auth-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; text-align: center; color: var(--text-main); }
+.form-group { margin-bottom: 16px; }
+.form-input {
+  width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); color: var(--input-text);
+  padding: 12px 16px; border-radius: 8px; font-size: 14px; outline: none;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.form-input::placeholder { color: var(--text-muted); }
+.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(229,9,20,0.2); }
+.close-modal { position: absolute; top: 16px; right: 16px; background: none; color: var(--text-muted); font-size: 24px; }
+.close-modal:hover { color: var(--text-main); }
+
+/* ═══════════════════ FOOTER SYSTEM ═══════════════════ */
+.saas-footer { background: var(--surface-color); border-top: 1px solid var(--border-color); padding: 4rem 2rem 2rem 2rem; margin-top: 5rem; font-family: var(--font-main); position: relative; }
+.saas-footer::before { content: ''; position: absolute; top: 0; left: 10%; width: 80%; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.6; }
+.footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 1.6fr; gap: 3rem; }
+.footer-brand h2 { color: var(--text-main); font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.footer-brand p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+.footer-col h3 { color: var(--text-main); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.25rem; position: relative; }
+.footer-col h3::after { content: ''; position: absolute; bottom: -6px; left: 0; width: 24px; height: 2px; background: var(--accent); }
+.footer-col ul { list-style: none; padding: 0; margin: 0; }
+.footer-col ul li { margin-bottom: 0.75rem; }
+.footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease, padding-left 0.2s ease; }
+.footer-col ul li a:hover { color: var(--text-main); padding-left: 4px; }
+.footer-contact-info { color: var(--text-muted); font-size: 0.875rem; line-height: 1.6; }
+.footer-contact-info p { margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 0.5rem; }
+.footer-bottom {
+  max-width: 1200px; margin: 3rem auto 0 auto;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--border-color);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8rem; color: var(--text-muted);
+}
+.footer-bottom-copy { /* cột trái */ }
+.footer-bottom-links {
+  display: flex; gap: 0; align-items: center;
+  /* cột giữa */
+}
+.footer-bottom-links a {
+  color: var(--text-muted); text-decoration: none;
+  padding: 0 14px;
+  border-right: 1px solid var(--border-color);
+  line-height: 1;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.footer-bottom-links a:first-child { padding-left: 0; }
+.footer-bottom-links a:last-child { border-right: none; padding-right: 0; }
+.footer-bottom-links a:hover { color: var(--text-main); }
+.footer-bottom-badge {
+  display: flex; align-items: center; justify-content: flex-end; gap: 6px;
+  font-size: 0.75rem; color: var(--text-muted); opacity: 0.7;
+  /* cột phải */
+}
+.footer-bottom-badge span { letter-spacing: 0.04em; }
+
+@media (max-width: 768px) {
+  .footer-bottom {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 1.25rem 0;
+  }
+  .footer-bottom-links { justify-content: center; }
+  .footer-bottom-badge { justify-content: center; }
+}
+
+@media (max-width: 992px) { .footer-container { grid-template-columns: 1fr 1fr; gap: 2rem; } .video-intro-container { grid-template-columns: 1fr; gap: 32px; } .video-title { font-size: 1.75rem; } }
+@media (max-width: 768px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; gap: 16px; }
+  .nav-menu { display: none; }
+  /* Header mobile: brand trái, auth phải (gọn) */
+  .header-inner {
+    grid-template-columns: auto 1fr;
+    gap: 0;
+  }
+  #header-auth-box {
+    justify-content: flex-end;
+    gap: 4px;
+  }
+  .btn-lang-header { display: none; }
+  .header-divider { display: none; }
+  #header-auth-box .btn-saas:not(.btn-primary) { display: none; }
+}
+@media (max-width: 576px) { .footer-container { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="#" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Logo">
+      <span data-i18n="brand_name">BAN CHQS BÌNH MỸ</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="index.html" class="nav-item" data-i18n="nav_home">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item" data-i18n="nav_intro">Giới thiệu</a>
+      <a href="tin-tuc.html" class="nav-item" data-i18n="nav_news">Tin tức</a>
+      <div class="nav-item">
+        <span data-i18n="nav_services">Dịch vụ</span> ▾
+        <div class="dropdown">
+          <a href="tracuu.html">🔍 <span data-i18n="drop_cccd">Tra cứu CCCD</span></a>
+          <a href="tuyen-quan.html">🪖 <span data-i18n="drop_draft">Tuyển quân</span></a>
+          <a href="tuyen-sinh.html">🎓 <span data-i18n="drop_edu">Tuyển sinh</span></a>
+          <a href="tracuu-dieudong.html">📋 <span data-i18n="drop_order">QĐ Điều động</span></a>
+        </div>
+      </div>
+      <a href="lien-he.html" class="nav-item" data-i18n="nav_contact">Liên hệ</a>
+    </nav>
+    
+    <div id="header-auth-box">
+      <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện">☀️</button>
+      <button id="lang-toggle" class="btn-lang-header">🇬🇧 EN</button>
+      <div class="header-divider"></div>
+      <a href="auth.html?mode=login" class="btn-saas" data-i18n="btn_login">Đăng nhập</a>
+      <a href="auth.html?mode=register" class="btn-saas btn-primary" data-i18n="btn_register">Đăng ký</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-badges reveal">
+    <span class="badge" style="background:rgba(229,9,20,0.1); padding:4px 12px; border-radius:12px; font-size:12px; margin:0 4px;" data-i18n="badge_serve">Phục vụ nhân dân</span>
+    <span class="badge" style="background:rgba(229,9,20,0.1); padding:4px 12px; border-radius:12px; font-size:12px; margin:0 4px;" data-i18n="badge_protect">Bảo vệ Tổ quốc</span>
+  </div>
+  <h1 class="hero-title" data-i18n="hero_title">CỔNG THÔNG TIN ĐIỆN TỬ QUÂN SỰ</h1>
+  <p class="hero-subtitle reveal" style="transition-delay: 0.2s;" data-i18n="hero_subtitle">
+    Hệ thống số hóa toàn diện của Ban Chỉ huy Quân sự Xã Bình Mỹ, TP.HCM. Xây dựng lực lượng vũ trang vững mạnh, chính quy, hiện đại.
+  </p>
+  <div class="reveal" style="transition-delay: 0.3s;">
+    <button class="btn-saas btn-primary" style="padding: 16px 32px; font-size: 16px;" data-i18n="btn_explore">Khám phá ngay</button>
+  </div>
+</section>
+
+<div class="container">
+  <div class="stats-grid reveal">
+    <div class="stat-card">
+      <div class="stat-num" data-target="400">0</div>
+      <div class="stat-label">Công dân tuổi 17</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-target="25">0</div>
+      <div class="stat-label">Năm thành lập</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-target="100">0</div>
+      <div class="stat-label">% Hoàn thành chỉ tiêu</div>
+    </div>
+  </div>
+
+  <h2 class="section-title reveal">Chức năng & Nhiệm vụ</h2>
+  <div class="grid-3 reveal">
+    <div class="glass-card hover-glow video-card-transparent">
+      <div class="card-icon">🎯</div>
+      <h3 class="card-title" data-i18n="feat_advisory_title">Tham mưu tác chiến</h3>
+      <p class="card-desc" data-i18n="feat_advisory_desc">Tham mưu cho cấp ủy Đảng, chính quyền địa phương về công tác quân sự — quốc phòng trên địa bàn xã.</p>
+    </div>
+    <div class="glass-card hover-glow video-card-transparent">
+      <div class="card-icon">🛡️</div>
+      <h3 class="card-title" data-i18n="feat_training_title">Huấn luyện Dân quân</h3>
+      <p class="card-desc" data-i18n="feat_training_desc">Xây dựng, huấn luyện, quản lý lực lượng dân quân tự vệ đạt tiêu chuẩn sẵn sàng chiến đấu.</p>
+    </div>
+    <div class="glass-card hover-glow video-card-transparent">
+      <div class="card-icon">🪖</div>
+      <h3 class="card-title" data-i18n="feat_recruitment_title">Tuyển chọn gọi nhập ngũ</h3>
+      <p class="card-desc" data-i18n="feat_recruitment_desc">Tổ chức thực hiện công tác tuyển quân, giao quân hàng năm đảm bảo đúng số lượng, chất lượng.</p>
+    </div>
+  </div>
+  <br><br><br>
+
+  <h2 class="section-title reveal">Video Hoạt Động</h2>
+  <div class="grid-2 reveal" id="video-container">
+    <div class="glass-card hover-glow video-card-transparent">
+      <div class="media-placeholder">
+        <video src="images/Video.mp4" controls playsinline></video>
+      </div>
+      <h3 class="card-title">Hành quân rèn luyện</h3>
+      <p class="card-desc">Hoàn thành 100% chỉ tiêu giao quân, đảm bảo chất lượng chính trị và sức khỏe.</p>
+    </div>
+    <div class="glass-card hover-glow video-card-transparent">
+      <div class="media-placeholder">
+        <video src="images/video1.mp4" controls playsinline></video>
+      </div>
+      <h3 class="card-title">Hội thao Quốc phòng</h3>
+      <p class="card-desc">Đội dân quân xã Bình Mỹ xuất sắc đạt giải Nhì toàn đoàn tại Hội thao Quốc phòng.</p>
+    </div>
+  </div>
+  <br><br><br>
+
+  <section class="section-video-intro reveal">
+    <div class="video-intro-container">
+      <div class="video-intro-left">
+        <span class="video-badge">Thước Phim Tư Liệu</span>
+        <h2 class="video-title">Video Truyền Thống Lực Lượng Vũ Trang Xã Bình Mỹ</h2>
+        <p class="video-desc">Ghi lại chặng đường lịch sử vẻ vang, những đóng góp to lớn và tinh thần kiên cường của quân và dân xã Bình Mỹ.</p>
+        <div class="video-meta">
+          <span class="meta-item">⏱️ Thời lượng: 5 phút</span>
+          <span class="meta-item">📅 Năm phát hành: 2026</span>
+        </div>
+      </div>
+      <div class="video-intro-right">
+        <div class="video-block-wrapper">
+          <video autoplay muted loop controls poster="images/video-poster.jpg" preload="metadata" playsinline>
+            <source src="images/CodeGioiThieu.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </section>
+  <br><br><br>
+
+  <h2 class="section-title reveal">Báo Chí Đưa Tin</h2>
+  <div class="grid-2 reveal" id="news-container">
+    <p style="color:var(--text-muted); font-size:14px;">Đang đồng bộ dữ liệu cổng thông tin từ Supabase...</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="auth-modal">
+  <div class="auth-form" style="position: relative;">
+    <button class="close-modal" onclick="closeAuth()">×</button>
+    <h2 class="auth-title" id="auth-title">Đăng nhập</h2>
+    <div class="form-group">
+      <input type="email" class="form-input" id="auth-email" placeholder="Địa chỉ Email">
+    </div>
+    <div class="form-group">
+      <input type="password" class="form-input" id="auth-password" placeholder="Mật khẩu hệ thống">
+    </div>
+    <button class="btn-saas btn-primary" id="auth-submit-btn" style="width: 100%; padding: 12px; margin-top: 10px;">Xác nhận</button>
+  </div>
+</div>
+
+<footer class="saas-footer glass-panel">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2 data-i18n="footer_title">BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ</h2>
+      <p style="margin-bottom: 1rem;" data-i18n="footer_desc">Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Lực lượng vũ trang Nhân dân xã Bình Mỹ, TP. Hồ Chí Minh.</p>
+      <p style="font-size: 0.8rem; opacity: 0.7;" data-i18n="footer_copyright">Chịu trách nhiệm nội dung: Ban Chỉ huy Quân sự xã Bình Mỹ</p>
+    </div>
+    <div class="footer-col">
+      <h3 data-i18n="footer_links_title">Liên Kết Nhanh</h3>
+      <ul>
+        <li><a href="index.html" data-i18n="nav_home">Trang chủ</a></li>
+        <li><a href="gioi-thieu.html" data-i18n="nav_intro">Giới thiệu</a></li>
+        <li><a href="tin-tuc.html">Tin tức & Sự kiện</a></li>
+        <li><a href="lien-he.html">Liên hệ công vụ</a></li>      
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thủ Tục & Tra Cứu</h3>
+      <ul>
+        <li><a href="#">Đăng ký Nghĩa vụ Quân sự</a></li>
+        <li><a href="tuyen-sinh.html">Tuyển sinh Quân sự</a></li>
+        <li><a href="dang-ky-DQTV.html">Đăng ký Dân quân tự vệ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3 data-i18n="footer_contact_title">Thông Tin Đường Dây Nóng</h3>
+      <div class="footer-contact-info">
+        <p>📍 <span>Địa chỉ: Đường Bình Mỹ, Xã Bình Mỹ, TP. HCM</span></p>
+        <p>📞 <span>Trực ban 24/7: (028) XXXX XXXX</span></p>
+        <p>✉️ <span>Email: bchqs.binhmy.@tphcm.gov.vn</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-copy">&copy; 2026 Cổng Thông Tin Ban CHQS Xã Bình Mỹ.</div>
+    <div class="footer-bottom-links">
+      <a href="chinh-sach-hau-phuong.html">Điều khoản sử dụng</a>
+      <a href="chinh-sach-bao-mat.html">Chính sách bảo mật</a>
+      <a href="so-do-website.html">Sơ đồ website</a>
+    </div>
+    <div class="footer-bottom-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Bảo mật & Tin cậy</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// 1. SCROLL REVEAL ANIMATION
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+      const counters = entry.target.querySelectorAll('.stat-num');
+      if(counters.length > 0) animateCounters(counters);
+      revealObserver.unobserve(entry.target); 
+    }
+  });
+}, { threshold: 0.1 });
+revealElements.forEach(el => revealObserver.observe(el));
+
+// 2. COUNTER ANIMATION
+function animateCounters(counters) {
+  counters.forEach(counter => {
+    const target = +counter.getAttribute('data-target');
+    const duration = 2000; 
+    const increment = target / (duration / 16); 
+    let current = 0;
+    const updateCounter = () => {
+      current += increment;
+      if (current < target) {
+        counter.innerText = Math.ceil(current);
+        requestAnimationFrame(updateCounter);
+      } else {
+        counter.innerText = target + (target === 100 ? '%' : '+');
+      }
+    };
+    updateCounter();
+  });
+}
+
+// 🌟 3. CẤU HÌNH SUPABASE AN TOÀN & ĐỒNG BỘ HIỆU ỨNG TOÀN DIỆN 🌟
+const SUPABASE_URL = "https://sbjzotypdfwtzlpsmnod.supabase.co"; 
+const SUPABASE_ANON_KEY = "sb_publishable_G7jwOQt4xodZPueh-g-qkw_YQgYJm-E";      
+
+if (!window.supabaseApp) {
+  window.supabaseApp = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+function applyGlowToAllCards() {
+  document.querySelectorAll('.hover-glow').forEach(card => {
+    if (card.classList.contains('glow-initialized')) return;
+    card.classList.add('glow-initialized');
+
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`); 
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -10; 
+      const rotateY = ((x - centerX) / centerX) * 10;
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    });
+  });
+}
+
+async function loadLatestNews() {
+  const supabase = window.supabaseApp; 
+  const { data: posts, error } = await supabase
+    .from('posts')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Lỗi đồng bộ Supabase:", error.message);
+    return;
+  }
+
+  const container = document.getElementById('news-container');
+  if(!container) return;
+  container.innerHTML = ''; 
+
+  if(!posts || posts.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-muted); text-align: center; width: 100%;">Hệ thống chưa có bài viết dữ liệu nào.</p>';
+    return;
+  }
+
+  const newsPosts = posts.filter(post => post.category !== 'video');
+
+  if(newsPosts.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-muted); text-align: center; width: 100%;">Hệ thống chưa có bài viết báo chí nào.</p>';
+    return;
+  }
+
+  newsPosts.forEach(post => {
+    const textData = post.description || post.content || '';
+    const shortDesc = textData.length > 150 ? textData.substring(0, 150) + '...' : textData;
+
+    container.innerHTML += `
+      <a href="tin-tuc.html?id=${post.id}" class="glass-card press-card hover-glow video-card-transparent">
+        <div class="media-placeholder">
+            <img src="${post.image_url || 'https://placehold.co/800x450/1a1a1a/ffffff?text=CHQS+Binh+My'}" 
+              alt="Báo" 
+              onerror="this.onerror=null; this.src='https://placehold.co/800x450/1a1a1a/ffffff?text=CHQS+Binh+My';">
+        </div>
+        <span class="badge" style="background: rgba(229,9,20,0.2); color: var(--accent); border:none; padding: 2px 8px; border-radius: 4px; font-size:12px;">
+          ${post.category === 'tin-tuc' ? 'Tin tức & Sự kiện' : post.category === 'tuyen-quan' ? 'Tuyển Quân' : 'Thông báo'}
+        </span>
+        <h3 class="card-title" style="margin-top: 12px;">${post.title}</h3>
+        <p class="card-desc">${shortDesc}</p>
+      </a>
+    `;
+  });
+
+  if (typeof applyGlowToAllCards === 'function') {
+    applyGlowToAllCards();
+  }
+}
+
+async function loadActivityVideos() {
+  const supabase = window.supabaseApp;
+  const { data: videoPosts, error } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('category', 'video')
+    .order('created_at', { ascending: false });
+
+  const container = document.getElementById('video-container');
+  if (!container) return;
+
+  if (error || !videoPosts || videoPosts.length === 0) {
+    return; 
+  }
+
+  container.innerHTML = '';
+  videoPosts.forEach(post => {
+    let mediaHtml = '';
+    const videoUrl = post.article_url || post.image_url || 'images/Video.mp4';
+    
+    if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+      let embedUrl = videoUrl;
+      if (videoUrl.includes('watch?v=')) {
+        embedUrl = videoUrl.replace('watch?v=', 'embed/');
+      } else if (videoUrl.includes('youtu.be/')) {
+        const parts = videoUrl.split('/');
+        const videoId = parts[parts.length - 1];
+        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+      }
+      mediaHtml = `<iframe src="${embedUrl}" style="position:absolute; inset:0; width:100%; height:100%; border:0; border-radius:8px;" allowfullscreen></iframe>`;
+    } else {
+      mediaHtml = `<video src="${videoUrl}" controls playsinline style="width:100%; height:100%; object-fit:cover; border-radius:8px;"></video>`;
+    }
+
+    container.innerHTML += `
+      <div class="glass-card hover-glow video-card-transparent">
+        <div class="media-placeholder" style="position:relative; overflow:hidden;">
+          ${mediaHtml}
+        </div>
+        <h3 class="card-title">${post.title}</h3>
+        <p class="card-desc">${post.content || post.description || ''}</p>
+      </div>
+    `;
+  });
+
+  if (typeof applyGlowToAllCards === 'function') {
+    applyGlowToAllCards();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadLatestNews();
+    loadActivityVideos(); 
+    applyGlowToAllCards(); 
+
+    const userFullname = localStorage.getItem('user_fullname');
+    const authBox = document.getElementById('header-auth-box');
+
+    if (userFullname && authBox) {
+      authBox.innerHTML = `
+        <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện">☀️</button>
+        <button id="lang-toggle" class="btn-lang-header">🇬🇧 EN</button>
+        <div class="header-divider"></div>
+        <a href="profile.html" style="font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-hover)'" onmouseout="this.style.color='var(--accent)'" title="Xem thông tin cá nhân">
+          👤 ${userFullname}
+        </a>
+        <button id="logout-btn" class="btn-saas btn-primary" data-i18n="btn_logout">Đăng xuất</button>
+      `;
+
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        if (window.supabaseApp) {
+          await window.supabaseApp.auth.signOut();
+        }
+        localStorage.removeItem('user_fullname'); 
+        window.location.reload(); 
+      });
+    }
+});
+
+const authModal = document.getElementById('auth-modal');
+const authTitle = document.getElementById('auth-title');
+let currentAuthMode = 'login'; 
+
+function openAuth(type) {
+  if(!authTitle || !authModal) return;
+  currentAuthMode = type;
+  authTitle.innerText = type === 'login' ? 'Đăng nhập hệ thống' : 'Đăng ký tài khoản';
+  authModal.classList.add('active');
+}
+
+function closeAuth() {
+  if(authModal) authModal.classList.remove('active');
+}
+
+if(authModal) {
+  authModal.addEventListener('click', function(e) {
+    if(e.target === authModal) closeAuth();
+  });
+}
+
+document.getElementById('auth-submit-btn').addEventListener('click', async () => {
+  const supabase = window.supabaseApp;
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value.trim();
+
+  if(!email || !password) {
+    alert('Vui lòng nhập đầy đủ địa chỉ Email và Mật khẩu!');
+    return;
+  }
+
+  if(currentAuthMode === 'register') {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if(error) {
+      alert('Lỗi đăng ký: ' + error.message);
+    } else {
+      alert('Đăng ký thành công! Hệ thống đã tạo hồ sơ cơ bản cho bạn.');
+      openAuth('login'); 
+    }
+  } else {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if(error) {
+      alert('Lỗi đăng nhập: ' + error.message);
+    } else {
+      alert('Đăng nhập thành công vào hệ thống!');
+      if (data && data.user) {
+        const { data: prof } = await supabase.from('profiles').select('ho_ten').eq('id', data.user.id).single();
+        if (prof && prof.ho_ten) {
+          localStorage.setItem('user_fullname', prof.ho_ten);
+        } else {
+          localStorage.setItem('user_fullname', data.user.email.split('@')[0]);
+        }
+      }
+      closeAuth();
+      window.location.reload(); 
+    }
+  }
+});
+</script>
+
+<script src="theme.js"></script>
+<script src="lang.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

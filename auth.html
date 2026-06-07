@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xác Thực Hệ Thống - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ═══════════════════ DESIGN TOKENS (ĐỒNG BỘ HỆ THỐNG) ═══════════════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255, 255, 255, 0.8);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914; 
+  --accent-hover: #ff1e2a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(10, 10, 10, 0.8);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+}
+
+/* ═══════════════════ RESET & BASE ═══════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { font-family: var(--font-main); background: var(--bg-color); color: var(--text-main); height: 100%; overflow: hidden; }
+
+body {
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 50% 30%, rgba(229, 9, 20, 0.08) 0%, transparent 60%), var(--bg-color);
+}
+
+/* ═══════════════════ AUTH CONTAINER ═══════════════════ */
+.auth-wrapper { width: 100%; max-width: 440px; padding: 20px; position: relative; }
+
+.glass-card {
+  background: var(--surface-color); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color); border-radius: var(--radius); padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* BANNER QUÂN HIỆU */
+.auth-header { text-align: center; margin-bottom: 32px; }
+.auth-header img { width: 55px; height: 55px; margin-bottom: 12px; }
+.auth-header h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+.auth-header p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+/* LAYOUT BLOCK FORM */
+.auth-panel { display: none; }
+.auth-panel.active { display: block; animation: fadeIn 0.4s ease forwards; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* FORM ELEMENTS */
+.form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+label { font-size: 13px; font-weight: 600; color: var(--text-main); }
+.form-input {
+  width: 100%; background: rgba(0, 0, 0, 0.02); border: 1px solid var(--border-color); color: var(--text-main);
+  padding: 12px 16px; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s;
+}
+[data-theme="dark"] .form-input { background: rgba(255, 255, 255, 0.03); }
+.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15); }
+.form-input:disabled { background: rgba(0, 0, 0, 0.05); color: var(--text-muted); cursor: not-allowed; font-weight: 600; }
+[data-theme="dark"] .form-input:disabled { background: rgba(255, 255, 255, 0.06); }
+
+/* BUTTONS */
+.btn-submit {
+  width: 100%; background: var(--accent); color: #fff; border: none; padding: 14px; border-radius: 8px;
+  font-size: 14px; font-weight: 600; transition: all 0.2s; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.25); margin-top: 8px;
+}
+.btn-submit:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* BOTTOM TOGGLE LINK */
+.auth-footer { text-align: center; margin-top: 24px; font-size: 13px; color: var(--text-muted); }
+.auth-link { color: var(--accent); font-weight: 600; text-decoration: none; margin-left: 4px; cursor: pointer; }
+.auth-link:hover { text-decoration: underline; }
+
+.back-home {
+  position: absolute; top: -40px; left: 20px; font-size: 13px; font-weight: 500;
+  color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 6px;
+}
+.back-home:hover { color: var(--text-main); }
+</style>
+</head>
+<body>
+
+<div class="auth-wrapper">
+  <a href="index.html" class="back-home">⬅️ Trở lại Cổng thông tin</a>
+  
+  <div class="glass-card">
+    <div class="auth-header">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
+      <h1 id="panel-title">Hệ Thống Xác Thực</h1>
+      <p id="panel-desc">Ban Chỉ Huy Quân Sự Xã Bình Mỹ</p>
+    </div>
+
+    <div id="login-panel" class="auth-panel active">
+      <form id="form-login" onsubmit="return false;">
+        <div class="form-group">
+          <label for="login-email">Địa chỉ Email công vụ</label>
+          <input type="email" class="form-input" id="login-email" placeholder="name@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Mật khẩu bảo mật</label>
+          <input type="password" class="form-input" id="login-password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-submit">Xác nhận đăng nhập</button>
+      </form>
+      <div class="auth-footer">
+        Chưa có tài khoản chiến sĩ? <span class="auth-link" onclick="switchMode('register')">Đăng ký ngay</span>
+      </div>
+    </div>
+
+    <div id="register-panel" class="auth-panel">
+      <form id="form-register" onsubmit="return false;">
+        <div class="form-group">
+          <label for="reg-fullname">Họ và tên cán bộ / chiến sĩ</label>
+          <input type="text" class="form-input" id="reg-fullname" placeholder="Ví dụ: Nguyễn Văn A" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-email">Địa chỉ Email đăng ký</label>
+          <input type="email" class="form-input" id="reg-email" placeholder="username@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Mật khẩu khởi tạo (Từ 6 ký tự)</label>
+          <input type="password" class="form-input" id="reg-password" placeholder="••••••••" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Cấp độ tài khoản mặc định</label>
+          <input type="text" class="form-input" value="Thành viên / Độc giả (Chỉ xem & tương tác)" disabled>
+        </div>
+
+        <button type="submit" class="btn-submit">Gửi yêu cầu khởi tạo tài khoản</button>
+      </form>
+      <div class="auth-footer">
+        Đã có tài khoản nghiệp vụ? <span class="auth-link" onclick="switchMode('login')">Đăng nhập</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// 1. CẤU HÌNH KẾT NỐI SUPABASE
+const SUPABASE_URL = "https://sbjzotypdfwtzlpsmnod.supabase.co"; 
+const SUPABASE_ANON_KEY = "sb_publishable_G7jwOQt4xodZPueh-g-qkw_YQgYJm-E"; 
+
+if (!window.supabaseClient) {
+  window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+const supabaseClient = window.supabaseClient;
+
+// 2. CHUYỂN ĐỔI QUA LẠI GIỮA ĐĂNG NHẬP / ĐĂNG KÝ
+function switchMode(mode) {
+  const loginPanel = document.getElementById('login-panel');
+  const registerPanel = document.getElementById('register-panel');
+  const title = document.getElementById('panel-title');
+  
+  if (mode === 'register') {
+    loginPanel.classList.remove('active');
+    registerPanel.classList.add('active');
+    title.innerText = "Đăng Ký Thành Viên";
+  } else {
+    registerPanel.classList.remove('active');
+    loginPanel.classList.add('active');
+    title.innerText = "Hệ Thống Xác Thực";
+  }
+}
+
+// 3. XỬ LÝ ĐĂNG KÝ TÀI KHOẢN MỚI CHỈ ĐƯỢC PHÂN QUYỀN LÀ USER
+const registerForm = document.getElementById('form-register');
+if (registerForm) {
+  registerForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const fullname = document.getElementById('reg-fullname').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const btn = this.querySelector('.btn-submit');
+
+    if(password.length < 6) {
+      alert('Mật khẩu bắt buộc phải từ 6 ký tự trở lên để đảm bảo an toàn!');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "⏳ Đang tạo tài khoản...";
+
+    // Bước A: Tạo tài khoản xác thực trong hệ thống Supabase Auth
+    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password
+    });
+
+    if (authError) {
+      alert("Lỗi đăng ký: " + authError.message);
+      btn.disabled = false;
+      btn.innerText = "Gửi yêu cầu khởi tạo tài khoản";
+      return;
+    }
+
+    if(authData && authData.user) {
+      // Bước B: Đồng bộ thông tin vào bảng 'profiles' với quyền CHỈ LÀ 'user'
+      const { error: profileError } = await supabaseClient
+        .from('profiles')
+        .insert([
+          { 
+            id: authData.user.id, 
+            ho_ten: fullname, 
+            role: 'user' // Khóa cứng quyền user tại đây, không thể thay đổi từ client
+          }
+        ]);
+
+      if(profileError) {
+        console.error("Lỗi đồng bộ thông tin quyền hạn:", profileError.message);
+      }
+
+      alert("🎉 Đăng ký hoàn tất! Tài khoản độc giả của đồng chí đã được kích hoạt.");
+      switchMode('login');
+      document.getElementById('login-email').value = email;
+    }
+
+    btn.disabled = false;
+    btn.innerText = "Gửi yêu cầu khởi tạo tài khoản";
+  });
+}
+
+// 4. XỬ LÝ ĐĂNG NHẬP HỆ THỐNG VÀ ĐIỀU HƯỚNG THEO CẤP BẬC
+const loginForm = document.getElementById('form-login');
+if (loginForm) {
+  loginForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const btn = this.querySelector('.btn-submit');
+
+    btn.disabled = true;
+    btn.innerText = "⏳ Đang xác thực thông tin...";
+
+    const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+    if (authError) {
+      alert("Đăng nhập thất bại: " + authError.message);
+      btn.disabled = false;
+      btn.innerText = "Xác nhận đăng nhập";
+      return;
+    }
+
+    // Truy vấn quyền từ bảng profiles để điều hướng
+    const { data: profile, error: profileError } = await supabaseClient
+      .from('profiles')
+      .select('role, ho_ten')
+      .eq('id', authData.user.id)
+      .single();
+
+    if (profileError || !profile) {
+      alert("Tài khoản hợp lệ nhưng chưa được đồng bộ thông tin phân quyền.");
+      btn.disabled = false;
+      btn.innerText = "Xác nhận đăng nhập";
+      return;
+    }
+
+    // Lưu thông tin tạm thời vào trình duyệt
+    localStorage.setItem('user_fullname', profile.ho_ten);
+
+    // Ghi nhận nhật ký đăng nhập thành công
+    await supabaseClient.from('activity_logs').insert([
+      { user_id: authData.user.id, action: 'LOGIN', details: `Cán bộ/Chiến sĩ ${profile.ho_ten} truy cập hệ thống` }
+    ]);
+
+    // ĐIỀU HƯỚNG TỰ ĐỘNG THEO QUYỀN HẠN
+    if (profile.role === 'admin') {
+      alert(`👨‍✈️ Xin chào Chỉ huy Quản trị: ${profile.ho_ten}. Chuyển hướng tới Trung tâm điều hành!`);
+      window.location.href = "admin.html";
+    } else {
+      alert(`🎖️ Xin chào Chiến sĩ/Độc giả: ${profile.ho_ten}. Đăng nhập thành công!`);
+      window.location.href = "profile.html"; // Chuyển sang trang profile cá nhân chỉ xem dữ liệu
+    }
+  });
+}
+
+// TỰ ĐỘNG PHÁT HIỆN CHẾ ĐỘ QUA URL (?mode=register)
+document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+  if (mode === 'register') {
+    switchMode('register');
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hệ Thống Điều Hành - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* ═══════════════════ DESIGN SYSTEM MẶC ĐỊNH ═══════════════════ */
+:root {
+  --bg-color: #f1f5f9;
+  --sidebar-bg: #ffffff;
+  --card-bg: #ffffff;
+  --border-color: rgba(0,0,0,0.08);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914;
+  --accent-hover: #ff1e2a;
+  --success: #10b981;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-color: #0b0f19;
+  --sidebar-bg: #111827;
+  --card-bg: #1f2937;
+  --border-color: rgba(255,255,255,0.08);
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-main);
+  background: var(--bg-color);
+  color: var(--text-main);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* LAYOUT CHÍNH */
+.sidebar {
+  width: 280px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color);
+  padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh;
+  z-index: 100;
+}
+.main-content { margin-left: 280px; flex: 1; padding: 40px; min-height: 100vh; }
+
+.logo-block { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-left: 10px; }
+.logo-block img { width: 40px; height: 40px; }
+.logo-text h2 { font-size: 15px; font-weight: 800; }
+.logo-text p { font-size: 11px; color: var(--text-muted); }
+
+.menu-list { list-style: none; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 200px); }
+.menu-item {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;
+  color: var(--text-muted); transition: 0.2s; text-decoration: none;
+}
+.menu-item:hover, .menu-item.active { background: rgba(229,9,20,0.08); color: var(--accent); }
+.menu-separator { border-top: 1px solid var(--border-color); margin: 10px 0; padding-top: 10px; }
+
+.admin-badge {
+  margin-top: auto; padding: 14px; background: rgba(0,0,0,0.03); border-radius: 8px;
+  font-size: 13px; text-align: center; font-weight: 500;
+}
+[data-theme="dark"] .admin-badge { background: rgba(255,255,255,0.03); }
+
+/* SECTIONS */
+.data-section { display: none; animation: fadeIn 0.3s ease; }
+.data-section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* HEADER PANEL */
+.header-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.header-panel h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.header-actions { display: flex; gap: 10px; align-items: center; }
+
+/* THỐNG KÊ ĐỒ THỊ/THÈ */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--border-color); padding: 24px;
+  border-radius: var(--radius); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+.stat-label { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+.stat-value { font-size: 28px; font-weight: 800; color: var(--accent); }
+
+.chart-box-wrapper {
+  background: var(--card-bg); border: 1px solid var(--border-color); padding: 30px;
+  border-radius: var(--radius); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+  margin-bottom: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+
+/* BẢNG DỮ LIỆU & BIỂU MẪU */
+.action-bar { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+.btn {
+  background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 8px;
+  font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s;
+}
+.btn:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--text-muted); margin-right: 10px; }
+.btn-secondary:hover { opacity: 0.9; }
+
+.form-box {
+  background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
+  padding: 30px; margin-bottom: 30px; display: none;
+}
+.form-box.always-show { display: block; }
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.form-control {
+  width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);
+  background: rgba(0,0,0,0.02); color: var(--text-main); font-family: inherit; font-size: 14px; outline: none;
+}
+[data-theme="dark"] .form-control { background: rgba(255,255,255,0.05); }
+.form-control:focus { border-color: var(--accent); }
+
+.data-table-container {
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  border-radius: var(--radius); overflow: hidden;
+}
+.data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+.data-table th { background: rgba(0,0,0,0.02); padding: 16px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
+[data-theme="dark"] .data-table th { background: rgba(255,255,255,0.02); }
+.data-table td { padding: 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+
+.role-select {
+  padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color);
+  background: var(--card-bg); color: var(--text-main); font-weight: 600; cursor: pointer;
+}
+
+/* MODAL OVERLAY CHỈNH SỬA BÀI VIẾT */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+.modal-content {
+  background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
+  width: 100%; max-width: 650px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+.modal-title { font-size: 18px; font-weight: 800; color: var(--accent); }
+.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); }
+.modal-close:hover { color: var(--accent); }
+
+/* NHẬT KÝ */
+.log-item { padding: 12px 16px; border-bottom: 1px solid var(--border-color); font-size: 13px; display: flex; justify-content: space-between; }
+.log-time { color: var(--text-muted); font-family: monospace; }
+
+/* BẢN ĐỒ SỐ KHU VỰC */
+#map-container { height: 550px; width: 100%; border-radius: var(--radius); border: 1px solid var(--border-color); overflow: hidden; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo-block">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
+    <div class="logo-text">
+      <h2>HỆ THỐNG CHỈ HUY</h2>
+      <p>Ban CHQS Xã Bình Mỹ</p>
+    </div>
+  </div>
+
+  <ul class="menu-list">
+    <li class="menu-item active" id="menu-dashboard" onclick="switchTab('dashboard')">📊 Tổng quan chỉ huy</li>
+    <li class="menu-item" id="menu-posts" onclick="switchTab('posts')">📰 Quản lý nội dung</li>
+    <li class="menu-item" id="menu-schedule" onclick="switchTab('schedule')">📅 Quản lý lịch trực</li>
+    <li class="menu-item" id="menu-users" onclick="switchTab('users')">👥 Quản lý người dùng</li>
+    <li class="menu-item" id="menu-map" onclick="switchTab('map')">🗺️ Bản đồ số địa bàn</li>
+    <li class="menu-item" id="menu-profile" onclick="switchTab('profile')">👤 Hồ sơ cá nhân</li>
+    <li class="menu-item" id="menu-logs" onclick="switchTab('logs')">📜 Nhật ký hệ thống</li>
+    
+    <li class="menu-separator"></li>
+    <a href="index.html" class="menu-item">🏠 Quay lại trang chủ</a>
+  </ul>
+
+  <div class="admin-badge" id="admin-info-box">
+    Đang xác thực quyền...
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="header-panel">
+    <h1 id="page-title">Tổng quan chỉ huy</h1>
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="theme-toggle-btn" onclick="toggleTheme()" style="background:#475569; margin-right: 0;">🌙 Chế độ tối</button>
+      <button class="btn btn-secondary" onclick="handleLogout()" style="background:#dc2626;">Đăng xuất</button>
+    </div>
+  </div>
+
+  <div id="sec-dashboard" class="data-section active">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">TỔNG SỐ NỘI DUNG / VĂN BẢN</div>
+        <div class="stat-value" id="stat-posts-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">HỒ SƠ CÁN BỘ TRUY CẬP</div>
+        <div class="stat-value" id="stat-profiles-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">SỐ LƯỢNG ĐĂNG KÝ MỚI</div>
+        <div class="stat-value" id="stat-register-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ƯỚC TÍNH LƯỢT TRUY CẬP</div>
+        <div class="stat-value" id="stat-views-count">2,450</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">NHẬT KÝ HÀNH CHÍNH</div>
+        <div class="stat-value" id="stat-logs-count">0</div>
+      </div>
+    </div>
+
+    <div class="chart-box-wrapper">
+      <div class="stat-label" style="text-align: center; width: 100%; margin-bottom: 20px; font-size: 15px; letter-spacing: 0.03em;">
+        📊 BIỂU ĐỒ PHÂN TÍCH TỶ LỆ PHẦN TRĂM (%) CHUYÊN MỤC VĂN BẢN HÀNH CHÍNH & TIN TỨC
+      </div>
+      <div style="position: relative; width: 100%; max-width: 340px; max-height: 340px;">
+        <canvas id="categoryPieChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-posts" class="data-section">
+    <div class="action-bar" id="posts-action-bar">
+      <button class="btn" id="btn-toggle-form" onclick="toggleAddForm()">➕ Đăng tin tức / Văn bản mới</button>
+    </div>
+
+    <div class="form-box" id="admin-form-section">
+      <h3 style="margin-bottom: 20px; font-weight:800; border-bottom:1px solid var(--border-color); padding-bottom:10px;">KHỞI TẠO NỘI DUNG TUYÊN TRUYỀN & VĂN BẢN</h3>
+      <form id="add-post-form">
+        <div class="form-group">
+          <label class="form-label">Tiêu đề bài viết / thông báo / văn bản</label>
+          <input type="text" class="form-control" id="post-title" required placeholder="Nhập tiêu đề chính xác...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Chuyên mục hiển thị</label>
+          <select class="form-control" id="post-category">
+            <option value="tin-tuc">Tin tức quân sự xã</option>
+            <option value="thong-bao">Thông báo tuyển quân / Huấn luyện</option>
+            <option value="chi-dao">Chỉ đạo điều hành</option>
+            <option value="van-ban">Văn bản quy phạm pháp luật</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ảnh bìa / Poster bài viết (Link URL hình ảnh)</label>
+          <input type="url" class="form-control" id="post-image-url" placeholder="Ví dụ: https://images.unsplash.com/... hoặc để trống">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Đường dẫn liên kết ngoài (URL bài báo khác hoặc file PDF đính kèm)</label>
+          <input type="url" class="form-control" id="post-article-url" placeholder="Ví dụ: https://baochinhphu.vn/...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nội dung văn bản chi tiết</label>
+          <textarea class="form-control" id="post-content" rows="6" required placeholder="Nhập nội dung văn bản chi tiết..."></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" class="btn btn-secondary" onclick="toggleAddForm()">Hủy bỏ</button>
+          <button type="submit" class="btn">Phát hành bài viết</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="data-table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 90px;">Hình ảnh</th>
+            <th>Tiêu đề bài đăng</th>
+            <th style="width: 180px;">Chuyên mục</th>
+            <th style="width: 150px;">Ngày phát hành</th>
+            <th style="width: 160px; text-align: center;">Tác vụ điều hành</th>
+          </tr>
+        </thead>
+        <tbody id="posts-table-body">
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--text-muted);">Đang liên kết dữ liệu chỉ huy...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="sec-schedule" class="data-section">
+    <div class="action-bar">
+      <button class="btn" type="button" onclick="openAddScheduleModal()" style="background:#10b981;">➕ Thêm ca trực mới</button>
+    </div>
+
+    <div class="data-table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Thời gian</th>
+            <th>Loại ca trực</th>
+            <th>Chỉ huy trực</th>
+            <th>Sĩ quan / Trực ban</th>
+            <th style="width: 180px; text-align: center;">Tác vụ điều hành</th>
+          </tr>
+        </thead>
+        <tbody id="admin-schedule-tbody">
+          <tr>
+            <td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">Đang tải dữ liệu điều động lịch...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="sec-users" class="data-section">
+    <div class="data-table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Họ và tên</th>
+            <th>Số điện thoại</th>
+            <th>Vai trò hiện tại</th>
+            <th>Ghi chú cán bộ</th>
+            <th style="width: 200px; text-align: center;">Cấp quyền chỉ huy</th>
+          </tr>
+        </thead>
+        <tbody id="users-table-body">
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--text-muted);">Đang đồng bộ danh sách quân số...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="sec-map" class="data-section">
+    <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: var(--radius); margin-bottom: 20px; font-size:14px; font-weight: 500;">
+      📍 <b>Hệ thống bản đồ quân sự giám sát địa bàn Xã Bình Mỹ</b>. Sử dụng để theo dõi các khu vực đóng quân, mục tiêu kinh tế - chính trị trọng điểm.
+    </div>
+    <div id="map-container">
+      <div id="map" style="width:100%; height:100%;"></div>
+    </div>
+  </div>
+
+  <div id="sec-profile" class="data-section">
+    <div class="form-box always-show" style="max-width: 700px; margin: 0 auto;">
+      <h3 style="margin-bottom: 24px; font-weight:800; border-bottom:1px solid var(--border-color); padding-bottom:10px; color: var(--accent);">CẬP NHẬT THÔNG TIN CÁN BỘ</h3>
+      <form id="profile-update-form">
+        <div class="form-group">
+          <label class="form-label">Họ và tên cán bộ</label>
+          <input type="text" class="form-control" id="profile-name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Số điện thoại liên lạc</label>
+          <input type="text" class="form-control" id="profile-phone" placeholder="Nhập số điện thoại hành chính...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Đường dẫn ảnh đại diện / Ảnh chân dung (Link URL)</label>
+          <input type="url" class="form-control" id="profile-avatar" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Thông tin chức vụ / Chi tiết công tác</label>
+          <textarea class="form-control" id="profile-bio" rows="3" placeholder="Nhập chức vụ, bộ phận công tác tại Ban CHQS Xã..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ghi chú hệ thống</label>
+          <textarea class="form-control" id="profile-notes" rows="3" placeholder="Ghi chú thêm thông tin cá nhân..."></textarea>
+        </div>
+        <div style="text-align: right;">
+          <button type="submit" class="btn">💾 Lưu thay đổi hồ sơ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="sec-logs" class="data-section">
+    <div class="data-table-container" id="logs-container" style="padding: 10px 0;">
+      <p style="text-align: center; padding: 20px; color: var(--text-muted);">Đang tải nhật ký kiểm toán...</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="edit-post-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">✏️ HIỆU CHỈNH BÀI VIẾT & VĂN BẢN</h3>
+      <button class="modal-close" onclick="closeEditModal()">&times;</button>
+    </div>
+    <form id="edit-post-form">
+      <input type="hidden" id="edit-post-id">
+      <div class="form-group">
+        <label class="form-label">Tiêu đề bài viết / thông báo / văn bản</label>
+        <input type="text" class="form-control" id="edit-post-title" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Chuyên mục hiển thị</label>
+        <select class="form-control" id="edit-post-category">
+          <option value="tin-tuc">Tin tức quân sự xã</option>
+          <option value="thong-bao">Thông báo tuyển quân / Huấn luyện</option>
+          <option value="chi-dao">Chỉ đạo điều hành</option>
+          <option value="van-ban">Văn bản quy phạm pháp luật</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ảnh bìa / Poster bài viết (Link URL hình ảnh)</label>
+        <input type="url" class="form-control" id="edit-post-image-url">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Đường dẫn liên kết ngoài (URL bài báo / File PDF đính kèm)</label>
+        <input type="url" class="form-control" id="edit-post-article-url">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nội dung văn bản chi tiết</label>
+        <textarea class="form-control" id="edit-post-content" rows="8" required></textarea>
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;">
+        <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Đóng lại</button>
+        <button type="submit" class="btn" style="background: #2563eb;">Lưu thay đổi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="schedule-modal">
+  <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3 class="modal-title" id="schedule-modal-title" style="color: var(--accent);">Thêm ca phân công trực ban</h3>
+      <button class="modal-close" onclick="closeScheduleModal()">&times;</button>
+    </div>
+    <input type="hidden" id="form-schedule-id">
+    
+    <div class="form-group">
+      <label class="form-label">Thời gian (Ngày trực)</label>
+      <input type="text" class="form-control" id="form-schedule-date" placeholder="Ví dụ: Thứ Hai (08/06/2026)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tên ca trực</label>
+      <input type="text" class="form-control" id="form-schedule-shift" placeholder="Ví dụ: Trực 24/24h">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Chỉ huy trực</label>
+      <input type="text" class="form-control" id="form-schedule-commander" placeholder="Họ tên Chỉ huy trưởng / Chỉ huy phó">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Sĩ quan / Trực ban cơ quan</label>
+      <input type="text" class="form-control" id="form-schedule-officer" placeholder="Họ tên sĩ quan kíp trực">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Vệ binh / Lực lượng tuần tra</label>
+      <input type="text" class="form-control" id="form-schedule-soldiers" placeholder="Tiểu đội vệ binh, dân quân...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ghi chú / Nhiệm vụ trọng tâm</label>
+      <textarea class="form-control" id="form-schedule-notes" rows="3" placeholder="Nhiệm vụ cụ thể nếu có..."></textarea>
+    </div>
+
+    <div style="display:flex; gap:12px; justify-content:flex-end; margin-top: 20px;">
+      <button type="button" class="btn btn-secondary" onclick="closeScheduleModal()">Hủy</button>
+      <button type="button" class="btn" onclick="saveScheduleData()" style="background:#10b981;">Lưu cập nhật</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 1. CẤU HÌNH KẾT NỐI SUPABASE
+const SUPABASE_URL = "https://sbjzotypdfwtzlpsmnod.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_G7jwOQt4xodZPueh-g-qkw_YQgYJm-E";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentAdminId = null;
+let currentAdminName = "Cán bộ quản trị";
+
+// 2. KHỞI TẠO TỰ ĐỘNG KHI TẢI TRANG
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAuth();
+  initTheme();
+  loadDashboardStats();
+  loadPostsData();
+  loadUsersData();
+  initMap();
+  loadLogsData();
+  loadAdminScheduleData();
+});
+
+// 3. KIỂM TRA PHÂN QUYỀN TRUY CẬP HỆ THỐNG
+async function checkAuth() {
+  const { data: { user }, error } = await supabaseClient.auth.getUser();
+  if (error || !user) {
+    alert("Vui lòng đăng nhập hệ thống quản trị!");
+    window.location.href = "auth.html";
+    return;
+  }
+  currentAdminId = user.id;
+  
+  const { data: profile } = await supabaseClient
+    .from('profiles')
+    .select('ho_ten, role')
+    .eq('id', user.id)
+    .single();
+
+  if (profile) {
+    if (profile.role !== 'admin') {
+      alert("Tài khoản không có đặc quyền truy cập trung tâm điều hành!");
+      window.location.href = "index.html";
+      return;
+    }
+    currentAdminName = profile.ho_ten;
+    document.getElementById('admin-info-box').innerText = `👨‍✈️ Chỉ huy: ${profile.ho_ten}`;
+    document.getElementById('profile-name').value = profile.ho_ten;
+  }
+}
+
+// 4. CHUYỂN ĐỔI TAB GIAO DIỆN HÀNH CHÍNH
+function switchTab(tabId) {
+  document.querySelectorAll('.data-section').forEach(sec => sec.classList.remove('active'));
+  document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+  
+  const targetSec = document.getElementById(`sec-${tabId}`);
+  const targetMenu = document.getElementById(`menu-${tabId}`);
+  if (targetSec) targetSec.classList.add('active');
+  if (targetMenu) targetMenu.classList.add('active');
+  
+  const titles = {
+    dashboard: "Tổng quan chỉ huy",
+    posts: "Quản lý nội dung văn bản & tin tức",
+    schedule: "Điều hành Lịch trực Ban Chỉ Huy",
+    users: "Quản lý lực lượng quân số",
+    map: "Bản đồ số địa bàn",
+    profile: "Hồ sơ cá nhân cán bộ",
+    logs: "Nhật ký hệ thống kiểm toán"
+  };
+  document.getElementById('page-title').innerText = titles[tabId] || "Hệ Thống Chỉ Huy";
+  
+  if(tabId === 'map' && map) {
+    setTimeout(() => { map.invalidateSize(); }, 200);
+  }
+}
+
+// 5. CẤU HÌNH GIAO DIỆN DARK/LIGHT TOKENS
+function initTheme() {
+  const savedTheme = localStorage.getItem('site-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('theme-toggle-btn').innerText = savedTheme === 'dark' ? '☀️ Chế độ sáng' : '🌙 Chế độ tối';
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', nextTheme);
+  localStorage.setItem('site-theme', nextTheme);
+  document.getElementById('theme-toggle-btn').innerText = nextTheme === 'dark' ? '☀️ Chế độ sáng' : '🌙 Chế độ tối';
+}
+
+// 6. ĐĂNG XUẤT AN TOÀN TRÌNH DUYỆT
+async function handleLogout() {
+  await supabaseClient.auth.signOut();
+  localStorage.clear();
+  window.location.href = "auth.html";
+}
+
+// 7. TẢI SỐ LIỆU THỐNG KÊ DASHBOARD QUÂN SỐ
+async function loadDashboardStats() {
+  try {
+    const { count: postsCount } = await supabaseClient.from('posts').select('*', { count: 'exact', head: true });
+    const { count: profilesCount } = await supabaseClient.from('profiles').select('*', { count: 'exact', head: true });
+    const { count: logsCount } = await supabaseClient.from('activity_logs').select('*', { count: 'exact', head: true });
+    
+    document.getElementById('stat-posts-count').innerText = postsCount || 0;
+    document.getElementById('stat-profiles-count').innerText = profilesCount || 0;
+    document.getElementById('stat-logs-count').innerText = logsCount || 0;
+    
+    renderChart();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+let categoryChart = null;
+function renderChart() {
+  const ctx = document.getElementById('categoryPieChart').getContext('2d');
+  if (categoryChart) categoryChart.destroy();
+  categoryChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Tin tức quân sự', 'Thông báo tuyển quân', 'Chỉ đạo điều hành', 'Văn bản pháp luật'],
+      datasets: [{
+        data: [35, 25, 20, 20],
+        backgroundColor: ['#E50914', '#10b981', '#3b82f6', '#f59e0b']
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  });
+}
+
+// 8. ĐIỀU HÀNH NỘI DUNG VĂN BẢN / BÀI VIẾT
+function toggleAddForm() {
+  const form = document.getElementById('admin-form-section');
+  form.style.display = form.style.display === 'block' ? 'none' : 'block';
+}
+
+async function loadPostsData() {
+  const tbody = document.getElementById('posts-table-body');
+  try {
+    const { data: posts, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    if (!posts || posts.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Chưa có bài đăng nào.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = '';
+    posts.forEach(post => {
+      const date = new Date(post.created_at).toLocaleDateString('vi-VN');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><img src="${post.image_url || 'https://via.placeholder.com/60'}" style="width:60px; height:40px; object-fit:cover; border-radius:4px;"></td>
+        <td style="font-weight:600;">${post.title}</td>
+        <td><span class="role-select" style="background:rgba(0,0,0,0.04);">${post.category}</span></td>
+        <td>${date}</td>
+        <td style="text-align:center;">
+          <button class="btn" style="padding:6px 12px; font-size:12px; background:#3b82f6; margin-right:4px;" onclick="openEditModal(${JSON.stringify(post).replace(/"/g, '&quot;')})">✏️ Sửa</button>
+          <button class="btn" style="padding:6px 12px; font-size:12px; background:#ef4444;" onclick="deletePost(${post.id}, '${post.title}')">🗑️ Xóa</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+document.getElementById('add-post-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const title = document.getElementById('post-title').value.trim();
+  const category = document.getElementById('post-category').value;
+  const image_url = document.getElementById('post-image-url').value.trim();
+  const article_url = document.getElementById('post-article-url').value.trim();
+  const content = document.getElementById('post-content').value.trim();
+  
+  const { error } = await supabaseClient.from('posts').insert([{ title, category, image_url, article_url, content }]);
+  if (error) {
+    alert("Lỗi khi phát hành văn bản: " + error.message);
+  } else {
+    alert("🎉 Đăng tải bài viết thành công!");
+    document.getElementById('add-post-form').reset();
+    toggleAddForm();
+    loadPostsData();
+    loadDashboardStats();
+    
+    await supabaseClient.from('activity_logs').insert([
+      { user_id: currentAdminId, action: 'ADD_POST', details: `Cán bộ ${currentAdminName} đã phát hành bài viết mới: ${title}` }
+    ]);
+  }
+});
+
+function openEditModal(post) {
+  document.getElementById('edit-post-id').value = post.id;
+  document.getElementById('edit-post-title').value = post.title;
+  document.getElementById('edit-post-category').value = post.category;
+  document.getElementById('edit-post-image-url').value = post.image_url || '';
+  document.getElementById('edit-post-article-url').value = post.article_url || '';
+  document.getElementById('edit-post-content').value = post.content || '';
+  document.getElementById('edit-post-modal').style.display = 'flex';
+}
+
+function closeEditModal() {
+  document.getElementById('edit-post-modal').style.display = 'none';
+}
+
+document.getElementById('edit-post-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('edit-post-id').value;
+  const title = document.getElementById('edit-post-title').value.trim();
+  const category = document.getElementById('edit-post-category').value;
+  const image_url = document.getElementById('edit-post-image-url').value.trim();
+  const article_url = document.getElementById('edit-post-article-url').value.trim();
+  const content = document.getElementById('edit-post-content').value.trim();
+  
+  const { error } = await supabaseClient.from('posts').update({ title, category, image_url, article_url, content }).eq('id', id);
+  if (error) {
+    alert("Lỗi khi lưu cập nhật: " + error.message);
+  } else {
+    alert("🎉 Cập nhật bài viết thành công!");
+    closeEditModal();
+    loadPostsData();
+    
+    await supabaseClient.from('activity_logs').insert([
+      { user_id: currentAdminId, action: 'EDIT_POST', details: `Cán bộ ${currentAdminName} hiệu chỉnh nội dung bài: ${title}` }
+    ]);
+  }
+});
+
+async function deletePost(id, title) {
+  if (!confirm(`Đồng chí có chắc chắn muốn xóa vĩnh viễn nội dung: "${title}" không?`)) return;
+  const { error } = await supabaseClient.from('posts').delete().eq('id', id);
+  if (error) {
+    alert("Lỗi khi gỡ: " + error.message);
+  } else {
+    alert("Đã gỡ bỏ nội dung thành công.");
+    loadPostsData();
+    loadDashboardStats();
+    
+    await supabaseClient.from('activity_logs').insert([
+      { user_id: currentAdminId, action: 'DELETE_POST', details: `Cán bộ ${currentAdminName} đã gỡ bỏ bài viết: ${title}` }
+    ]);
+  }
+}
+
+// 9. QUẢN LÝ LỊCH TRỰC BAN CHỈ HUY (NEW FUNCTIONALITY)
+async function loadAdminScheduleData() {
+  const tbody = document.getElementById('admin-schedule-tbody');
+  if(!tbody) return;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('duty_schedule')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">Chưa có lịch trực nào, bấm nút Thêm để bắt đầu phân công.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    data.forEach(item => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight:700; color:var(--accent);">${item.date_string}</td>
+        <td style="font-weight:600;">${item.shift_name}</td>
+        <td><span style="color:var(--accent); font-weight:700;">👨‍✈️ ${item.commander}</span></td>
+        <td>🎖️ ${item.officer}</td>
+        <td style="text-align:center;">
+          <button class="btn" style="padding:6px 12px; font-size:12px; background:#3b82f6; margin-right:4px;" onclick="openEditScheduleModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Sửa</button>
+          <button class="btn" style="padding:6px 12px; font-size:12px; background:#ef4444;" onclick="deleteSchedule(${item.id}, '${item.date_string}')">🗑️ Xóa</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function openAddScheduleModal() {
+  document.getElementById('schedule-modal-title').innerText = "Thêm ca phân công trực ban";
+  document.getElementById('form-schedule-id').value = "";
+  document.getElementById('form-schedule-date').value = "";
+  document.getElementById('form-schedule-shift').value = "Trực 24/24h";
+  document.getElementById('form-schedule-commander').value = "";
+  document.getElementById('form-schedule-officer').value = "";
+  document.getElementById('form-schedule-soldiers').value = "";
+  document.getElementById('form-schedule-notes').value = "";
+  document.getElementById('schedule-modal').style.display = 'flex';
+}
+
+function openEditScheduleModal(item) {
+  document.getElementById('schedule-modal-title').innerText = "Chỉnh sửa kíp trực ban";
+  document.getElementById('form-schedule-id').value = item.id;
+  document.getElementById('form-schedule-date').value = item.date_string;
+  document.getElementById('form-schedule-shift').value = item.shift_name;
+  document.getElementById('form-schedule-commander').value = item.commander;
+  document.getElementById('form-schedule-officer').value = item.officer;
+  document.getElementById('form-schedule-soldiers').value = item.soldiers || "";
+  document.getElementById('form-schedule-notes').value = item.notes || "";
+  document.getElementById('schedule-modal').style.display = 'flex';
+}
+
+function closeScheduleModal() {
+  document.getElementById('schedule-modal').style.display = 'none';
+}
+
+async function saveScheduleData() {
+  const id = document.getElementById('form-schedule-id').value;
+  const date_string = document.getElementById('form-schedule-date').value.trim();
+  const shift_name = document.getElementById('form-schedule-shift').value.trim();
+  const commander = document.getElementById('form-schedule-commander').value.trim();
+  const officer = document.getElementById('form-schedule-officer').value.trim();
+  const soldiers = document.getElementById('form-schedule-soldiers').value.trim();
+  const notes = document.getElementById('form-schedule-notes').value.trim();
+
+  if(!date_string || !shift_name || !commander || !officer) {
+    alert("Vui lòng điền đầy đủ các thông tin cốt lõi (Ngày, Ca, Chỉ huy, Sĩ quan)!");
+    return;
+  }
+
+  const payload = { date_string, shift_name, commander, officer, soldiers, notes };
+
+  if(id) {
+    const { error } = await supabaseClient.from('duty_schedule').update(payload).eq('id', id);
+    if(error) alert("Lỗi: " + error.message);
+    else alert("🎉 Đã cập nhật sửa đổi lịch trực công tác!");
+  } else {
+    const { error } = await supabaseClient.from('duty_schedule').insert([payload]);
+    if(error) alert("Lỗi: " + error.message);
+    else alert("🎉 Đã lập ca phân công trực ban mới!");
+  }
+
+  closeScheduleModal();
+  loadAdminScheduleData();
+}
+
+async function deleteSchedule(id, dateStr) {
+  if(!confirm(`Đồng chí có chắc chắn muốn hủy phân công trực ngày: ${dateStr}?`)) return;
+
+  const { error } = await supabaseClient.from('duty_schedule').delete().eq('id', id);
+  if(error) alert("Lỗi khi gỡ: " + error.message);
+  else {
+    alert("Đã giải phóng ca trực khỏi hệ thống điều hành.");
+    loadAdminScheduleData();
+  }
+}
+
+// 10. PHÂN QUYỀN VAI TRÒ QUÂN SỐ CÁN BỘ
+async function loadUsersData() {
+  const tbody = document.getElementById('users-table-body');
+  try {
+    const { data: profiles, error } = await supabaseClient.from('profiles').select('*');
+    if (error) throw error;
+    tbody.innerHTML = '';
+    profiles.forEach(p => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight:600;">${p.ho_ten || 'Chưa cập nhật'}</td>
+        <td>${p.so_dien_thoai || '-'}</td>
+        <td><span style="text-transform: uppercase; font-weight:700; color: ${p.role==='admin'?'var(--accent)':'#2563eb'}">${p.role}</span></td>
+        <td>${p.ghi_chu || '-'}</td>
+        <td style="text-align:center;">
+          <select class="role-select" onchange="updateUserRole('${p.id}', this.value)">
+            <option value="user" ${p.role==='user'?'selected':''}>User (Chiến sĩ)</option>
+            <option value="admin" ${p.role==='admin'?'selected':''}>Admin (Chỉ huy)</option>
+          </select>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function updateUserRole(userId, newRole) {
+  const { error } = await supabaseClient.from('profiles').update({ role: newRole }).eq('id', userId);
+  if (error) {
+    alert("Lỗi phân cấp chỉ huy: " + error.message);
+  } else {
+    alert("Cập nhật phân quyền cán bộ thành công!");
+    loadUsersData();
+  }
+}
+
+// 11. KHỞI TẠO BẢN ĐỒ GIÁM SÁT MỤC TIÊU ĐỊA BÀN
+let map;
+function initMap() {
+  if (!document.getElementById('map')) return;
+  map = L.map('map').setView([11.0531, 106.6022], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+  
+  L.marker([11.0531, 106.6022]).addTo(map)
+    .bindPopup('<b>Ban CHQS Xã Bình Mỹ</b><br>Sở chỉ huy điều hành kíp trực.')
+    .openPopup();
+}
+
+// 12. TẢI NHẬT KÝ KIỂM TOÁN HOẠT ĐỘNG
+async function loadLogsData() {
+  const container = document.getElementById('logs-container');
+  try {
+    const { data: logs, error } = await supabaseClient.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(40);
+    if (error) throw error;
+    if(!logs || logs.length === 0) {
+      container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted);">Hệ thống chưa ghi nhận hoạt động nào.</p>';
+      return;
+    }
+    container.innerHTML = '';
+    logs.forEach(log => {
+      const time = new Date(log.created_at).toLocaleString('vi-VN');
+      const div = document.createElement('div');
+      div.className = 'log-item';
+      div.innerHTML = `
+        <span><b>[${log.action}]</b> ${log.details}</span>
+        <span class="log-time">${time}</span>
+      `;
+      container.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// 13. CẬP NHẬT HỒ SƠ THÔNG TIN CÁ NHÂN CÁN BỘ
+document.getElementById('profile-update-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const ho_ten = document.getElementById('profile-name').value.trim();
+  const so_dien_thoai = document.getElementById('profile-phone').value.trim();
+  const avatar_url = document.getElementById('profile-avatar').value.trim();
+  const bio = document.getElementById('profile-bio').value.trim();
+  const ghi_chu = document.getElementById('profile-notes').value.trim();
+  
+  const { error } = await supabaseClient.from('profiles').update({ ho_ten, so_dien_thoai, avatar_url, bio, ghi_chu }).eq('id', currentAdminId);
+  if (error) {
+    alert("Lỗi cập nhật dữ liệu: " + error.message);
+  } else {
+    alert("🎉 Đã lưu thay đổi hồ sơ cán bộ thành công!");
+    await checkAuth();
+    loadUsersData();
+  }
+});
+</script>
+
+</body>
+</html>

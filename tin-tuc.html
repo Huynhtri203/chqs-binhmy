@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tin Tức & Sự Kiện - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ═══════════════════ DESIGN TOKENS TRÙNG KHỚP HỆ THỐNG ═══════════════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255, 255, 255, 0.8);
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.3);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914; 
+  --accent-hover: #ff1e2a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+}
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(10, 10, 10, 0.8);
+  --surface-hover: #141414;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.5);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-family: var(--font-main); background: var(--bg-color); color: var(--text-main); }
+body { overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1;
+  background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ═══════════════════ STICKY HEADER & BLUR GLASS ═══════════════════ */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(247, 242, 242, 0.6);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; letter-spacing: -0.03em; }
+.brand img { width: 40px; height: 40px; }
+
+.nav-menu { display: flex; align-items: center; gap: 32px; }
+.nav-item { position: relative; font-size: 14px; font-weight: 500; color: var(--text-muted); transition: color 0.2s; padding: 24px 0; }
+.nav-item:hover, .nav-item.active { color: var(--text-main); }
+
+.dropdown {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(10px);
+  background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color); border-radius: var(--radius);
+  padding: 8px; min-width: 200px;
+  opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+.nav-item:hover .dropdown { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.dropdown a {
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+  border-radius: 8px; font-size: 14px; color: var(--text-muted); transition: all 0.2s;
+}
+.dropdown a:hover { background: rgba(68, 58, 58, 0.05); color: var(--text-main); }
+
+.btn-saas {
+  background: #fff; color: #000; padding: 8px 18px; border-radius: 22px;
+  font-size: 14px; font-weight: 600; transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(17, 17, 17, 0.25);
+}
+.btn-saas:hover { background: #e0e0e0; transform: scale(1.02); }
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 10px 10px rgba(229,9,20,0.4); }
+.btn-primary:hover { background: var(--accent-hover); transform: scale(1.02); }
+
+/* ═══════════════════ TIN TỨC HERO BANNER ═══════════════════ */
+.news-hero { padding: 140px 24px 40px 24px; text-align: center; }
+.news-hero h1 { font-size: 3.5rem; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 12px; background: linear-gradient(180deg, #fff 0%, #aaa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+[data-theme="light"] .news-hero h1 { background: linear-gradient(180deg, #0f172a 0%, #64748b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
+.news-hero p { color: var(--text-muted); font-size: 16px; }
+
+/* STYLE CHO KHU VỰC ĐĂNG BÀI */
+.form-control { width: 100%; padding: 11px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(120,120,120,0.1); color: var(--text-main); font-size: 14px; outline: none; transition: all 0.2s; }
+.form-control:focus { border-color: var(--accent); box-shadow: 0 0 8px var(--border-glow); }
+
+/* ═══════════════════ CONTAINER LƯỚI TIN TỨC ═══════════════════ */
+.container { max-width: 1200px; margin: 0 auto; padding: 20px 24px 100px 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+
+.glass-card {
+  background: rgba(20, 20, 20, 0.4); backdrop-filter: blur(16px); border: 1px solid var(--border-color);
+  border-radius: var(--radius); padding: 24px; transition: all 0.3s ease; position: relative;
+}
+[data-theme="light"] .glass-card { background: rgba(255, 255, 255, 0.5); }
+.glass-card:hover { border-color: rgba(229, 9, 20, 0.5); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(229,9,20,0.1); }
+
+.media-placeholder { width: 100%; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; margin-bottom: 16px; position: relative; background: #1a1a1a; }
+.media-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+.card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; line-height: 1.4; }
+.card-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ═══════════════════ FOOTER SYSTEM ═══════════════════ */
+.saas-footer { background: var(--surface-color); border-top: 1px solid var(--border-color); padding: 4rem 2rem 2rem 2rem; margin-top: 5rem; font-family: var(--font-main); position: relative; }
+.saas-footer::before { content: ''; position: absolute; top: 0; left: 10%; width: 80%; height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.6; }
+.footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1.2fr 1.2fr 1.6fr; gap: 3rem; }
+.footer-brand h2 { color: var(--text-main); font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: -0.02em; }
+.footer-brand p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+.footer-col h3 { color: var(--text-main); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.25rem; position: relative; }
+.footer-col h3::after { content: ''; position: absolute; bottom: -6px; left: 0; width: 24px; height: 2px; background: var(--accent); }
+.footer-col ul { list-style: none; padding: 0; margin: 0; }
+.footer-col ul li { margin-bottom: 0.75rem; }
+.footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s ease, padding-left 0.2s ease; }
+.footer-col ul li a:hover { color: var(--text-main); padding-left: 4px; }
+.footer-contact-info { color: var(--text-muted); font-size: 0.875rem; line-height: 1.6; }
+.footer-contact-info p { margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 0.5rem; }
+.footer-bottom { max-width: 1200px; margin: 4rem auto 0 auto; padding-top: 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.8rem; color: var(--text-muted); }
+
+@media (max-width: 992px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } .footer-container { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+@media (max-width: 768px) { .grid-3 { grid-template-columns: 1fr; } .footer-container { grid-template-columns: 1fr; } .nav-menu { display: none; } }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Logo">
+      <span>BAN CHQS BÌNH MỸ</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="index.html" class="nav-item">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item">Giới thiệu</a>
+      <a href="tin-tuc.html" class="nav-item active">Tin tức</a>
+      <div class="nav-item">
+        <span>Dịch vụ</span> ▾
+        <div class="dropdown">
+          <a href="#">🔍 <span>Tra cứu CCCD</span></a>
+          <a href="tuyen-quan.html">🪖 <span>Tuyển quân</span></a>
+          <a href="tuyen-sinh.html">🎓 <span>Tuyển sinh</span></a>
+          <a href="#">📋 <span>QĐ Điều động</span></a>
+        </div>
+      </div>
+      <a href="lien-he.html" class="nav-item">Liên hệ</a>
+    </nav>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button id="theme-toggle" style="background:none; color:var(--text-main); font-size:30px;">☀️</button>
+      <button id="lang-toggle" class="btn-saas">🇬🇧 EN</button>
+      <a href="auth.html?mode=login" class="btn-saas">Đăng nhập</a>
+      <a href="auth.html?mode=register" class="btn-saas btn-primary">Đăng ký</a>
+    </div>
+  </div>
+</header>
+
+<section class="news-hero">
+  <h1>TIN TỨC & SỰ KIỆN QUÂN SỰ</h1>
+  <p>Cập nhật liên tục thông báo công tác an ninh quốc phòng địa phương mới nhất</p>
+</section>
+
+<div id="admin-control-box" style="text-align: center; margin-bottom: 25px; display: none;">
+  <button id="toggle-form-btn" class="btn-saas btn-primary" style="font-size: 15px; padding: 10px 24px;">➕ Đăng tin tức / Hình ảnh mới</button>
+</div>
+
+<div id="admin-form-section" class="glass-card" style="max-width: 650px; margin: 0 auto 40px auto; display: none;">
+  <h3 style="margin-bottom: 20px; text-align: center; letter-spacing: 0.05em; color: var(--accent);">TẠO BÀI VIẾT QUÂN SỰ MỚI</h3>
+  <form id="add-post-form">
+    <div style="margin-bottom: 16px;">
+      <label style="display:block; margin-bottom: 6px; font-size:14px; font-weight:600;">Tiêu đề bài viết:</label>
+      <input type="text" id="post-title" class="form-control" required placeholder="Nhập tiêu đề tin tức...">
+    </div>
+    <div style="margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size:14px; font-weight:600;">Chuyên mục:</label>
+        <select id="post-category" class="form-control">
+          <option value="tin-tuc">Tin Tức</option>
+          <option value="tuyen-quan">Tuyển Quân</option>
+          <option value="thong-bao">Thông Báo</option>
+          <option value="chi-dao">Chỉ đạo điều hành</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block; margin-bottom: 6px; font-size:14px; font-weight:600;">Link hình ảnh (URL):</label>
+        <input type="url" id="post-image-url" class="form-control" placeholder="Dán link ảnh online vào đây...">
+      </div>
+    </div>
+    <div style="margin-bottom: 20px;">
+      <label style="display:block; margin-bottom: 6px; font-size:14px; font-weight:600;">Nội dung chi tiết bài viết:</label>
+      <textarea id="post-content" rows="5" class="form-control" required placeholder="Nhập nội dung thông tin chi tiết tại đây..." style="font-family: inherit; resize: vertical;"></textarea>
+    </div>
+    <button type="submit" class="btn-saas btn-primary" style="width:100%; padding:12px; border-radius: 8px; font-size: 15px;">🚀 Xác Nhận Đăng Bài Lên Hệ Thống</button>
+  </form>
+</div>
+
+<div class="container">
+  <div class="grid-3" id="news-grid-container">
+    <p style="color:var(--text-muted); font-size:14px; grid-column: 1/-1; text-align:center;">Đang tải danh sách bài viết từ kho lưu trữ...</p>
+  </div>
+
+  <div id="article-detail-view" class="glass-card" style="display: none; max-width: 850px; margin: 0 auto; padding: 32px;">
+    <button onclick="closeDetailView()" class="btn-saas" style="margin-bottom: 24px; background: rgba(120,120,120,0.15); color: var(--text-main); font-weight: 600;">⬅️ Quay lại danh sách</button>
+    
+    <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <span id="detail-category" style="background:rgba(229,9,20,0.1); color:var(--accent); font-size:12px; padding:4px 10px; border-radius:4px; font-weight:600;">Tin tổng hợp</span>
+      <span id="detail-date" style="color: var(--text-muted); font-size: 13px; font-family: monospace;"></span>
+    </div>
+    
+    <h2 id="detail-title" style="font-size: 2.2rem; font-weight: 800; margin-bottom: 24px; line-height: 1.4; letter-spacing: -0.02em;"></h2>
+    
+    <div style="text-align: center; margin-bottom: 28px;">
+      <img id="detail-image" src="" alt="Poster" style="max-width: 100%; max-height: 500px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border-color); display: none;">
+    </div>
+    
+    <div id="detail-content" style="font-size: 16px; line-height: 1.8; color: var(--text-main); white-space: pre-wrap; margin-bottom: 35px; text-align: justify;"></div>
+    
+    <div id="detail-external-link-box" style="display: none; border-top: 1px solid var(--border-color); padding-top: 24px; text-align: center;">
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 14px;">Bài viết này có nội dung chi tiết hoặc nguồn trích dẫn từ cơ quan báo chí chính thống:</p>
+      <a id="detail-external-link" href="#" target="_blank" class="btn-saas btn-primary" style="display: inline-block; padding: 12px 28px; border-radius: 30px;">🌐 Xem bài viết gốc toàn văn</a>
+    </div>
+  </div>
+</div>
+
+<footer class="saas-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2>BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ</h2>
+      <p style="margin-bottom: 1rem;">Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Lực lượng vũ trang Nhân dân xã Bình Mỹ, TP. Hồ Chí Minh.</p>
+      <p style="font-size: 0.8rem; opacity: 0.7;">Chịu trách nhiệm nội dung: Ban Chỉ huy Quân sự xã Bình Mỹ</p>
+    </div>
+    <div class="footer-col">
+      <h3>Liên Kết Nhanh</h3>
+      <ul>
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="gioi-thieu.html">Giới thiệu</a></li>
+        <li><a href="tin-tuc.html">Tin tức & Sự kiện</a></li>
+        <li><a href="lien-he.html">Liên hệ công vụ</a></li>      
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thủ Tục & Tra Cứu</h3>
+      <ul>
+        <li><a href="#">Đăng ký Nghĩa vụ Quân sự</a></li>
+        <li><a href="tuyen-sinh.html">Tuyển sinh Quân sự</a></li>
+        <li><a href="dang-ky-DQTV.html">Đăng ký Dân quân tự vệ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thông Tin Đường Dây Nóng</h3>
+      <div class="footer-contact-info">
+        <p>📍 <span>Địa chỉ: Đường Bình Mỹ, Xã Bình Mỹ, TP. HCM</span></p>
+        <p>📞 <span>Trực ban 24/7: (028) XXXX XXXX</span></p>
+        <p>✉️ <span>Email: bchqs.binhmy.@tphcm.gov.vn</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>&copy; 2026 Cổng Thông Tin Ban CHQS Xã Bình Mỹ.</div>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════ CẤU HÌNH SUPABASE AN TOÀN TUYỆT ĐỐI ═══════════════════
+const SUPABASE_URL = "https://sbjzotypdfwtzlpsmnod.supabase.co"; 
+const SUPABASE_ANON_KEY = "sb_publishable_G7jwOQt4xodZPueh-g-qkw_YQgYJm-E";
+
+if (!window.supabaseApp) {
+  window.supabaseApp = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+// 1. HÀM TẢI TIN TỨC VÀ KHỬ LỖI ẢNH VÒNG LẶP CHẾT (ĐÃ CẬP NHẬT ĐỂ BẤM VÀO ĐƯỢC CHI TIẾT)
+async function loadAllNews() {
+  const supabase = window.supabaseApp;
+  const { data: posts, error } = await supabase
+    .from('posts')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Lỗi lấy danh sách tin tức:", error.message);
+    return;
+  }
+
+  const gridContainer = document.getElementById('news-grid-container');
+  if(!gridContainer) return;
+  gridContainer.innerHTML = '';
+
+  if (!posts || posts.length === 0) {
+    gridContainer.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1; text-align:center;">Hệ thống chưa có thông tin dữ liệu nào.</p>';
+    return;
+  }
+
+  posts.forEach(post => {
+    const textData = post.content || post.description || '';
+    const shortDesc = textData.length > 120 ? textData.substring(0, 120) + '...' : textData;
+    
+    const placeholderImg = "https://placehold.co/800x450/1a1a1a/ffffff?text=Ban+CHQS+Binh+My";
+    const finalImgSrc = post.image_url && post.image_url.trim() !== "" ? post.image_url : placeholderImg;
+
+    // Thay đổi: Thêm thuộc tính điều hướng onclick vào thẻ div tin tức
+    gridContainer.innerHTML += `
+      <div class="glass-card" style="cursor: pointer;" onclick="window.location.href='tin-tuc.html?id=${post.id}'">
+        <div class="media-placeholder">
+          <img src="${finalImgSrc}" 
+               alt="Báo" 
+               onerror="this.onerror=null; this.src='${placeholderImg}';">
+        </div>
+        <span style="background:rgba(229,9,20,0.1); color:var(--accent); font-size:11px; padding:3px 8px; border-radius:4px; font-weight:600; display:inline-block; margin-bottom:10px;">
+          ${post.category === 'tin-tuc' ? 'Tin Tức' : post.category === 'tuyen-quan' ? 'Tuyển Quân' : post.category === 'chi-dao' ? 'Chỉ đạo điều hành' : 'Thông Báo'}
+        </span>
+        <h3 class="card-title">${post.title}</h3>
+        <p class="card-desc">${shortDesc}</p>
+      </div>
+    `;
+  });
+}
+
+// 2. HÀM XÁC THỰC QUYỀN ADMIN ĐỂ HIỂN THỊ KHU VỰC ĐĂNG BÀI
+async function checkAdminPermission() {
+  const supabase = window.supabaseApp;
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    console.log("Khách vãng lai / Chưa đăng nhập -> Ẩn nút đăng bài.");
+    return;
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const isAdminEmail = (user.email === "admin_cua_ban@gmail.com");
+
+  if ((!profileError && profile && profile.role === 'admin') || isAdminEmail) {
+    const adminBox = document.getElementById('admin-control-box');
+    if (adminBox) {
+      adminBox.style.display = 'block';
+    }
+  }
+}
+
+// BỔ SUNG LOGIC CHỨC NĂNG: Hàm đóng chế độ xem chi tiết, quay lại lưới tin tức tổng hợp
+function closeDetailView() {
+  document.getElementById('article-detail-view').style.display = 'none';
+  const gridContainer = document.getElementById('news-grid-container');
+  if(gridContainer) gridContainer.style.display = 'grid';
+  // Xóa tham số id trên thanh URL mà không làm load lại trang
+  window.history.pushState({}, document.title, window.location.pathname);
+}
+
+// 3. KHỞI CHẠY KHI TRANG WEB SẴN SÀNG
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadAllNews();    // Tải dữ liệu tin tức công khai
+  checkAdminPermission(); // Kiểm tra tài khoản xem có hiển thị thanh công cụ không
+
+  // Xử lý ẩn/hiện bảng Đăng bài viết
+  const toggleFormBtn = document.getElementById('toggle-form-btn');
+  const adminFormSection = document.getElementById('admin-form-section');
+  
+  if (toggleFormBtn && adminFormSection) {
+    toggleFormBtn.addEventListener('click', () => {
+      if (adminFormSection.style.display === 'none') {
+        adminFormSection.style.display = 'block';
+        toggleFormBtn.innerHTML = '➖ Đóng bảng đăng bài';
+      } else {
+        adminFormSection.style.display = 'none';
+        toggleFormBtn.innerHTML = '➕ Đăng tin tức / Hình ảnh mới';
+      }
+    });
+  }
+
+  // Xử lý submit bài viết mới lên Supabase
+  const addPostForm = document.getElementById('add-post-form');
+  if (addPostForm) {
+    addPostForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const supabase = window.supabaseApp;
+
+      const title = document.getElementById('post-title').value;
+      const category = document.getElementById('post-category').value;
+      const image_url = document.getElementById('post-image-url').value.trim() || null;
+      const content = document.getElementById('post-content').value;
+
+      const { data, error } = await supabase
+        .from('posts')
+        .insert([{ title, category, image_url, content }]);
+
+      if (error) {
+        alert('Có lỗi xảy ra khi tải bài lên: ' + error.message);
+        console.error(error);
+      } else {
+        alert('🎉 Đăng bài viết thành công lên hệ thống Supabase!');
+        addPostForm.reset(); 
+        adminFormSection.style.display = 'none'; 
+        toggleFormBtn.innerHTML = '➕ Đăng tin tức / Hình ảnh mới';
+        loadAllNews(); 
+      }
+    });
+  }
+
+  // BỔ SUNG LOGIC CHỨC NĂNG: KIỂM TRA THAM SỐ ID KHI TRANG TIN TỨC ĐƯỢC TẢI
+  const urlParams = new URLSearchParams(window.location.search);
+  const postId = urlParams.get('id');
+
+  if (postId) {
+    // Ẩn lưới tin tức chung
+    const gridContainer = document.getElementById('news-grid-container');
+    if(gridContainer) gridContainer.style.display = 'none';
+
+    // Hiển thị khung chi tiết
+    const detailView = document.getElementById('article-detail-view');
+    if(detailView) detailView.style.display = 'block';
+
+    const supabase = window.supabaseApp;
+
+    // Truy vấn dữ liệu từ Supabase theo ID bài viết
+    const { data: post, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('id', postId)
+      .single();
+
+    if (error || !post) {
+      document.getElementById('detail-title').innerText = "Không tìm thấy nội dung bài viết!";
+      return;
+    }
+
+    // Đổ dữ liệu vào giao diện văn bản chi tiết
+    document.getElementById('detail-title').innerText = post.title;
+    document.getElementById('detail-content').innerText = post.content;
+    document.getElementById('detail-date').innerText = `Ngày phát hành hệ thống: ${new Date(post.created_at).toLocaleString('vi-VN')}`;
+    
+    // Xử lý hiển thị ảnh bìa poster nội bộ
+    const imgElement = document.getElementById('detail-image');
+    if (post.image_url) {
+      imgElement.src = post.image_url;
+      imgElement.style.display = 'inline-block';
+    } else {
+      imgElement.style.display = 'none';
+    }
+
+    // Định dạng nhãn chuyên mục
+    let catText = "Tin tổng hợp";
+    if(post.category === 'tin-tuc') catText = "Tin tức quân sự xã";
+    if(post.category === 'tuyen-quan') catText = "Tuyển quân nghĩa vụ quân sự";
+    if(post.category === 'thong-bao') catText = "Thông báo tuyển quân / Huấn luyện";
+    if(post.category === 'chi-dao') catText = "Chỉ đạo điều hành";
+    document.getElementById('detail-category').innerText = catText;
+
+    // Kiểm tra xem có bài viết liên kết ngoài không (Nếu có link ngoài thì hiển thị thêm nút bấm)
+    const linkBox = document.getElementById('detail-external-link-box');
+    const linkAnchor = document.getElementById('detail-external-link');
+    if(post.article_url) {
+      linkBox.style.display = 'block';
+      linkAnchor.href = post.article_url;
+    } else {
+      linkBox.style.display = 'none';
+    }
+  }
+}); 
+</script>
+
+<script src="theme.js"></script>
+<script src="lang.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

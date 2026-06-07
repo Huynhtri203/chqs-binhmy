@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chính Sách Bảo Mật Dữ Liệu - Ban CHQS Xã Bình Mỹ</title>
+  
+  <!-- Nhúng font chữ cao cấp chống vỡ chữ -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════ 1. DESIGN TOKENS (CYBER-MILITARY SAAS) ═══════════════════ */
+    :root {
+      --bg-gradient: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+      --card-bg: rgba(255, 255, 255, 0.75);
+      --card-border: rgba(15, 23, 42, 0.08);
+      --text-primary: #0f172a;
+      --text-muted: #64748b;
+      --primary-red: #8B1A1A;
+      --cyber-blue: #0284c7;
+      --cyber-glow: rgba(2, 132, 199, 0.15);
+      --accent-gold: #C9A227;
+      --radius: 16px;
+      --font-stack: 'Be Vietnam Pro', system-ui, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #0f172a 0%, #020617 100%);
+      --card-bg: rgba(15, 23, 42, 0.6);
+      --card-border: rgba(2, 132, 199, 0.2);
+      --text-primary: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary-red: #E50914;
+      --cyber-blue: #38bdf8;
+      --cyber-glow: rgba(56, 189, 248, 0.25);
+      --accent-gold: #F0C040;
+    }
+
+    /* ═══════════════════ 2. RESET & NỀN TẢNG HIỆU ỨNG ═══════════════════ */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-stack); }
+    html, body { min-height: 100vh; background: var(--bg-gradient); color: var(--text-primary); transition: background 0.3s, color 0.3s; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    
+    /* Hiệu ứng mạng lưới lưới nhiễu bảo mật (Tech Grid Background) */
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.03;
+      background-image: linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    [data-theme="dark"] body::before { opacity: 0.07; }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 110px 24px 60px; }
+
+    /* ═══════════════════ 3. HEADER CHUẨN LỊCH LÃM ═══════════════════ */
+    .header {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+      background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+    }
+    [data-theme="dark"] .header { background: rgba(2, 6, 23, 0.7); }
+    .header-inner { max-width: 960px; margin: 0 auto; padding: 0 24px; height: 70px; display: flex; align-items: center; justify-content: space-between; }
+    
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .brand img { width: 38px; height: 38px; }
+    .brand-text h1 { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; color: var(--primary-red); }
+    .brand-text p { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+    
+    .theme-toggle { background: none; border: none; cursor: pointer; font-size: 18px; padding: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+    [data-theme="dark"] .theme-toggle:hover { background: rgba(255,255,255,0.08); }
+
+    /* ═══════════════════ 4. HERO SECTION (SIÊU NGẦU) ═══════════════════ */
+    .hero { text-align: center; margin-bottom: 40px; }
+    .cyber-badge {
+      display: inline-flex; align-items: center; gap: 8px; background: rgba(2, 132, 199, 0.08);
+      color: var(--cyber-blue); border: 1px solid rgba(2, 132, 199, 0.2); padding: 6px 14px;
+      border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;
+    }
+    [data-theme="dark"] .cyber-badge { background: rgba(56, 189, 248, 0.1); }
+    .cyber-badge span { display: inline-block; width: 6px; height: 6px; background: #22c55e; border-radius: 50%; animation: pulse 1.5s infinite; }
+    
+    .hero h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 12px; }
+    .hero p { font-size: 14.5px; color: var(--text-muted); max-width: 640px; margin: 0 auto; line-height: 1.6; }
+
+    /* ═══════════════════ 5. THƯỚC PHIM TƯ LIỆU - MÃ HÓA BẢO MẬT ═══════════════════ */
+    .section-title { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-gold); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    
+    .video-reel-container {
+      background: #000000; border: 1px solid var(--card-border); border-radius: var(--radius);
+      padding: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); margin-bottom: 40px;
+      position: relative; transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .video-reel-container:hover { border-color: var(--cyber-blue); box-shadow: 0 0 30px var(--cyber-glow); }
+    
+    /* Tỷ lệ khung hình chuẩn cinematic 16:9 */
+    .video-wrapper {
+      position: relative; width: 100%; padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      height: 0; overflow: hidden; border-radius: calc(var(--radius) - 4px); background: #090d16;
+    }
+    .video-wrapper video, .video-wrapper iframe {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: cover;
+    }
+
+    /* Hiệu ứng kính ngắm phòng chỉ huy đè lên video tạo độ ngầu */
+    .video-overlay-hud {
+      position: absolute; inset: 12px; pointer-events: none;
+      border: 1px solid rgba(56, 189, 248, 0.1); display: flex; justify-content: space-between; align-items: flex-start; padding: 10px;
+      font-size: 10px; color: var(--cyber-blue); font-family: monospace; opacity: 0.7;
+    }
+    .video-overlay-hud::before { content: 'REC ●'; color: #ef4444; font-weight: bold; animation: pulse 1s infinite; }
+    .video-overlay-hud::after { content: 'SYS_SECURE_V.26'; }
+
+    /* ═══════════════════ 6. KHỐI NỘI DUNG CHÍNH SÁCH ═══════════════════ */
+    .card {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius);
+      padding: 32px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01); margin-bottom: 24px; transition: all 0.3s;
+    }
+    .card:hover { border-color: var(--primary-red); }
+
+    .tech-section { margin-bottom: 28px; }
+    .tech-section:last-child { margin-bottom: 0; }
+    .tech-section h3 { font-size: 16px; font-weight: 800; color: var(--primary-red); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .tech-section h3 span { font-family: monospace; color: var(--cyber-blue); font-size: 14px; }
+    .tech-section p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
+    
+    /* Danh sách kỹ thuật mã hóa */
+    .tech-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+    .spec-box { background: rgba(0,0,0,0.02); border: 1px solid var(--card-border); padding: 14px; border-radius: 8px; }
+    [data-theme="dark"] .spec-box { background: rgba(255,255,255,0.02); }
+    .spec-box h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; color: var(--text-primary); }
+    .spec-box p { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+
+    /* ═══════════════════ 7. HIỆU ỨNG CUỘN & KEYFRAMES ═══════════════════ */
+    .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* ═══════════════════ 8. FOOTER CHUẨN HÓA ═══════════════════ */
+    .footer { border-top: 1px solid var(--card-border); padding: 32px 24px; text-align: center; margin-top: 48px; }
+    .footer p { font-size: 12.5px; color: var(--text-muted); }
+    .footer-links { margin-top: 10px; display: flex; justify-content: center; gap: 16px; }
+    .footer-links a { font-size: 12.5px; color: var(--cyber-blue); text-decoration: none; font-weight: 500; }
+
+    /* Responsive Di Động */
+    @media (max-width: 640px) {
+      .container { padding-top: 94px; padding-left: 16px; padding-right: 16px; }
+      .card { padding: 24px; }
+      .tech-specs { grid-template-columns: 1fr; gap: 12px; }
+      .video-overlay-hud { display: none; } /* Ẩn bớt HUD trên điện thoại nhỏ */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc Huy">
+        <div class="brand-text">
+          <h1>BAN CHQS XÃ BÌNH MỸ</h1>
+          <p>Hệ thống an ninh số cơ sở</p>
+        </div>
+      </a>
+      <button class="theme-toggle" id="theme-btn" aria-label="Đổi giao diện">☀️</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════ CONTAINER CHÍNH ═══════════════════ -->
+  <main class="container">
+    
+    <!-- Hero Tiêu Đề -->
+    <section class="hero reveal">
+      <div class="cyber-badge"><span></span>Mã hóa dữ liệu 256-bit</div>
+      <h2>Chính Sách Bảo Mật An Ninh</h2>
+      <p>Cam kết bảo vệ tuyệt đối thông tin bản khai, hồ sơ đăng ký nghĩa vụ quân sự và dân quân tự vệ của công dân trên không gian mạng thuộc phạm vi Ban CHQS xã quản lý.</p>
+    </section>
+
+    <!-- PHẦN THƯỚC PHIM TƯ LIỆU BẢO MẬT -->
+    <div class="reveal">
+      <h3 class="section-title">🎬 Thước phim tư liệu // Giải mã quy trình bảo mật</h3>
+      <div class="video-reel-container">
+        <div class="video-wrapper">
+          
+          <video 
+            src="images/VideoBaoMat.mp4" 
+            autoplay 
+            muted 
+            loop 
+            playsinline 
+            controls>
+          </video>
+
+          <div class="video-overlay-hud"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KHỐI CHÍNH SÁCH BẢO MẬT CHI TIẾT -->
+    <div class="card reveal">
+      
+      <div class="tech-section">
+        <h3><span>[01]</span> Thu thập thông tin giới hạn</h3>
+        <p>Hệ thống cổng thông tin điện tử của Ban CHQS xã Bình Mỹ chỉ thu thập các dữ liệu định danh cơ bản do công dân tự nguyện cung cấp trong các form đăng ký trực tuyến (Họ tên, CCCD, Số điện thoại, Địa chỉ cư trú) phục vụ trực tiếp cho công tác rà soát nguồn tuyển quân.</p>
+      </div>
+
+      <div class="tech-section">
+        <h3><span>[02]</span> Kiến trúc bảo mật hạ tầng</h3>
+        <p>Toàn bộ thông tin sau khi công dân nhấn nút gửi sẽ ngay lập tức được mã hóa đầu cuối và chuyển tiếp qua kênh truyền bảo mật chuyên dụng, không lưu trữ công khai trên máy chủ web để tránh các lỗ hổng rò rỉ dữ liệu.</p>
+        
+        <!-- Hộp thông số kỹ thuật (Tech specs grid) nhìn rất ngầu -->
+        <div class="tech-specs">
+          <div class="spec-box">
+            <h4>End-to-End Encryption</h4>
+            <p>Mã hóa dữ liệu ngay từ khi rời khỏi trình duyệt của công dân.</p>
+          </div>
+          <div class="spec-box">
+            <h4>Zero-Knowledge Protocol</h4>
+            <p>Không ai có quyền xem dữ liệu ngoại trừ cán bộ tuyển sinh được cấp phép.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <h3><span>[03]</span> Quyền lợi và trách nhiệm của công dân</h3>
+        <p>Công dân có toàn quyền yêu cầu cơ quan quân sự cơ sở kiểm tra, đính chính hoặc xóa bỏ thông tin cá nhân của mình trên hệ thống lưu trữ tạm thời bằng cách liên hệ trực tiếp văn phòng ban Chỉ huy quân sự xã.</p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ═══════════════════ FOOTER ═══════════════════ -->
+  <footer class="footer reveal">
+    <p>© 2026 Hệ thống kỹ thuật mật mã an ninh quốc phòng cơ sở Ban CHQS Xã Bình Mỹ.</p>
+    <div class="footer-links">
+      <a href="index.html">Quay lại trang chủ</a>
+      <a href="dang-ky-DQTV.html">Đăng ký Dân quân</a>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════ JAVASCRIPT ĐIỀU KHIỂN NATIVE ═══════════════════ -->
+  <script>
+    // 1. Hiệu ứng cuộn trồi hiện mượt mà (Scroll Reveal)
+    const revealElements = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.05 });
+    revealElements.forEach(el => observer.observe(el));
+
+    // 2. Logic bật/tắt Dark Mode lưu trạng thái thông minh vào LocalStorage
+    const themeBtn = document.getElementById('theme-btn');
+    
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeBtn.innerText = '🌙';
+    }
+
+    themeBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      if (currentTheme === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        themeBtn.innerText = '☀️';
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeBtn.innerText = '🌙';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tra cứu Quyết định Điều động · Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro',sans-serif;background:#F5F3EE;min-height:100vh;padding-bottom:60px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#6B0F0F 0%,#8B1A1A 40%,#A93226 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-inner{max-width:760px;margin:0 auto;padding:32px 20px 28px;display:flex;align-items:center;gap:18px;position:relative}
+.hero-logo{width:60px;height:60px;flex-shrink:0;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3))}
+.hero-text h1{font-size:10px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.12em;margin-bottom:4px}
+.hero-text h2{font-size:18px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:3px}
+.hero-text p{font-size:12px;color:rgba(255,255,255,.7)}
+.back-btn{margin-left:auto;flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;color:rgba(255,255,255,.85);font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;transition:background .2s}
+.back-btn:hover{background:rgba(255,255,255,.22)}
+.gold-line{width:100%;height:4px;background:linear-gradient(90deg,#C9A227,#F0C040,#C9A227)}
+
+/* MAIN */
+.main{max-width:760px;margin:0 auto;padding:22px 16px 0}
+
+/* TABS */
+.tabs{display:flex;background:#fff;border:1px solid #E0D9CE;border-radius:10px;overflow:hidden;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tab-btn{flex:1;padding:13px 8px;font-family:inherit;font-size:12px;font-weight:600;color:#888;background:none;border:none;border-right:1px solid #E0D9CE;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.tab-btn:last-child{border-right:none}
+.tab-btn.active{background:#8B1A1A;color:#fff}
+.tab-btn:not(.active):hover{background:#FBF7F2;color:#8B1A1A}
+
+/* PANEL */
+.panel{display:none}
+.panel.active{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD */
+.card{background:#fff;border-radius:12px;border:1px solid #E0D9CE;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:18px;overflow:hidden}
+.card-head{background:linear-gradient(90deg,#6B0F0F,#8B1A1A);padding:13px 18px;display:flex;align-items:center;gap:10px}
+.card-head h3{font-size:13px;font-weight:700;color:#fff;flex:1}
+.card-body{padding:18px}
+
+/* FORM */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.flabel{font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em}
+.finput{height:46px;border:1.5px solid #DDD;border-radius:8px;padding:0 14px;font-family:inherit;font-size:14px;color:#333;outline:none;background:#FAFAF8;transition:border-color .2s;width:100%}
+.finput:focus{border-color:#8B1A1A;background:#fff}
+.finput::placeholder{color:#bbb}
+
+/* BTN */
+.btn-primary{width:100%;height:48px;background:linear-gradient(90deg,#6B0F0F,#A93226);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s;letter-spacing:.02em}
+.btn-primary:hover{opacity:.9}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-sm{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border:1px solid #DDD;border-radius:6px;background:#fff;font-family:inherit;font-size:12px;font-weight:600;color:#555;cursor:pointer;transition:all .2s;text-decoration:none;white-space:nowrap}
+.btn-sm:hover{border-color:#8B1A1A;color:#8B1A1A}
+.btn-sm.red-fill{background:#8B1A1A;border-color:#8B1A1A;color:#fff}
+.btn-sm.red-fill:hover{background:#6B0F0F}
+.btn-sm.green-fill{background:#1E8449;border-color:#1E8449;color:#fff}
+
+/* STATE */
+.state-box{text-align:center;padding:40px 20px}
+.state-icon{font-size:48px;margin-bottom:12px}
+.state-title{font-size:16px;font-weight:700;color:#444;margin-bottom:8px}
+.state-desc{font-size:13px;color:#999;line-height:1.7}
+
+/* ── KẾT QUẢ KIỂU TRA CỨU TUỔI 17 ── */
+.result-wrap{animation:fadeUp .3s ease}
+
+/* PROFILE CARD */
+.profile-card{background:#fff;border-radius:14px;border:1px solid #E0D9CE;box-shadow:0 4px 20px rgba(0,0,0,.08);overflow:hidden;margin-bottom:16px}
+.profile-head{background:linear-gradient(135deg,#6B0F0F,#A93226);padding:20px;display:flex;align-items:center;gap:16px}
+.profile-avatar{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.profile-name{font-size:18px;font-weight:800;color:#fff;margin-bottom:3px}
+.profile-sub{font-size:12px;color:rgba(255,255,255,.75)}
+.profile-status{margin-left:auto;flex-shrink:0;padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;text-align:center}
+
+/* INFO ROWS */
+.info-section{padding:0}
+.info-row{display:flex;align-items:center;padding:13px 20px;border-bottom:1px solid #F5F0E8}
+.info-row:last-child{border-bottom:none}
+.info-icon{font-size:18px;width:32px;flex-shrink:0}
+.info-label{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;width:140px;flex-shrink:0}
+.info-value{font-size:14px;font-weight:600;color:#222;flex:1}
+.info-value.highlight{color:#8B1A1A;font-weight:700;font-size:15px}
+.info-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.badge-green{background:#D5F5E3;color:#1E8449}
+.badge-red{background:#FADBD8;color:#922B21}
+.badge-blue{background:#D6EAF8;color:#1A5276}
+
+/* QUYẾT ĐỊNH SECTION */
+.qd-section{background:#FBF5F5;border-top:2px solid #8B1A1A;padding:16px 20px}
+.qd-title{font-size:12px;font-weight:700;color:#8B1A1A;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.qd-number{font-size:22px;font-weight:800;color:#8B1A1A;margin-bottom:4px}
+.qd-date{font-size:12px;color:#999}
+.qd-arrow{display:flex;align-items:center;gap:10px;margin:12px 0;padding:12px 14px;background:#fff;border-radius:8px;border:1px solid #E0D9CE}
+.qd-arrow-from{font-size:13px;color:#666;flex:1}
+.qd-arrow-icon{font-size:20px}
+.qd-arrow-to{font-size:13px;font-weight:700;color:#8B1A1A;flex:1;text-align:right}
+
+/* PDF VIEWER */
+.pdf-card{background:#fff;border-radius:14px;border:1px solid #E0D9CE;box-shadow:0 4px 20px rgba(0,0,0,.08);overflow:hidden;margin-bottom:16px}
+.pdf-toolbar{padding:12px 18px;background:#FAFAF8;border-bottom:1px solid #F0EBE3;display:flex;align-items:center;gap:8px}
+.pdf-toolbar-title{font-size:13px;font-weight:700;color:#333;flex:1}
+.pdf-embed{width:100%;height:640px;border:none;display:block;background:#e8e4dc}
+.pdf-no-file{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;gap:10px;text-align:center}
+.pdf-no-file .ico{font-size:40px}
+.pdf-no-file p{font-size:13px;color:#aaa;line-height:1.6}
+
+/* NOTE */
+.search-note{font-size:12px;color:#aaa;text-align:center;margin-top:10px;line-height:1.5}
+.required-note{font-size:12px;color:#8B1A1A;text-align:center;margin-top:8px;font-weight:600}
+
+/* ADMIN */
+.login-wrap{max-width:360px;margin:0 auto}
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.stat-mini{background:#fff;border:1px solid #E0D9CE;border-radius:10px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.stat-mini-num{font-size:26px;font-weight:800;line-height:1;margin-bottom:4px}
+.stat-mini-lbl{font-size:10px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.05em}
+.tbl-wrap{overflow-x:auto}
+.data-tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+.data-tbl th{background:#F5F0E8;padding:10px 12px;text-align:left;font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #E0D9CE;white-space:nowrap}
+.data-tbl td{padding:10px 12px;border-bottom:1px solid #F0EBE3;color:#333;vertical-align:middle}
+.data-tbl tr:last-child td{border-bottom:none}
+.data-tbl tr:hover td{background:#FAFAF8}
+
+/* LOADING */
+.loading-bar{height:3px;border-radius:2px;background:linear-gradient(90deg,#8B1A1A,#C9A227,#8B1A1A);background-size:200% 100%;animation:loadAnim 1.2s linear infinite}
+@keyframes loadAnim{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed #DDD;border-radius:10px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .2s;background:#FAFAF8;position:relative}
+.upload-zone:hover,.upload-zone.drag{border-color:#8B1A1A;background:#FBF5F5}
+.upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;padding:16px;overflow-y:auto}
+.modal-bg.open{display:flex;align-items:flex-start;justify-content:center}
+.modal-box{background:#fff;border-radius:14px;max-width:560px;width:100%;margin-top:40px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:fadeUp .25s ease}
+.modal-head{background:linear-gradient(90deg,#6B0F0F,#A93226);padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:14px;font-weight:700;color:#fff}
+.modal-close{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:18px;max-height:80vh;overflow-y:auto}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;padding-top:14px;border-top:1px solid #F0EBE3}
+.btn-cancel{padding:10px 20px;border:1px solid #DDD;border-radius:8px;background:#fff;font-family:inherit;font-size:13px;font-weight:600;color:#666;cursor:pointer}
+.btn-save{padding:10px 22px;background:#8B1A1A;border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-save:hover{background:#6B0F0F}
+
+/* SPINNER / MSG */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.msg{padding:11px 14px;border-radius:8px;font-size:13px;font-weight:600;margin-top:12px;display:none}
+.msg.ok{background:#D5F5E3;border:1px solid #A9DFBF;color:#1E8449;display:block}
+.msg.err{background:#FADBD8;border:1px solid #F1948A;color:#922B21;display:block}
+
+/* SETUP */
+.setup-step{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #F0EBE3}
+.setup-step:last-child{border-bottom:none}
+.setup-num{width:26px;height:26px;border-radius:50%;background:#8B1A1A;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.setup-text{font-size:13px;color:#444;line-height:1.7}
+.setup-text strong{color:#222}
+.setup-text code{background:#F0EBE3;padding:1px 5px;border-radius:4px;font-size:11px;font-family:monospace;color:#8B1A1A}
+.config-box{margin-top:18px;padding:14px;background:#FBF5F5;border-radius:8px;border:1px solid #F5C0C0}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.grid-2 .full{grid-column:1/-1}
+
+@media(max-width:520px){
+  .grid-2{grid-template-columns:1fr}
+  .grid-2 .full{grid-column:1}
+  .stats-row{gap:8px}
+  .pdf-embed{height:420px}
+  .hero-text h2{font-size:16px}
+  .hero-logo{width:50px;height:50px}
+  .info-label{width:110px}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <img class="hero-logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
+    <div class="hero-text">
+      <h1>Ban Chỉ huy Quân sự · Xã Bình Mỹ TP.HCM</h1>
+      <h2>TRA CỨU QUYẾT ĐỊNH ĐIỀU ĐỘNG</h2>
+      <p>Tra cứu và xem file quyết định điều động cá nhân</p>
+    </div>
+    <a href="index.html" class="back-btn">← Trang chủ</a>
+  </div>
+</div>
+<div class="gold-line"></div>
+
+<div class="main">
+
+  <!-- TABS — chỉ hiện 2 tab công khai -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('search',this)">🔍 Tra cứu</button>
+    <button class="tab-btn" onclick="switchTab('admin',this)">🔐 Quản lý Admin</button>
+  </div>
+
+  <!-- ══════════ PANEL TRA CỨU ══════════ -->
+  <div id="panel-search" class="panel active">
+
+    <div class="card">
+      <div class="card-head">
+        <span>🔍</span>
+        <h3>TRA CỨU QUYẾT ĐỊNH ĐIỀU ĐỘNG</h3>
+      </div>
+      <div class="card-body">
+
+        <div class="field">
+          <label class="flabel">Số CCCD / CMND <span style="color:#c00">*</span></label>
+          <input class="finput" id="s-cccd" type="text" placeholder="Nhập đầy đủ số CCCD..." maxlength="12"
+                 onkeydown="if(event.key==='Enter')doSearch()">
+        </div>
+
+        <div class="field">
+          <label class="flabel">Họ và tên <span style="color:#c00">*</span></label>
+          <input class="finput" id="s-hoten" type="text" placeholder="Nhập đầy đủ họ và tên..."
+                 onkeydown="if(event.key==='Enter')doSearch()">
+        </div>
+
+        <div class="field">
+          <label class="flabel">Ngày tháng năm sinh <span style="color:#c00">*</span></label>
+          <input class="finput" id="s-ngaysinh" type="date"
+                 onkeydown="if(event.key==='Enter')doSearch()">
+        </div>
+
+        <button class="btn-primary" id="btn-search" onclick="doSearch()">
+          🔍 Tra cứu ngay
+        </button>
+        <p class="required-note">* Phải điền đầy đủ cả 3 trường để tra cứu</p>
+        <p class="search-note">Hệ thống sẽ đối chiếu CCCD + Họ tên + Ngày sinh<br>và trả về đúng 1 hồ sơ quyết định điều động của bạn</p>
+      </div>
+    </div>
+
+    <!-- KẾT QUẢ -->
+    <div id="result-area">
+      <div class="card">
+        <div class="card-body">
+          <div class="state-box">
+            <div class="state-icon">📋</div>
+            <div class="state-title">Nhập thông tin để tra cứu</div>
+            <div class="state-desc">
+              Điền đầy đủ <strong>Số CCCD</strong>, <strong>Họ và tên</strong><br>
+              và <strong>Ngày tháng năm sinh</strong> rồi bấm tra cứu.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end panel-search -->
+
+  <!-- ══════════ PANEL ADMIN ══════════ -->
+  <div id="panel-admin" class="panel">
+
+    <!-- ĐĂNG NHẬP -->
+    <div id="admin-login-box" class="card login-wrap">
+      <div class="card-head"><span>🔐</span><h3>ĐĂNG NHẬP QUẢN TRỊ</h3></div>
+      <div class="card-body">
+        <div class="field">
+          <label class="flabel">Tên đăng nhập</label>
+          <input class="finput" id="a-user" type="text" placeholder="admin" autocomplete="username">
+        </div>
+        <div class="field">
+          <label class="flabel">Mật khẩu</label>
+          <input class="finput" id="a-pass" type="password" placeholder="••••••••"
+                 autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <button class="btn-primary" onclick="doLogin()">🔐 Đăng nhập</button>
+        <div class="msg" id="login-msg"></div>
+        <p class="search-note" style="margin-top:12px;">HuynhMinhTri</p>
+      </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="admin-main" style="display:none;">
+
+      <div class="admin-topbar">
+        <div style="font-size:14px;font-weight:700;color:#333;">👋 Xin chào, <strong id="admin-name-lbl">Admin</strong></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-sm green-fill" onclick="openAddModal()">➕ Thêm quyết định</button>
+          <button class="btn-sm" onclick="loadAdminData()">🔄 Làm mới</button>
+          <button class="btn-sm" onclick="toggleSetup()" id="btn-setup" style="border-color:#C9A227;color:#7A5C00;">⚙️ Cài đặt</button>
+          <button class="btn-sm" onclick="doLogout()" style="color:#c00;border-color:#f5c0c0;">🚪 Đăng xuất</button>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-mini"><div class="stat-mini-num" id="st-total" style="color:#8B1A1A;">0</div><div class="stat-mini-lbl">Tổng QĐ</div></div>
+        <div class="stat-mini"><div class="stat-mini-num" id="st-haspdf" style="color:#1E8449;">0</div><div class="stat-mini-lbl">Có file PDF</div></div>
+        <div class="stat-mini"><div class="stat-mini-num" id="st-nopdf" style="color:#B7950B;">0</div><div class="stat-mini-lbl">Chưa có PDF</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-body" style="padding:12px 16px;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input class="finput" id="admin-search" style="flex:1;height:38px;font-size:13px;"
+                   placeholder="🔍 Tìm nhanh trong danh sách..." oninput="filterTable(this.value)">
+            <button class="btn-sm" onclick="document.getElementById('admin-search').value='';filterTable('')">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span>📋</span><h3>DANH SÁCH QUYẾT ĐỊNH ĐIỀU ĐỘNG</h3></div>
+        <div id="admin-loading" class="loading-bar" style="margin:10px 16px 0;display:none;"></div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table class="data-tbl">
+              <thead><tr><th>#</th><th>Số QĐ</th><th>Họ và tên</th><th>CCCD</th><th>Ngày sinh</th><th>Đơn vị mới</th><th>Ngày QĐ</th><th>PDF</th><th>Thao tác</th></tr></thead>
+              <tbody id="admin-tbody"><tr><td colspan="9" style="text-align:center;padding:32px;color:#aaa;">Đang tải...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end admin-main, data table card -->
+
+      <!-- ⚙️ CÀI ĐẶT — chỉ hiện sau khi đăng nhập -->
+      <div id="admin-setup-box" style="display:none;animation:fadeUp .25s ease;">
+        <div class="card">
+          <div class="card-head">
+            <span>⚙️</span>
+            <h3>HƯỚNG DẪN KẾT NỐI GOOGLE SHEETS</h3>
+            <button onclick="toggleSetup()" style="margin-left:auto;background:rgba(255,255,255,.2);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</button>
+          </div>
+          <div class="card-body">
+            <div class="setup-step"><div class="setup-num">1</div><div class="setup-text">Hàng tiêu đề Sheet3 phải đúng thứ tự: <code>so_quyet_dinh</code> <code>ho_ten</code> <code>cccd</code> <code>ngay_sinh</code> <code>don_vi_cu</code> <code>don_vi_moi</code> <code>chuc_vu</code> <code>ngay_quyet_dinh</code> <code>hieu_luc</code> <code>pdf_url</code> <code>ghi_chu</code></div></div>
+            <div class="setup-step"><div class="setup-num">2</div><div class="setup-text"><strong>Publish to web:</strong> File → Share → Publish to web → chọn <em>Sheet3</em> → <em>CSV</em> → Publish. Copy link CSV nhận được.</div></div>
+            <div class="setup-step"><div class="setup-num">3</div><div class="setup-text">Điền link CSV vào biến <code>CSV_URL</code> trong <code>&lt;script&gt;</code> cuối file HTML này.</div></div>
+            <div class="setup-step"><div class="setup-num">4</div><div class="setup-text"><strong>Upload PDF lên Google Drive</strong> → Get link → đổi <code>/view</code> thành <code>/preview</code> → điền vào cột <code>pdf_url</code> trong Sheets.</div></div>
+            <div class="setup-step"><div class="setup-num">5</div><div class="setup-text"><strong>⚠️ Phải chạy qua http:// server</strong> (VS Code Live Server, Python http.server...) — không mở file:// trực tiếp vì trình duyệt chặn fetch().</div></div>
+            <div class="config-box">
+              <div style="font-size:12px;font-weight:700;color:#8B1A1A;margin-bottom:8px;">⚙️ Cấu hình hiện tại</div>
+              <div style="font-size:13px;color:#555;line-height:1.9;">
+                CSV URL: <code id="cfg-url" style="font-size:10px;word-break:break-all;">—</code><br>
+                Trạng thái: <span id="cfg-status">🔄 Chưa kiểm tra</span>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn-sm" onclick="testConn()">🔌 Kiểm tra kết nối</button>
+                <button class="btn-sm" onclick="clearCache()">🗑️ Xóa cache</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end admin-main -->
+  </div><!-- end panel-admin -->
+
+<!-- ══════════ MODAL THÊM / SỬA ══════════ -->
+<div class="modal-bg" id="modal-add" onclick="closeModalBg(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="modal-title-lbl">➕ Thêm Quyết định Điều động</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="grid-2">
+        <div class="field"><label class="flabel">Số quyết định *</label><input class="finput" id="m-soqd" placeholder="01/QĐ-CHQS-BM"></div>
+        <div class="field"><label class="flabel">Ngày quyết định *</label><input class="finput" id="m-ngayqd" type="date"></div>
+        <div class="field"><label class="flabel">Họ và tên *</label><input class="finput" id="m-hoten" placeholder="Nguyễn Văn A"></div>
+        <div class="field"><label class="flabel">Số CCCD *</label><input class="finput" id="m-cccd" placeholder="079..." maxlength="12"></div>
+        <div class="field"><label class="flabel">Ngày sinh *</label><input class="finput" id="m-ngaysinh" type="date"></div>
+        <div class="field"><label class="flabel">Chức vụ</label><input class="finput" id="m-chucvu" placeholder="Tiểu đội trưởng"></div>
+        <div class="field"><label class="flabel">Đơn vị cũ</label><input class="finput" id="m-donvicu" placeholder="Trung đội 1"></div>
+        <div class="field"><label class="flabel">Đơn vị mới *</label><input class="finput" id="m-donvimoi" placeholder="Trung đội 2"></div>
+        <div class="field"><label class="flabel">Hiệu lực từ ngày</label><input class="finput" id="m-hieuluc" type="date"></div>
+        <div class="field"><label class="flabel">Ghi chú</label><input class="finput" id="m-ghichu" placeholder="Ghi chú..."></div>
+        <div class="field full"><label class="flabel">URL PDF (Google Drive /preview)</label><input class="finput" id="m-pdfurl" placeholder="https://drive.google.com/file/d/FILE_ID/preview" onchange="previewPdf(this.value)"></div>
+      </div>
+
+      <!-- UPLOAD -->
+      <div style="margin-bottom:14px;">
+        <div class="flabel" style="margin-bottom:7px;">HOẶC UPLOAD FILE PDF / ẢNH</div>
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="file-input" accept=".pdf,image/jpeg,image/png" onchange="handleFile(this)">
+          <div style="font-size:32px;margin-bottom:8px;">📎</div>
+          <div style="font-size:13px;font-weight:600;color:#555;margin-bottom:3px;">Kéo thả hoặc bấm để chọn file</div>
+          <div style="font-size:11px;color:#aaa;">PDF hoặc ảnh chụp · Tối đa 10MB</div>
+        </div>
+        <div id="upload-preview" style="display:none;align-items:center;gap:10px;padding:10px 14px;background:#EAFAF1;border:1px solid #A9DFBA;border-radius:8px;margin-top:10px;">
+          <span style="font-size:22px;">📄</span>
+          <span id="file-name" style="font-size:13px;font-weight:600;color:#1E8449;flex:1;"></span>
+          <span id="file-size" style="font-size:11px;color:#999;"></span>
+          <button onclick="clearFile()" style="background:none;border:none;cursor:pointer;color:#c00;font-size:16px;">✕</button>
+        </div>
+      </div>
+
+      <!-- PREVIEW PDF TRONG MODAL -->
+      <div id="modal-pdf-wrap" style="display:none;margin-bottom:14px;">
+        <div class="flabel" style="margin-bottom:7px;">XEM TRƯỚC FILE PDF</div>
+        <div style="border-radius:8px;overflow:hidden;border:1px solid #DDD;">
+          <iframe id="modal-pdf-frame" src="" width="100%" height="360" style="border:none;display:block;background:#e8e4dc;"></iframe>
+        </div>
+      </div>
+
+      <div class="msg" id="modal-msg"></div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Hủy</button>
+        <button class="btn-save" id="btn-save" onclick="saveRecord()">
+          <span id="save-spin" style="display:none;" class="spinner"></span>
+          💾 Lưu quyết định
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL XEM PDF TO -->
+<div class="modal-bg" id="modal-pdf-full" onclick="closePdfModal(event)" style="background:rgba(0,0,0,.8);align-items:center;">
+  <div style="background:#fff;border-radius:12px;width:95%;max-width:860px;max-height:93vh;overflow:hidden;display:flex;flex-direction:column;animation:fadeUp .25s ease;">
+    <div style="background:linear-gradient(90deg,#6B0F0F,#A93226);padding:12px 18px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:16px;">📄</span>
+      <span id="pdf-full-title" style="font-size:14px;font-weight:700;color:#fff;flex:1;">Quyết định điều động</span>
+      <button onclick="closePdfFull()" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <iframe id="pdf-full-frame" src="" style="flex:1;border:none;width:100%;min-height:75vh;background:#e8e4dc;"></iframe>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════
+   ⚙️ CẤU HÌNH — THAY CSV_URL VÀ MẬT KHẨU
+   ════════════════════════════════════════════════ */
+const CSV_URL    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQnlg0M8AJnF8DbTF7hkAW-LSlnrj1htIL5_RvKr7MsFmlk_XNJwiFcpjWk5xl9xD8DDny9TynGs_Vb/pub?gid=638625438&single=true&output=csv';
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'binhmy2026';
+/* ════════════════════════════════════════════════ */
+
+// DEMO fallback khi chưa kết nối được Sheets
+const DEMO = [
+  { so_quyet_dinh:'01/QĐ-CHQS-BM', ho_ten:'Huỳnh Minh Trí',    cccd:'012345678910', ngay_sinh:'2003-09-21', don_vi_cu:'Tiểu đội 1', don_vi_moi:'Tiểu đội 2', chuc_vu:'Chiến sĩ',           ngay_quyet_dinh:'2026-02-25', hieu_luc:'2026-02-25', pdf_url:'https://drive.google.com/file/d/1ChRCYjjkFkS0Bdr77ch_-nhUDCK3rflb/preview', ghi_chu:'' },
+  { so_quyet_dinh:'01/QĐ-CHQS-BM', ho_ten:'Nguyễn Văn An',     cccd:'079200012345', ngay_sinh:'2026-01-10', don_vi_cu:'',           don_vi_moi:'',            chuc_vu:'',                   ngay_quyet_dinh:'2026-01-10', hieu_luc:'',           pdf_url:'https://drive.google.com/file/d/1ChRCYjjkFkS0Bdr77ch_-nhUDCK3rflb/preview', ghi_chu:'' },
+  { so_quyet_dinh:'1234',           ho_ten:'Ngô Nguyễn Thành Khôi', cccd:'12345678911',  ngay_sinh:'2006-03-14', don_vi_cu:'',           don_vi_moi:'',            chuc_vu:'',                   ngay_quyet_dinh:'',           hieu_luc:'',           pdf_url:'', ghi_chu:'' },
+];
+
+let cachedData = null;
+let allData    = [];
+let isLoggedIn = false;
+let editIdx    = -1;
+let blobUrl    = null;
+
+/* ── TABS ── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+  // Ẩn setup khi chuyển tab
+  const sb = document.getElementById('admin-setup-box');
+  if (sb) sb.style.display = 'none';
+  if (name === 'admin' && isLoggedIn) loadAdminData();
+}
+
+/* ── TOGGLE SETUP (chỉ admin) ── */
+function toggleSetup() {
+  const box = document.getElementById('admin-setup-box');
+  const isHidden = box.style.display === 'none' || box.style.display === '';
+  box.style.display = isHidden ? 'block' : 'none';
+  if (isHidden) {
+    document.getElementById('cfg-url').textContent = CSV_URL.substring(0, 80) + '...';
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+/* ── DATA ── */
+function norm(s) {
+  if (!s) return '';
+  return s.toString().toLowerCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/\s+/g, ' ');
+}
+
+function normDate(d) {
+  if (!d) return '';
+  d = d.trim();
+  const m1 = d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m1) return `${m1[3]}-${m1[2].padStart(2,'0')}-${m1[1].padStart(2,'0')}`;
+  return d;
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const p = d.split('-');
+  return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : d;
+}
+
+function csvSplit(line) {
+  const res = []; let cur = ''; let q = false;
+  for (const c of line) {
+    if (c === '"') { q = !q; }
+    else if (c === ',' && !q) { res.push(cur); cur = ''; }
+    else cur += c;
+  }
+  res.push(cur);
+  return res;
+}
+
+function parseCSV(text) {
+  text = text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+
+  const rawH = csvSplit(lines[0]).map(h => h.replace(/^"|"$/g, '').trim());
+  console.log('[parseCSV] Headers:', rawH);
+
+  // Map tên cột — cột đầu trống mặc định là so_quyet_dinh
+  const MAP = {
+    '':'so_quyet_dinh','so_quyet_dinh':'so_quyet_dinh','số quyết định':'so_quyet_dinh',
+    'ho_ten':'ho_ten','họ và tên':'ho_ten','họ tên':'ho_ten',
+    'cccd':'cccd','số cccd':'cccd','cmnd':'cccd',
+    'ngay_sinh':'ngay_sinh','ngày sinh':'ngay_sinh',
+    'don_vi_cu':'don_vi_cu','đơn vị cũ':'don_vi_cu',
+    'don_vi_moi':'don_vi_moi','đơn vị mới':'don_vi_moi',
+    'chuc_vu':'chuc_vu','chức vụ':'chuc_vu',
+    'ngay_quyet_dinh':'ngay_quyet_dinh','ngày quyết định':'ngay_quyet_dinh',
+    'hieu_luc':'hieu_luc','hiệu lực':'hieu_luc',
+    'pdf_url':'pdf_url','link pdf':'pdf_url','url pdf':'pdf_url',
+    'ghi_chu':'ghi_chu','ghi chú':'ghi_chu',
+  };
+  let firstEmpty = false;
+  const headers = rawH.map(h => {
+    const k = h.toLowerCase().trim();
+    if (k === '' && !firstEmpty) { firstEmpty = true; return 'so_quyet_dinh'; }
+    return MAP[k] || h;
+  });
+  console.log('[parseCSV] Mapped headers:', headers);
+
+  return lines.slice(1).map(line => {
+    const vals = csvSplit(line);
+    const obj  = {};
+    headers.forEach((h, i) => {
+      let v = (vals[i] || '').replace(/^"|"$/g, '').trim();
+      if (['ngay_sinh','ngay_quyet_dinh','hieu_luc'].includes(h)) v = normDate(v);
+      obj[h] = v;
+    });
+    return obj;
+  }).filter(r => r.ho_ten || r.cccd);
+}
+
+async function fetchData(force) {
+  if (!force && cachedData) return cachedData;
+  try {
+    const r = await fetch(CSV_URL + '&nocache=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const text = await r.text();
+    const parsed = parseCSV(text);
+    console.log('[fetchData] Loaded', parsed.length, 'rows from Sheets');
+    if (parsed.length > 0) { cachedData = parsed; return cachedData; }
+    console.warn('[fetchData] 0 rows — fallback to DEMO');
+    return DEMO;
+  } catch(e) {
+    console.warn('[fetchData] Error:', e.message, '— using DEMO');
+    return DEMO;
+  }
+}
+
+/* ── TRA CỨU (AND logic: cả 3 trường phải khớp) ── */
+async function doSearch() {
+  const cccd  = document.getElementById('s-cccd').value.trim();
+  const hoten = document.getElementById('s-hoten').value.trim();
+  const ngay  = document.getElementById('s-ngaysinh').value; // YYYY-MM-DD
+
+  // Validate: bắt buộc cả 3
+  if (!cccd || !hoten || !ngay) {
+    setState('warn', '⚠️ Chưa đủ thông tin',
+      'Vui lòng điền đầy đủ <strong>Số CCCD</strong>, <strong>Họ và tên</strong><br>và <strong>Ngày tháng năm sinh</strong> để tra cứu.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-search');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Đang tra cứu...';
+  setState('loading', '⏳ Đang tìm kiếm...', 'Đang đối chiếu thông tin với cơ sở dữ liệu...');
+
+  try {
+    const data = await fetchData(false);
+    console.log('[doSearch] Data:', data.length, 'rows');
+    console.log('[doSearch] Input — CCCD:', cccd, '| Tên:', hoten, '| Ngày:', ngay);
+
+    const hit = data.find(r => {
+      const okCccd  = norm(r.cccd) === norm(cccd);
+      const okHoten = norm(r.ho_ten) === norm(hoten);
+      const okNgay  = r.ngay_sinh === ngay;
+      console.log(`[check] "${r.ho_ten}" | cccd:"${r.cccd}"=${okCccd} | ten=${okHoten} | ngay:"${r.ngay_sinh}" vs "${ngay}"=${okNgay}`);
+      return okCccd && okHoten && okNgay;
+    });
+
+    if (hit) {
+      renderResult(hit);
+    } else {
+      setState('empty', '😔 Không tìm thấy hồ sơ',
+        'Không tìm thấy quyết định điều động phù hợp.<br>' +
+        'Vui lòng kiểm tra lại thông tin đã nhập<br>' +
+        'hoặc liên hệ Ban CHQS Xã Bình Mỹ để được hỗ trợ.');
+    }
+  } catch(e) {
+    console.error('[doSearch] Error:', e);
+    setState('error', '❌ Lỗi kết nối', 'Không thể tải dữ liệu. Vui lòng thử lại sau.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔍 Tra cứu ngay';
+  }
+}
+
+function setState(type, title, desc) {
+  const icons = { loading:'⏳', warn:'⚠️', empty:'📭', error:'❌' };
+  document.getElementById('result-area').innerHTML = `
+    <div class="card"><div class="card-body">
+      <div class="state-box">
+        <div class="state-icon">${icons[type]||'📄'}</div>
+        <div class="state-title">${title}</div>
+        <div class="state-desc">${desc}</div>
+      </div>
+    </div></div>`;
+}
+
+function renderResult(r) {
+  const hasPdf = r.pdf_url && r.pdf_url.trim();
+
+  const html = `
+  <div class="result-wrap">
+
+    <!-- PROFILE CARD -->
+    <div class="profile-card">
+      <div class="profile-head">
+        <div class="profile-avatar">🪖</div>
+        <div>
+          <div class="profile-name">${r.ho_ten || '—'}</div>
+          <div class="profile-sub">CCCD: ${r.cccd || '—'} &nbsp;·&nbsp; Sinh: ${fmtDate(r.ngay_sinh)}</div>
+        </div>
+        <div class="profile-status">${hasPdf ? '✅ Có file PDF' : '📎 Chưa có PDF'}</div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-row">
+          <span class="info-icon">👤</span>
+          <span class="info-label">Họ và tên</span>
+          <span class="info-value highlight">${r.ho_ten || '—'}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">🪪</span>
+          <span class="info-label">Số CCCD</span>
+          <span class="info-value" style="font-family:monospace;">${r.cccd || '—'}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">🎂</span>
+          <span class="info-label">Ngày sinh</span>
+          <span class="info-value">${fmtDate(r.ngay_sinh)}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">🎖️</span>
+          <span class="info-label">Chức vụ</span>
+          <span class="info-value">${r.chuc_vu || '—'}</span>
+        </div>
+      </div>
+
+      <!-- QUYẾT ĐỊNH -->
+      <div class="qd-section">
+        <div class="qd-title">📋 Thông tin quyết định điều động</div>
+        <div class="qd-number">${r.so_quyet_dinh || '—'}</div>
+        <div class="qd-date">Ngày ký: ${fmtDate(r.ngay_quyet_dinh)} &nbsp;·&nbsp; Hiệu lực từ: ${fmtDate(r.hieu_luc)}</div>
+        <div class="qd-arrow">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Đơn vị cũ</div>
+            <div class="qd-arrow-from">${r.don_vi_cu || '—'}</div>
+          </div>
+          <div class="qd-arrow-icon">→</div>
+          <div style="text-align:right;">
+            <div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Điều động đến</div>
+            <div class="qd-arrow-to">${r.don_vi_moi || '—'}</div>
+          </div>
+        </div>
+        ${r.ghi_chu ? `<div style="font-size:13px;color:#666;margin-top:8px;padding:10px 12px;background:#fff;border-radius:6px;border:1px solid #E0D9CE;">📝 ${r.ghi_chu}</div>` : ''}
+      </div>
+    </div>
+
+    <!-- FILE QUYẾT ĐỊNH PDF -->
+    <div class="pdf-card">
+      <div class="pdf-toolbar">
+        <span style="font-size:16px;">📄</span>
+        <span class="pdf-toolbar-title">File quyết định điều động — ${r.so_quyet_dinh || ''}</span>
+        ${hasPdf ? `
+        <button class="btn-sm" onclick="openPdfFull('${r.pdf_url}','${(r.so_quyet_dinh||'').replace(/'/g,"\\'")}')">🔍 Xem to</button>
+        <a class="btn-sm red-fill" href="${r.pdf_url.replace('/preview','/view')}" target="_blank">⬇️ Tải PDF</a>
+        ` : ''}
+      </div>
+      ${hasPdf
+        ? `<iframe class="pdf-embed" src="${r.pdf_url}" title="QĐ ${r.so_quyet_dinh||''}"></iframe>`
+        : `<div class="pdf-no-file">
+             <div class="ico">📂</div>
+             <p>File quyết định chưa được đính kèm.<br>
+             Vui lòng liên hệ Ban CHQS Xã Bình Mỹ<br>
+             để nhận bản cứng hoặc yêu cầu cập nhật.</p>
+           </div>`
+      }
+    </div>
+
+  </div>`;
+
+  document.getElementById('result-area').innerHTML = html;
+}
+
+/* ── ADMIN ── */
+function doLogin() {
+  const u = document.getElementById('a-user').value.trim();
+  const p = document.getElementById('a-pass').value;
+  const msg = document.getElementById('login-msg');
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    isLoggedIn = true;
+    document.getElementById('admin-login-box').style.display = 'none';
+    document.getElementById('admin-main').style.display = 'block';
+    document.getElementById('admin-name-lbl').textContent = u;
+    loadAdminData();
+  } else {
+    msg.className = 'msg err';
+    msg.textContent = '❌ Tên đăng nhập hoặc mật khẩu không đúng!';
+  }
+}
+function doLogout() {
+  isLoggedIn = false;
+  document.getElementById('admin-login-box').style.display = 'block';
+  document.getElementById('admin-main').style.display = 'none';
+  document.getElementById('a-pass').value = '';
+  document.getElementById('login-msg').className = 'msg';
+  // Ẩn setup khi đăng xuất
+  const sb = document.getElementById('admin-setup-box');
+  if (sb) sb.style.display = 'none';
+}
+
+async function loadAdminData() {
+  document.getElementById('admin-loading').style.display = 'block';
+  const data = await fetchData(true);
+  allData = data;
+  document.getElementById('admin-loading').style.display = 'none';
+  const hp = data.filter(r => r.pdf_url && r.pdf_url.trim()).length;
+  document.getElementById('st-total').textContent  = data.length;
+  document.getElementById('st-haspdf').textContent = hp;
+  document.getElementById('st-nopdf').textContent  = data.length - hp;
+  renderTable(data);
+}
+
+function renderTable(data) {
+  const tb = document.getElementById('admin-tbody');
+  if (!data.length) {
+    tb.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:#aaa;">Chưa có dữ liệu</td></tr>';
+    return;
+  }
+  tb.innerHTML = data.map((r,i) => `
+    <tr>
+      <td style="color:#bbb;font-size:12px;">${i+1}</td>
+      <td><strong style="color:#8B1A1A;">${r.so_quyet_dinh||'—'}</strong></td>
+      <td>${r.ho_ten||'—'}</td>
+      <td style="font-family:monospace;font-size:12px;">${r.cccd||'—'}</td>
+      <td>${fmtDate(r.ngay_sinh)}</td>
+      <td>${r.don_vi_moi||'—'}</td>
+      <td>${fmtDate(r.ngay_quyet_dinh)}</td>
+      <td>${r.pdf_url&&r.pdf_url.trim()
+        ? '<span style="background:#D5F5E3;color:#1E8449;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;">✅ Có</span>'
+        : '<span style="background:#FADBD8;color:#922B21;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;">❌ Chưa</span>'}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn-sm" onclick="editRecord(${i})" style="font-size:11px;padding:4px 8px;">✏️ Sửa</button>
+        ${r.pdf_url?`<button class="btn-sm" onclick="openPdfFull('${r.pdf_url}','${(r.so_quyet_dinh||'').replace(/'/g,"\\'")}')
+" style="font-size:11px;padding:4px 8px;">👁️</button>`:''}
+      </td>
+    </tr>`).join('');
+}
+
+function filterTable(q) {
+  if (!q.trim()) { renderTable(allData); return; }
+  const ql = q.toLowerCase();
+  renderTable(allData.filter(r => Object.values(r).some(v => v && v.toString().toLowerCase().includes(ql))));
+}
+
+/* ── MODAL THÊM/SỬA ── */
+const FLDS = ['soqd','ngayqd','hoten','cccd','ngaysinh','chucvu','donvicu','donvimoi','hieuluc','ghichu','pdfurl'];
+
+function openAddModal() {
+  editIdx = -1;
+  document.getElementById('modal-title-lbl').textContent = '➕ Thêm Quyết định Điều động';
+  FLDS.forEach(f => { const e = document.getElementById('m-'+f); if(e) e.value=''; });
+  clearFile(); hidePdf();
+  document.getElementById('modal-msg').className = 'msg';
+  openModal();
+}
+function editRecord(i) {
+  editIdx = i; const r = allData[i]; if (!r) return;
+  document.getElementById('modal-title-lbl').textContent = '✏️ Sửa Quyết định Điều động';
+  document.getElementById('m-soqd').value    = r.so_quyet_dinh||'';
+  document.getElementById('m-ngayqd').value  = r.ngay_quyet_dinh||'';
+  document.getElementById('m-hoten').value   = r.ho_ten||'';
+  document.getElementById('m-cccd').value    = r.cccd||'';
+  document.getElementById('m-ngaysinh').value= r.ngay_sinh||'';
+  document.getElementById('m-chucvu').value  = r.chuc_vu||'';
+  document.getElementById('m-donvicu').value = r.don_vi_cu||'';
+  document.getElementById('m-donvimoi').value= r.don_vi_moi||'';
+  document.getElementById('m-hieuluc').value = r.hieu_luc||'';
+  document.getElementById('m-ghichu').value  = r.ghi_chu||'';
+  document.getElementById('m-pdfurl').value  = r.pdf_url||'';
+  document.getElementById('modal-msg').className = 'msg';
+  clearFile();
+  if (r.pdf_url) showPdf(r.pdf_url); else hidePdf();
+  openModal();
+}
+function openModal() { document.getElementById('modal-add').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal() { document.getElementById('modal-add').classList.remove('open'); document.body.style.overflow=''; }
+function closeModalBg(e) { if (e.target===document.getElementById('modal-add')) closeModal(); }
+
+async function saveRecord() {
+  const soqd    = document.getElementById('m-soqd').value.trim();
+  const hoten   = document.getElementById('m-hoten').value.trim();
+  const cccd    = document.getElementById('m-cccd').value.trim();
+  const donvimoi= document.getElementById('m-donvimoi').value.trim();
+  const ngaysinh= document.getElementById('m-ngaysinh').value;
+  const msgEl   = document.getElementById('modal-msg');
+  msgEl.className = 'msg';
+  if (!soqd||!hoten||!cccd||!donvimoi||!ngaysinh) {
+    msgEl.className='msg err';
+    msgEl.textContent='❌ Vui lòng điền đầy đủ các trường bắt buộc (*)';
+    return;
+  }
+  document.getElementById('btn-save').disabled=true;
+  document.getElementById('save-spin').style.display='inline-block';
+  const record = {
+    so_quyet_dinh:soqd, ho_ten:hoten, cccd, ngay_sinh:ngaysinh,
+    don_vi_cu:document.getElementById('m-donvicu').value.trim(),
+    don_vi_moi:donvimoi,
+    chuc_vu:document.getElementById('m-chucvu').value.trim(),
+    ngay_quyet_dinh:document.getElementById('m-ngayqd').value,
+    hieu_luc:document.getElementById('m-hieuluc').value,
+    pdf_url:document.getElementById('m-pdfurl').value.trim(),
+    ghi_chu:document.getElementById('m-ghichu').value.trim(),
+  };
+  // Update local
+  if (editIdx>=0) { DEMO[editIdx]=record; if(cachedData)cachedData[editIdx]=record; }
+  else { DEMO.push(record); if(cachedData)cachedData.push(record); }
+  allData = cachedData||DEMO;
+  document.getElementById('btn-save').disabled=false;
+  document.getElementById('save-spin').style.display='none';
+  msgEl.className='msg ok';
+  msgEl.textContent= editIdx>=0
+    ? '✅ Đã cập nhật! Nhớ cập nhật Google Sheets trực tiếp.'
+    : '✅ Đã thêm vào bộ nhớ! Nhớ thêm dòng này vào Google Sheets.';
+  setTimeout(()=>{ closeModal(); loadAdminData(); },1600);
+}
+
+/* ── UPLOAD ── */
+function handleFile(input) {
+  const file = input.files[0]; if(!file) return;
+  if(file.size>10*1024*1024){alert('File quá lớn! Tối đa 10MB.');return;}
+  document.getElementById('upload-preview').style.display='flex';
+  document.getElementById('file-name').textContent=file.name;
+  document.getElementById('file-size').textContent=fmtSize(file.size);
+  if(blobUrl) URL.revokeObjectURL(blobUrl);
+  blobUrl=URL.createObjectURL(file);
+  document.getElementById('m-pdfurl').value=blobUrl;
+  if(file.type==='application/pdf') showPdf(blobUrl);
+  else {
+    const w=document.getElementById('modal-pdf-wrap');
+    w.style.display='block';
+    w.innerHTML=`<div class="flabel" style="margin-bottom:7px;">XEM TRƯỚC ẢNH</div><img src="${blobUrl}" style="width:100%;border-radius:8px;border:1px solid #DDD;">`;
+  }
+}
+function clearFile() {
+  document.getElementById('file-input').value='';
+  document.getElementById('upload-preview').style.display='none';
+  if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null;}
+}
+function showPdf(url) {
+  document.getElementById('modal-pdf-wrap').style.display='block';
+  document.getElementById('modal-pdf-frame').src=url;
+}
+function hidePdf() {
+  document.getElementById('modal-pdf-wrap').style.display='none';
+  const f=document.getElementById('modal-pdf-frame'); if(f) f.src='';
+}
+function previewPdf(url) { if(url) showPdf(url); else hidePdf(); }
+function fmtSize(b) { return b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB'; }
+
+const uz=document.getElementById('upload-zone');
+uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag');});
+uz.addEventListener('dragleave',()=>uz.classList.remove('drag'));
+uz.addEventListener('drop',e=>{
+  e.preventDefault();uz.classList.remove('drag');
+  const fi=document.getElementById('file-input');fi.files=e.dataTransfer.files;handleFile(fi);
+});
+
+/* ── PDF FULL ── */
+function openPdfFull(url,title) {
+  document.getElementById('pdf-full-frame').src=url;
+  document.getElementById('pdf-full-title').textContent='QĐ: '+(title||'Quyết định điều động');
+  document.getElementById('modal-pdf-full').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closePdfFull() {
+  document.getElementById('modal-pdf-full').classList.remove('open');
+  document.getElementById('pdf-full-frame').src='';
+  document.body.style.overflow='';
+}
+function closePdfModal(e) { if(e.target===document.getElementById('modal-pdf-full')) closePdfFull(); }
+
+/* ── SETUP ── */
+async function testConn() {
+  const el=document.getElementById('cfg-status');
+  el.textContent='🔄 Đang kiểm tra...';
+  try {
+    const r=await fetch(CSV_URL+'&t='+Date.now(),{signal:AbortSignal.timeout(8000)});
+    if(r.ok){
+      const t=await r.text();
+      const lines=t.trim().split('\n');
+      el.innerHTML=`<span style="color:#1E8449;">✅ Kết nối thành công! Đọc được ${lines.length-1} bản ghi.</span>`;
+      console.log('[testConn] Headers:', lines[0]);
+    } else {
+      el.innerHTML=`<span style="color:#c00;">❌ Lỗi HTTP ${r.status}</span>`;
+    }
+  } catch(e) {
+    el.innerHTML=`<span style="color:#c00;">❌ ${e.message} — Cần chạy qua http:// server</span>`;
+  }
+}
+function clearCache() {
+  cachedData=null;
+  document.getElementById('cfg-status').innerHTML='<span style="color:#1E8449;">✅ Đã xóa cache!</span>';
+}
+
+</script>
+</body>
+</html>

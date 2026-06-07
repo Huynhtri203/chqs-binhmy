@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng Ký Dân Quân Thường Trực - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════ DESIGN TOKENS (ĐỒNG BỘ CHỦ ĐẠO) ═══════════════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255, 255, 255, 0.4);
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.3);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914; 
+  --accent-hover: #ff1e2a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(15, 15, 15, 0.6);
+  --surface-hover: #141414;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.5);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+}
+
+/* ═══════════════════ RESET & GLOBAL ═══════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-family: var(--font-main); background: var(--bg-color); color: var(--text-main); }
+body { overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+
+/* NỀN GRADIENT SANG TRỌNG */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1;
+  background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 0% 100%, rgba(201, 162, 39, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* ═══════════════════ STICKY HEADER (BLUR GLASS) ═══════════════════ */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(247, 242, 242, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; letter-spacing: -0.03em; }
+.brand img { width: 40px; height: 40px; }
+
+.nav-menu { display: flex; align-items: center; gap: 32px; }
+.nav-item { font-size: 14px; font-weight: 500; color: var(--text-muted); transition: color 0.2s; padding: 24px 0; }
+.nav-item:hover, .nav-item.active { color: var(--text-main); }
+
+.btn-saas {
+  background: #fff; color: #000; padding: 8px 18px; border-radius: 22px;
+  font-size: 14px; font-weight: 600; transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(17, 17, 17, 0.15);
+}
+.btn-saas:hover { background: #e0e0e0; transform: scale(1.02); }
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 10px 10px rgba(229,9,20,0.3); }
+
+/* ═══════════════════ HERO TIÊU ĐỀ ═══════════════════ */
+.hero-dqtv { padding-top: 140px; padding-bottom: 40px; text-align: center; }
+.badge-dqtv {
+  display: inline-block; background: rgba(229, 9, 20, 0.1); color: var(--accent); padding: 6px 16px;
+  border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.hero-title {
+  font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.04em;
+  margin-bottom: 16px; line-height: 1.2;
+  background: linear-gradient(180deg, var(--text-main) 0%, var(--text-muted) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-subtitle { color: var(--text-muted); font-size: 15px; max-width: 650px; margin: 0 auto; line-height: 1.6; }
+
+/* ═══════════════════ LAYOUT CHÍNH & REVEAL ═══════════════════ */
+.container { max-width: 1200px; margin: 0 auto; padding: 20px 24px 80px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; align-items: start; }
+
+.reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+.glass-panel {
+  background: var(--surface-color); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color); border-radius: var(--radius); padding: 36px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.glass-panel:hover { border-color: rgba(229, 9, 20, 0.3); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02); }
+
+/* ═══════════════════ THÔNG TIN TIÊU CHUẨN (CỘT TRÁI) ═══════════════════ */
+.panel-title { font-size: 1.35rem; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+.info-section { margin-bottom: 28px; }
+.info-section h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; margin-bottom: 12px; }
+.info-list { list-style: none; }
+.info-list li { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; display: flex; gap: 10px; }
+.info-list li::before { content: "•"; color: var(--accent); font-weight: bold; }
+
+/* ═══════════════════ BIỂU MẪU ĐĂNG KÝ (CỘT PHẢI) ═══════════════════ */
+.form-grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
+.form-input {
+  width: 100%; background: rgba(0, 0, 0, 0.02); border: 1px solid var(--border-color); color: var(--text-main);
+  padding: 12px 14px; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s;
+  font-family: inherit;
+}
+[data-theme="dark"] .form-input { background: rgba(255, 255, 255, 0.03); }
+.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15); background: var(--bg-color); }
+textarea.form-input { resize: vertical; min-height: 90px; }
+
+/* TRẠNG THÁI THÔNG BÁO */
+.alert-success { background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 14px; border-radius: 8px; font-size: 14px; font-weight: 600; text-align: center; margin-top: 16px; display: none; }
+.alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-top: 12px; display: none; }
+
+/* ═══════════════════ FOOTER ĐỒNG BỘ ═══════════════════ */
+.saas-footer {
+  background: rgba(255, 255, 255, 0.4); border-top: 1px solid var(--border-color);
+  padding: 4rem 2rem 2rem 2rem; margin-top: 6rem; font-size: 14px;
+}
+[data-theme="dark"] .saas-footer { background: rgba(10, 10, 10, 0.8); }
+.footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 48px; }
+.footer-brand h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+.footer-brand p { color: var(--text-muted); line-height: 1.6; }
+.footer-col h3 { font-size: 14px; font-weight: 600; text-transform: uppercase; margin-bottom: 16px; color: var(--text-main); }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 10px; }
+.footer-col ul li a { color: var(--text-muted); transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--accent); }
+.footer-bottom { max-width: 1200px; margin: 4rem auto 0 auto; padding-top: 1.5rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 13px; }
+
+/* Responsive */
+@media (max-width: 992px) {
+  .grid-2 { grid-template-columns: 1fr; gap: 32px; }
+  .footer-container { grid-template-columns: 1fr; gap: 32px; }
+}
+@media (max-width: 768px) {
+  .form-grid-inputs { grid-template-columns: 1fr; gap: 0; }
+  .nav-menu { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
+      <span>BAN CHQS BÌNH MỸ</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="index.html" class="nav-item">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item">Giới thiệu</a>
+      <a href="tin-tuc.html" class="nav-item">Tin tức</a>
+      <a href="lien-he.html" class="nav-item">Liên hệ</a>
+    </nav>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button id="theme-toggle" style="background:none; color:var(--text-main); font-size:24px;">☀️</button>
+      <button class="btn-saas btn-primary">Cổng Dịch Vụ</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero-dqtv reveal">
+  <span class="badge-dqtv">Nghĩa vụ tham gia lực lượng DQTV</span>
+  <h1 class="hero-title">Đăng Ký Dân Quân Tự Vệ</h1>
+  <p class="hero-subtitle">Cổng tiếp nhận thông tin đăng ký tham gia lực lượng Dân quân thường trực Xã Bình Mỹ. Hãy phát huy tinh thần trách nhiệm của thế hệ trẻ trong sự nghiệp bảo vệ an ninh trật tự địa phương.</p>
+</section>
+
+<div class="container">
+  <div class="grid-2">
+    
+    <div class="glass-panel reveal">
+      <h2 class="panel-title">⭐ Tiêu Chuẩn & Quyền Lợi</h2>
+      
+      <div class="info-section">
+        <h4>1. Tiêu chuẩn tuyển chọn</h4>
+        <ul class="info-list">
+          <li>Công dân nam từ đủ 18 tuổi đến hết 25 tuổi cư trú tại địa phương.</li>
+          <li>Có lý lịch rõ ràng, chấp hành nghiêm đường lối của Đảng và Pháp luật.</li>
+          <li>Sức khỏe đạt tiêu chuẩn thực hiện nghĩa vụ tham gia Dân quân tự vệ.</li>
+          <li>Trình độ văn hóa: Tốt nghiệp THCS trở lên.</li>
+        </ul>
+      </div>
+
+      <div class="info-section">
+        <h4>2. Chế độ chính sách được hưởng</h4>
+        <ul class="info-list">
+          <li>Được bảo đảm phụ cấp ngày công lao động, bố trí nơi ăn, nghỉ tập trung.</li>
+          <li>Được cấp phát quân trang, trang thiết bị theo quy định của Luật DQTV.</li>
+          <li>Được hoãn thực hiện nghĩa vụ quân sự thời bình khi đang tham gia Dân quân thường trực đủ thời hạn quy định.</li>
+          <li>Hỗ trợ đóng bảo hiểm y tế, bảo hiểm xã hội trong thời gian làm nhiệm vụ.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="glass-panel reveal" style="transition-delay: 0.1s;">
+      <h2 class="panel-title">📝 Bản Khai Đăng Ký Trực Tuyến</h2>
+      
+      <form id="dqtv-form">
+        
+        <div class="form-grid-inputs">
+          <div class="form-group">
+            <label class="form-label">Họ và tên công dân *</label>
+            <input type="text" id="hoten" class="form-input" required placeholder="Nguyễn Văn A">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Số CCCD (12 số) *</label>
+            <input type="text" id="cccd" class="form-input" required placeholder="079xxxxxxxxx" maxlength="12" pattern="\d{12}">
+          </div>
+        </div>
+
+        <div class="form-grid-inputs">
+          <div class="form-group">
+            <label class="form-label">Ngày tháng năm sinh *</label>
+            <input type="date" id="dob" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Số điện thoại di động *</label>
+            <input type="tel" id="phone" class="form-input" required placeholder="0908xxxxxx">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Địa chỉ thường trú / tạm trú tại xã *</label>
+          <input type="text" id="addr" class="form-input" required placeholder="Số nhà, Tổ, Ấp..., Xã Bình Mỹ">
+        </div>
+
+        <div class="form-grid-inputs">
+          <div class="form-group">
+            <label class="form-label">Trình độ học vấn *</label>
+            <select id="edu" class="form-input" required>
+              <option value="">-- Chọn trình độ --</option>
+              <option value="THCS">Tốt nghiệp THCS</option>
+              <option value="THPT">Tốt nghiệp THPT</option>
+              <option value="Trung cấp / Cao đẳng">Trung cấp / Cao đẳng</option>
+              <option value="Đại học">Đại học trở lên</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Thể lực (Chiều cao / Cân nặng) *</label>
+            <input type="text" id="physical" class="form-input" required placeholder="Ví dụ: 1m70 - 62kg">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tình trạng việc làm hiện tại</label>
+          <input type="text" id="job" class="form-input" placeholder="Ví dụ: Đi làm tự do, Công nhân, Học nghề...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ghi chú / Nguyện vọng hoàn cảnh cá nhân</label>
+          <textarea id="note" class="form-input" placeholder="Nhập hoàn cảnh gia đình hoặc các thông tin mong muốn Ban CHQS lưu ý..."></textarea>
+        </div>
+
+        <div id="error-msg" class="alert-error"></div>
+
+        <button type="submit" id="btn-submit" class="btn-saas btn-primary" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 700;">
+          Gửi đơn đăng ký tham gia
+        </button>
+
+        <div id="success-alert" class="alert-success">
+          🎉 Đăng ký thông tin thành công! Ban Chỉ huy Quân sự xã sẽ rà soát hồ sơ và liên hệ trực tiếp với đồng chí.
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<footer class="saas-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2>BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ</h2>
+      <p>Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Cơ quan quân sự cơ sở thuộc huyện Củ Chi, Thành phố Hồ Chí Minh.</p>
+    </div>
+    <div class="footer-col">
+      <h3>Liên kết nhanh</h3>
+      <ul>
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="gioi-thieu.html">Giới thiệu</a></li>
+        <li><a href="lien-he.html">Liên hệ công vụ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thông tin liên hệ</h3>
+      <p style="color:var(--text-muted); line-height:1.6;">
+        📍 Địa chỉ: Đường Bình Mỹ, Xã Bình Mỹ, Huyện Củ Chi, TP.HCM<br>
+        📞 Điện thoại trực ban: 028.xxx.xxx<br>
+        🕒 Giờ làm việc: Hành chính (Trực chiến 24/7)
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 Cổng Thông Tin Ban CHQS Xã Bình Mỹ. Quy chuẩn số hóa dữ liệu quốc phòng cơ sở.
+  </div>
+</footer>
+
+<script>
+// 1. HIỆU ỨNG CUỘN HIỆN CHỮ (SCROLL REVEAL)
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+      revealObserver.unobserve(entry.target); 
+    }
+  });
+}, { threshold: 0.1 });
+revealElements.forEach(el => revealObserver.observe(el));
+
+// 2. GIAO DIỆN SÁNG / TỐI (THEME TOGGLE)
+const themeToggle = document.getElementById('theme-toggle');
+themeToggle.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  if (currentTheme === 'dark') {
+    document.documentElement.removeAttribute('data-theme');
+    themeToggle.innerText = '☀️';
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeToggle.innerText = '🌙';
+  }
+});
+
+// ========================================================
+// 3. KẾT NỐI API DATABASE GOOGLE SHEET (VIA APP SCRIPT)
+// ========================================================
+// ⚠️ Thay bằng đường dẫn API Web App lấy từ Google Apps Script của bạn
+const FORM_API = "https://script.google.com/macros/s/AKfycbxwOc9GgXX4TseUVxb8pEj40D6dx__iGMO6xBSfYP9_lnvyQ-PK_KuCnjVW6cMnIcf-/exec";
+
+document.getElementById('dqtv-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const btn = document.getElementById('btn-submit');
+  const alertBox = document.getElementById('success-alert');
+  const errorBox = document.getElementById('error-msg');
+  
+  // Thu thập dữ liệu từ các trường nhập liệu
+  const payload = {
+    loai: 'Đăng ký DQTV',
+    hoten: document.getElementById('hoten').value.trim(),
+    cccd: document.getElementById('cccd').value.trim(),
+    dob: document.getElementById('dob').value,
+    phone: document.getElementById('phone').value.trim(),
+    addr: document.getElementById('addr').value.trim(),
+    edu: document.getElementById('edu').value,
+    job: document.getElementById('job').value.trim() + " | Thể lực: " + document.getElementById('physical').value.trim(),
+    note: document.getElementById('note').value.trim()
+  };
+
+  // Thay đổi trạng thái nút bấm (Loading state)
+  btn.disabled = true;
+  btn.style.background = '#64748b';
+  btn.innerHTML = '⏳ Đang truyền tải dữ liệu hồ sơ...';
+  errorBox.style.display = 'none';
+  alertBox.style.display = 'none';
+
+  try {
+    // Gửi phương thức POST bất đồng bộ tới Apps Script Google Sheet bằng chế độ no-cors giống trang tuyển quân
+    await fetch(FORM_API, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    // Cập nhật trạng thái thành công lên giao diện người dùng
+    alertBox.style.display = 'block';
+    this.reset(); // Làm sạch form
+    btn.style.background = '#22c55e';
+    btn.innerHTML = '✅ Đã gửi hồ sơ thành công';
+    
+    // Khôi phục nút sau 4 giây
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.style.background = '';
+      btn.innerHTML = 'Gửi đơn đăng ký tham gia';
+    }, 4000);
+
+  } catch(err) {
+    errorBox.textContent = '❌ Không thể thiết lập kết nối dữ liệu. Vui lòng kiểm tra lại mạng mạng!';
+    errorBox.style.display = 'block';
+    btn.disabled = false;
+    btn.style.background = '';
+    btn.innerHTML = 'Gửi đơn đăng ký tham gia';
+  }
+});
+</script>
+
+</body>
+</html>

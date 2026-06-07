@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hồ Sơ Cá Nhân - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ═══════════════════ DESIGN TOKENS (ĐỒNG BỘ CHÍNH XÁC HỆ THỐNG) ═══════════════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255, 255, 255, 0.8);
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914; 
+  --accent-hover: #ff1e2a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(10, 10, 10, 0.8);
+  --surface-hover: #141414;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+}
+
+/* ═══════════════════ RESET & GLOBAL ═══════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-family: var(--font-main); background: var(--bg-color); color: var(--text-main); }
+body { overflow-x: hidden; -webkit-font-smoothing: antialiased; padding-top: 100px; }
+a { text-decoration: none; color: inherit; }
+button, input, select { font-family: inherit; }
+
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1;
+  background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ═══════════════════ STICKY HEADER ═══════════════════ */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(247, 242, 242, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; }
+.brand img { width: 40px; height: 40px; }
+.nav-menu { display: flex; align-items: center; gap: 32px; }
+.nav-item { font-size: 14px; font-weight: 500; color: var(--text-muted); transition: color 0.2s; padding: 24px 0; }
+.nav-item:hover { color: var(--text-main); }
+.btn-saas {
+  background: #fff; color: #000; padding: 8px 18px; border-radius: 22px;
+  font-size: 14px; font-weight: 600; transition: all 0.2s; box-shadow: 0 4px 14px rgba(17, 17, 17, 0.1);
+  cursor: pointer; border: none;
+}
+.btn-saas:hover { background: #e0e0e0; transform: scale(1.02); }
+
+/* ═══════════════════ PROFILE LAYOUT ═══════════════════ */
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+.profile-grid { display: grid; grid-template-columns: 350px 1fr; gap: 32px; align-items: start; }
+
+/* GLASS CARD PANEL */
+.glass-card {
+  background: var(--surface-color); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color); border-radius: var(--radius); padding: 32px;
+  position: relative; transform-style: preserve-3d; transition: transform 0.1s ease;
+}
+.glass-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.glass-card:hover::before { opacity: 1; }
+
+/* AVATAR SIDEBAR CARD */
+.avatar-section { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.avatar-wrapper {
+  width: 110px; height: 110px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #bcce54);
+  display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white;
+  box-shadow: 0 10px 25px rgba(229, 9, 20, 0.2); margin-bottom: 8px;
+}
+.profile-name { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+.profile-role-badge {
+  background: rgba(229, 9, 20, 0.1); color: var(--accent); padding: 6px 16px;
+  border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.meta-info-list { width: 100%; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 24px; text-align: left; }
+.meta-item { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 12px; }
+.meta-label { color: var(--text-muted); }
+.meta-value { font-weight: 600; color: var(--text-main); }
+
+/* MAIN CONTENT TABS & FORMS */
+.profile-main-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 24px; }
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group.full-width { grid-column: span 2; }
+label { font-size: 14px; font-weight: 600; color: var(--text-main); }
+.form-input {
+  width: 100%; background: rgba(0, 0, 0, 0.02); border: 1px solid var(--border-color); color: var(--text-main);
+  padding: 12px 16px; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s;
+}
+[data-theme="dark"] .form-input { background: rgba(255, 255, 255, 0.03); }
+.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(229,9,20,0.15); }
+.form-input:disabled { opacity: 0.6; cursor: not-allowed; background: rgba(0,0,0,0.05); }
+
+.btn-primary {
+  background: var(--accent); color: #fff; border: none; padding: 12px 24px; border-radius: 8px;
+  font-size: 14px; font-weight: 600; transition: all 0.2s; box-shadow: 0 6px 20px rgba(229,9,20,0.3);
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-top: 16px;
+}
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-danger { background: #ef4444; box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2); }
+.btn-danger:hover { background: #dc2626; }
+
+/* ACTIVITY LOGS TABLE */
+.logs-section { margin-top: 32px; }
+.logs-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.logs-table-wrapper { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
+.logs-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+.logs-table th, .logs-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
+.logs-table th { background: rgba(0, 0, 0, 0.02); font-weight: 600; color: var(--text-muted); }
+[data-theme="dark"] .logs-table th { background: rgba(255, 255, 255, 0.02); }
+.logs-table tr:last-child td { border-bottom: none; }
+.badge-action { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.badge-action.login { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.badge-action.edit { background: rgba(245, 158, 11, 0.1); color: #f59e1b; }
+.badge-action.delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+/* FOOTER */
+.saas-footer { background: var(--surface-color); border-top: 1px solid var(--border-color); padding: 3rem 2rem 1.5rem 2rem; margin-top: 5rem; font-size: 14px; }
+.footer-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--text-muted); }
+
+@media (max-width: 768px) {
+  .profile-grid { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full-width { grid-column: span 1; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Logo">
+      <span>BAN CHQS BÌNH MỸ</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="index.html" class="nav-item">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item">Giới thiệu</a>
+      <a href="tin-tuc.html" class="nav-item">Tin tức</a>
+      <a href="lien-he.html" class="nav-item">Liên hệ</a>
+    </nav>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button id="theme-toggle" style="background:none; border:none; color:var(--text-main); font-size:30px; cursor:pointer;">☀️</button>
+      <a href="index.html" class="btn-saas">💻 Cổng thông tin</a>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="profile-grid">
+    
+    <div class="glass-card hover-glow avatar-section">
+      <div class="avatar-wrapper" id="user-avatar-icon">👤</div>
+      <h2 class="profile-name" id="user-display-name">Đang tải...</h2>
+      <span class="profile-role-badge" id="user-role-badge">Hội viên</span>
+      
+      <div class="meta-info-list">
+        <div class="meta-item">
+          <span class="meta-label">Trạng thái:</span>
+          <span class="meta-value" style="color: #10b981;">● Đang hoạt động</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">ID Quân nhân:</span>
+          <span class="meta-value" id="user-meta-id" style="font-size: 11px; opacity: 0.7;">---</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Ngày tham gia:</span>
+          <span class="meta-value" id="user-joined-date">--/--/----</span>
+        </div>
+      </div>
+      
+      <button id="btn-logout-sidebar" class="btn-primary btn-danger" style="width: 100%;">🚪 Đăng xuất khỏi hệ thống</button>
+    </div>
+
+    <div class="glass-card hover-glow">
+      <h1 class="profile-main-title">Thông Tin Tài Khoản</h1>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Quản lý hồ sơ công vụ và theo dõi nhật ký hoạt động trên hệ thống dữ liệu điện tử Ban CHQS Xã Bình Mỹ.</p>
+      
+      <form id="profile-update-form" onsubmit="event.preventDefault();">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="input-fullname">Họ và tên cán bộ/chiến sĩ</label>
+            <input type="text" class="form-input" id="input-fullname" placeholder="Nhập đầy đủ họ tên">
+          </div>
+          <div class="form-group">
+            <label for="input-email">Địa chỉ Email (Hệ thống Auth)</label>
+            <input type="email" class="form-input" id="input-email" disabled>
+          </div>
+          <div class="form-group">
+            <label for="input-role">Cấp bậc / Phân quyền chức năng</label>
+            <input type="text" class="form-input" id="input-role" disabled style="text-transform: uppercase; font-weight: 700;">
+          </div>
+          <div class="form-group">
+            <label for="input-dept">Đơn vị công tác</label>
+            <input type="text" class="form-input" id="input-dept" value="Lực lượng vũ trang Xã Bình Mỹ" disabled>
+          </div>
+        </div>
+        
+        <button type="button" id="btn-save-profile" class="btn-primary">💾 Lưu thay đổi hồ sơ</button>
+      </form>
+
+      <div class="logs-section">
+        <div class="logs-title">📋 Nhật Ký Hoạt Động Gần Đây</div>
+        <div class="logs-table-wrapper">
+          <table class="logs-table">
+            <thead>
+              <tr>
+                <th>Hành động</th>
+                <th>Chi tiết hoạt động</th>
+                <th>Thời gian thực hiện</th>
+              </tr>
+            </thead>
+            <tbody id="logs-table-body">
+              <tr>
+                <td colspan="3" style="text-align: center; color: var(--text-muted);">Đang truy vấn nhật ký từ Supabase...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<footer class="saas-footer">
+  <div class="footer-container">
+    <div>&copy; 2026 Cổng Thông Tin Ban CHQS Xã Bình Mỹ. An toàn - Bảo mật hành chính.</div>
+    <div>Hệ thống điều hành số hóa toàn diện v2.0</div>
+  </div>
+</footer>
+
+<script>
+// 1. CẤU HÌNH KẾT NỐI SUPABASE (ĐỒNG BỘ VỚI AUTH.HTML VÀ INDEX.HTML)
+// ⚠️ CHÚ Ý: Hãy thay thế 2 giá trị dưới đây bằng URL và Key thực tế trong file auth.html của bạn
+const SUPABASE_URL = "https://sbjzotypdfwtzlpsmnod.supabase.co"; 
+const SUPABASE_ANON_KEY = "sb_publishable_G7jwOQt4xodZPueh-g-qkw_YQgYJm-E";      
+
+if (!window.supabaseClient) {
+  window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+const supabaseClient = window.supabaseClient;
+
+// 2. KHỞI TẠO KIỂM TRA BẢO MẬT & TẢI DỮ LIỆU NGƯỜI DÙNG
+let currentUserId = null;
+
+async function checkAuthAndLoadProfile() {
+  // Lấy thông tin user hiện tại đang đăng nhập từ Supabase Auth
+  const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+
+  if (authError || !user) {
+    alert("Hệ thống phát hiện đồng chí chưa đăng nhập hoặc phiên làm việc đã hết hạn. Vui lòng xác thực!");
+    window.location.href = "auth.html?mode=login";
+    return;
+  }
+
+  currentUserId = user.id;
+
+  // Điền dữ liệu cơ bản từ Auth lên giao diện
+  document.getElementById('input-email').value = user.email;
+  document.getElementById('user-meta-id').innerText = user.id;
+  
+  const createdDate = new Date(user.created_at);
+  document.getElementById('user-joined-date').innerText = createdDate.toLocaleDateString('vi-VN');
+
+  // Truy vấn bổ sung dữ liệu phân quyền ở bảng 'profiles'
+  const { data: profile, error: profileError } = await supabaseClient
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  if (!profileError && profile) {
+    document.getElementById('user-display-name').innerText = profile.ho_ten || "Chưa thiết lập tên";
+    document.getElementById('input-fullname').value = profile.ho_ten || "";
+    document.getElementById('input-role').value = profile.role === 'admin' ? "Chỉ huy (Admin)" : "Chiến sĩ / Dân quân (User)";
+    document.getElementById('user-role-badge').innerText = profile.role === 'admin' ? "Ban Chỉ Huy" : "Chiến Sĩ";
+    
+    if(profile.role === 'admin') {
+      document.getElementById('user-avatar-icon').innerText = "⭐";
+    }
+    
+    // Đảm bảo LocalStorage đồng bộ chính xác để index.html nhận diện
+    localStorage.setItem('user_fullname', profile.ho_ten);
+  } else {
+    // Trường hợp dự phòng nếu chưa có hàng trong bảng profiles
+    const defaultName = user.email.split('@')[0];
+    document.getElementById('user-display-name').innerText = defaultName;
+    document.getElementById('input-fullname').value = defaultName;
+    document.getElementById('input-role').value = "Chưa phân quyền (User)";
+  }
+
+  // Tải danh sách nhật ký hoạt động cá nhân
+  await loadUserActivityLogs(user.id);
+}
+
+// 3. TẢI NHẬT KÝ HOẠT ĐỘNG RIÊNG TƯ CỦA TÀI KHOẢN
+async function loadUserActivityLogs(userId) {
+  const { data: logs, error } = await supabaseClient
+    .from('activity_logs')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(10); // Lấy tối đa 10 hoạt động gần nhất để tối ưu tốc độ
+
+  const tbody = document.getElementById('logs-table-body');
+  if (!tbody) return;
+
+  if (error || !logs || logs.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Chưa ghi nhận nhật ký thao tác nào cho tài khoản này.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = '';
+  logs.forEach(log => {
+    const logTime = new Date(log.created_at).toLocaleString('vi-VN');
+    
+    // Phân loại badge màu sắc dựa trên mã hành động
+    let badgeClass = 'login';
+    if(log.action.includes('EDIT') || log.action.includes('UPDATE')) badgeClass = 'edit';
+    if(log.action.includes('DELETE')) badgeClass = 'delete';
+
+    tbody.innerHTML += `
+      <tr>
+        <td><span class="badge-action ${badgeClass}">${log.action}</span></td>
+        <td>${log.details || 'Không có chi tiết dữ liệu'}</td>
+        <td style="color: var(--text-muted); font-size: 13px;">${logTime}</td>
+      </tr>
+    `;
+  });
+}
+
+// 4. XỬ LÝ LƯU CẬP NHẬT HỒ SƠ LÊN SUPABASE
+document.getElementById('btn-save-profile').addEventListener('click', async () => {
+  if (!currentUserId) return;
+
+  const btn = document.getElementById('btn-save-profile');
+  const newFullName = document.getElementById('input-fullname').value.trim();
+
+  if (!newFullName) {
+    alert("Họ và tên không được phép để trống!");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = "⏳ Đang ghi nhận thay đổi...";
+
+  // Tiến hành cập nhật trực tiếp vào bảng profiles
+  const { error } = await supabaseClient
+    .from('profiles')
+    .update({ ho_ten: newFullName })
+    .eq('id', currentUserId);
+
+  if (error) {
+    alert("Gặp lỗi khi lưu hồ sơ: " + error.message);
+  } else {
+    alert("🎉 Cập nhật thông tin hồ sơ thành công!");
+    
+    // Đồng bộ lại toàn bộ trình duyệt dữ liệu
+    localStorage.setItem('user_fullname', newFullName);
+    document.getElementById('user-display-name').innerText = newFullName;
+    
+    // Ghi nhận hành động vào nhật ký hệ thống
+    await supabaseClient.from('activity_logs').insert([
+      { user_id: currentUserId, action: 'UPDATE_PROFILE', details: `Người dùng thay đổi tên hiển thị thành: ${newFullName}` }
+    ]);
+    
+    // Tải lại nhật ký hoạt động
+    await loadUserActivityLogs(currentUserId);
+  }
+
+  btn.disabled = false;
+  btn.innerText = "💾 Lưu thay đổi hồ sơ";
+});
+
+// 5. XỬ LÝ ĐĂNG XUẤT AN TOÀN
+document.getElementById('btn-logout-sidebar').addEventListener('click', async () => {
+  if (confirm("Đồng chí có chắc chắn muốn đăng xuất khỏi hệ thống chỉ huy không?")) {
+    await supabaseClient.auth.signOut();
+    localStorage.removeItem('user_fullname');
+    alert("Đã đăng xuất tài khoản thành công!");
+    window.location.href = "index.html";
+  }
+});
+
+// 6. HIỆU ỨNG TILT NGHIÊNG 3D KÍNH MỜ
+function applyGlowEffects() {
+  document.querySelectorAll('.hover-glow').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`); 
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -4; 
+      const rotateY = ((x - centerX) / centerX) * 4;
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    });
+  });
+}
+
+// KHỞI CHẠY KHI TRANG SẴN SÀNG
+document.addEventListener('DOMContentLoaded', () => {
+  checkAuthAndLoadProfile();
+  applyGlowEffects();
+  
+  // Xử lý nút chuyển đổi Sáng/Tối nhanh
+  const toggleBtn = document.getElementById('theme-toggle');
+  if(toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      if (currentTheme === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        toggleBtn.innerText = "☀️";
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        toggleBtn.innerText = "🌙";
+      }
+    });
+  }
+});
+</script>
+
+</body>
+</html>

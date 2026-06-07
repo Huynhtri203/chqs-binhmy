@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lịch Trực Ban Chỉ Huy - Cơ Quan Quân Sự</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255, 255, 255, 0.8);
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914; 
+  --accent-hover: #ff1e2a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-color: #030712;
+  --surface-color: rgba(17, 24, 39, 0.7);
+  --surface-hover: #1f2937;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.5;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  padding-top: 100px;
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* NAVBAR HEADER */
+.header-nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 70px;
+  background: var(--surface-color); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color); z-index: 100;
+}
+.nav-container { display: flex; justify-content: space-between; align-items: center; height: 100%; }
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; text-decoration: none; color: var(--text-main); }
+.brand-logo { width: 36px; height: 36px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; }
+.nav-menu { display: flex; align-items: center; gap: 28px; }
+.nav-item { text-decoration: none; color: var(--text-muted); font-size: 14px; font-weight: 600; }
+.nav-item:hover, .nav-item.active { color: var(--text-main); }
+
+/* CONTENT SECTION */
+.page-title { font-size: 32px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 8px; text-align: center; }
+.page-desc { text-align: center; color: var(--text-muted); font-size: 15px; margin-bottom: 40px; }
+
+/* TABLE RESPONSIVE STYLE */
+.table-wrapper {
+  background: var(--surface-color);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+  margin-bottom: 60px;
+}
+table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14.5px; }
+th {
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--text-main); font-weight: 700;
+  padding: 16px 20px; border-bottom: 2px solid var(--border-color);
+}
+[data-theme="dark"] th { background: rgba(255, 255, 255, 0.02); }
+td { padding: 16px 20px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: top; }
+tr:hover { background: var(--surface-hover); }
+
+.badge-commander {
+  background: rgba(229, 9, 20, 0.1); color: var(--accent);
+  padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 13px; display: inline-block;
+}
+.loading-text { text-align: center; padding: 40px; color: var(--text-muted); font-size: 15px; }
+
+/* BUTTON THEME */
+.btn-theme { background: transparent; border: 1px solid var(--border-color); cursor: pointer; padding: 8px 12px; border-radius: 8px; color: var(--text-main); }
+</style>
+</head>
+<body>
+
+  <header class="header-nav">
+    <div class="container nav-container">
+      <a href="index.html" class="brand">
+        <div class="brand-logo">🪖</div>
+        <span>BÌNH MỸ MILITARY</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-item">Trang chủ</a>
+        <a href="#" class="nav-item active">📅 Lịch trực quân sự</a>
+        <a href="tracuu.html" class="nav-item">Tra cứu CCCD</a>
+        <a href="tuyen-quan.html" class="nav-item">Tuyển quân</a>
+      </nav>
+      <div>
+        <button class="btn-theme" id="theme-toggle">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">LỊCH TRỰC BAN CHỈ HUY & LỰC LƯỢNG</h1>
+    <p class="page-desc">Hệ thống công khai lịch trực điều hành cơ quan, trực chiến và tuần tra an ninh địa bàn Xã Bình Mỹ.</p>
+
+    <div class="table-wrapper">
+      <table id="schedule-table">
+        <thead>
+          <tr>
+            <th style="width: 15%;">Thời gian</th>
+            <th style="width: 15%;">Loại ca trực</th>
+            <th style="width: 20%;">Chỉ huy trực</th>
+            <th style="width: 20%;">Sĩ quan / Trực ban</th>
+            <th style="width: 15%;">Vệ binh / Tuần tra</th>
+            <th style="width: 15%;">Nhiệm vụ / Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody id="schedule-tbody">
+          <tr>
+            <td colspan="6" class="loading-text">⏳ Đang đồng bộ lịch trực từ cơ sở dữ liệu quốc phòng...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+<script>
+const SUPABASE_URL = "https://sbjzotypdfwtzlpsmnod.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_G7jwOQt4xodZPueh-g-qkw_YQgYJm-E";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+window.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  fetchDutySchedule();
+});
+
+function initTheme() {
+  const savedTheme = localStorage.getItem('site-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('theme-toggle').innerHTML = savedTheme === 'dark' ? '☀️' : '🌙';
+}
+
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const curr = document.documentElement.getAttribute('data-theme');
+  const next = curr === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('site-theme', next);
+  document.getElementById('theme-toggle').innerHTML = next === 'dark' ? '☀️' : '🌙';
+});
+
+// Tải dữ liệu lịch trực xếp theo ID tăng dần
+async function fetchDutySchedule() {
+  const tbody = document.getElementById('schedule-tbody');
+  try {
+    const { data, error } = await supabase
+      .from('duty_schedule')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="loading-text">Chưa có lịch trực ban nào được xếp cho tuần này.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    data.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight: 700; color: var(--accent);">${escapeHtml(row.date_string)}</td>
+        <td><span style="font-weight:600;">${escapeHtml(row.shift_name)}</span></td>
+        <td><span class="badge-commander">👨‍✈️ ${escapeHtml(row.commander)}</span></td>
+        <td>🎖️ ${escapeHtml(row.officer)}</td>
+        <td style="font-size:13px; color:var(--text-muted);">${escapeHtml(row.soldiers || 'Trống')}</td>
+        <td style="font-size:13px; font-style: italic;">${escapeHtml(row.notes || '-')}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan="6" class="loading-text" style="color:var(--accent);">Lỗi kết nối máy chủ dữ liệu!</td></tr>`;
+  }
+}
+
+function escapeHtml(str) {
+  if(!str) return '';
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+</script>
+</body>
+</html>

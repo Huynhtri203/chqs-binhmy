@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giới thiệu - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════ DESIGN TOKENS (ĐỒNG BỘ TRANG CHỦ) ═══════════════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255, 255, 255, 0.8);
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.3);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914; 
+  --accent-hover: #ff1e2a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(10, 10, 10, 0.8);
+  --surface-hover: #141414;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.5);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+}
+
+/* ═══════════════════ RESET & GLOBAL ═══════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-family: var(--font-main); background: var(--bg-color); color: var(--text-main); }
+body { overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+
+/* NỀN GRADIENT SANG TRỌNG */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1;
+  background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.12) 0%, transparent 50%),
+              radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.02) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* ═══════════════════ HEADER (STICKY BLUR) ═══════════════════ */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(247, 242, 242, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; letter-spacing: -0.03em; }
+.brand img { width: 40px; height: 40px; }
+
+.nav-menu { display: flex; align-items: center; gap: 32px; }
+.nav-item { font-size: 14px; font-weight: 500; color: var(--text-muted); transition: color 0.2s; padding: 24px 0; }
+.nav-item:hover, .nav-item.active { color: var(--text-main); }
+
+.btn-saas {
+  background: #fff; color: #000; padding: 8px 18px; border-radius: 22px;
+  font-size: 14px; font-weight: 600; transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(17, 17, 17, 0.15);
+}
+.btn-saas:hover { background: #e0e0e0; transform: scale(1.02); }
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 10px 10px rgba(229,9,20,0.3); }
+
+/* ═══════════════════ HERO BANNER GIỚI THIỆU ═══════════════════ */
+.hero-intro {
+  padding-top: 160px; padding-bottom: 80px; text-align: center; position: relative;
+}
+.badge-intro {
+  background: rgba(229, 9, 20, 0.1); color: var(--accent); padding: 6px 16px;
+  border-radius: 20px; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+}
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 900; letter-spacing: -0.04em;
+  margin-top: 20px; margin-bottom: 20px; line-height: 1.2;
+  background: linear-gradient(180deg, var(--text-main) 0%, var(--text-muted) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-subtitle {
+  font-size: clamp(1rem, 1.8vw, 1.2rem); color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.6;
+}
+
+/* ═══════════════════ LAYOUT ĐỊNH DẠNG CHUNG ═══════════════════ */
+.container { max-width: 1200px; margin: 0 auto; padding: 60px 24px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 48px; align-items: center; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+.section-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; position: relative; }
+.section-title::after { content: ''; display: block; width: 40px; height: 3px; background: var(--accent); margin-top: 12px; border-radius: 2px; }
+.section-desc { font-size: 1.05rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; }
+
+/* SCROLL REVEAL ANIMATION */
+.reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════ KHUNG CHỨA HÌNH ẢNH & VIDEO TRỐNG (PLACEHOLDERS) ═══════════════════ */
+.media-box-wrapper {
+  position: relative; width: 100%; aspect-ratio: 16/10;
+  background: rgba(20, 20, 20, 0.05); border: 2px dashed var(--border-color);
+  border-radius: var(--radius); overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--text-muted); transition: all 0.3s ease;
+}
+[data-theme="dark"] .media-box-wrapper { background: rgba(20, 20, 20, 0.4); }
+.media-box-wrapper:hover { border-color: var(--accent); box-shadow: 0 10px 30px rgba(229, 9, 20, 0.1); }
+
+.media-box-wrapper img, .media-box-wrapper video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2;
+}
+.media-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.6; }
+.media-label { font-size: 14px; font-weight: 500; }
+
+/* Khung video lớn tỷ lệ chuẩn 16:9 */
+.video-large-wrapper { aspect-ratio: 16/9; border-style: solid; background: #000; }
+
+/* ═══════════════════ SƠ ĐỒ / PHÒNG BAN BAN CHỈ HUY ═══════════════════ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color); border-radius: var(--radius); padding: 32px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-align: center;
+}
+[data-theme="dark"] .glass-card { background: rgba(15, 15, 15, 0.6); }
+.glass-card:hover { transform: translateY(-5px); border-color: rgba(229, 9, 20, 0.4); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+
+.avatar-placeholder {
+  width: 100px; height: 100px; border-radius: 50%; background: var(--surface-hover);
+  margin: 0 auto 20px auto; border: 2px solid var(--border-color);
+  display: flex; align-items: center; justify-content: center; font-size: 2rem; overflow: hidden; position: relative;
+}
+.avatar-placeholder img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.member-role { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.member-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+.member-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+/* ═══════════════════ FOOTER ═══════════════════ */
+.saas-footer {
+  background: rgba(255, 255, 255, 0.4); border-top: 1px solid var(--border-color);
+  padding: 4rem 2rem 2rem 2rem; margin-top: 6rem; font-size: 14px;
+}
+[data-theme="dark"] .saas-footer { background: rgba(10, 10, 10, 0.8); }
+.footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 48px; }
+.footer-brand h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+.footer-brand p { color: var(--text-muted); line-height: 1.6; }
+.footer-col h3 { font-size: 14px; font-weight: 600; text-transform: uppercase; margin-bottom: 16px; color: var(--text-main); }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 10px; }
+.footer-col ul li a { color: var(--text-muted); transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--accent); }
+.footer-bottom { max-width: 1200px; margin: 4rem auto 0 auto; padding-top: 1.5rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 13px; }
+
+/* Responsive */
+@media (max-width: 992px) {
+  .grid-2 { grid-template-columns: 1fr; gap: 32px; }
+  .footer-container { grid-template-columns: 1fr; gap: 32px; }
+}
+@media (max-width: 768px) {
+  .grid-3 { grid-template-columns: 1fr; }
+  .nav-menu { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
+      <span>BAN CHQS BÌNH MỸ</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="index.html" class="nav-item">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item active">Giới thiệu</a>
+      <a href="tin-tuc.html" class="nav-item">Tin tức</a>
+      <a href="lien-he.html" class="nav-item">Liên hệ</a> 
+    </nav>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button id="theme-toggle" style="background:none; color:var(--text-main); font-size:24px;">☀️</button>
+      <button class="btn-saas btn-primary">Cổng Dịch Vụ</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ HERO BANNER ═══════════════════ -->
+<section class="hero-intro reveal">
+  <span class="badge-intro">Lực Lượng Vũ Trang Bình Mỹ</span>
+  <h1 class="hero-title">Lịch Sử Vẻ Vang & Sứ Mệnh</h1>
+  <p class="hero-subtitle">
+    Tìm hiểu về chặng đường phát triển, cơ cấu tổ chức và những đóng góp chiến lược của Ban Chỉ huy Quân sự xã Bình Mỹ, huyện Củ Chi, TP.Hồ Chí Minh.
+  </p>
+</section>
+
+<div class="container">
+
+  <!-- ═══════════════════ SECTION 1: LỊCH SỬ HÌNH THÀNH (HÌNH ẢNH TRÁI, CHỮ PHẢI) ═══════════════════ -->
+  <section class="grid-2 reveal" style="margin-bottom: 100px;">
+    <!-- KHUNG HÌNH ẢNH 1 -->
+    <div class="media-box-wrapper">
+      <!-- 💡 BỎ LINK HÌNH ẢNH VÀO ĐÂY (Thay thế thẻ img dưới) -->
+      <img src="images/vo2.jpg" alt="Hình ảnh tư liệu">
+      <div class="media-icon">🖼️</div>
+      <div class="media-label">Khung hình ảnh Tư liệu Lịch sử (Tỷ lệ 16:10)</div>
+    </div>
+    
+    <div>
+      <h2 class="section-title">Lịch sử & Quá trình Phát triển</h2>
+      <p class="section-desc">
+        Nằm trên địa bàn cửa ngõ chiến lược của huyện Củ Chi, đất và người Bình Mỹ đã trải qua những giai đoạn lịch sử oanh liệt trong các cuộc kháng chiến cứu nước. Lực lượng vũ trang xã luôn là lực lượng nòng cốt bảo vệ chính quyền và nhân dân.
+      </p>
+      <p class="section-desc">
+        Bước sang thời kỳ mới, Ban CHQS xã Bình Mỹ tiếp tục kế thừa truyền thống cách mạng, không ngừng đổi mới tư duy huấn luyện, xây dựng thế trận quốc phòng toàn dân vững chắc gắn liền với an ninh nhân dân.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ SECTION 2: VIDEO TRUYỀN THỐNG LỚN (CHIẾM TRỌN CHIỀU RỘNG) ═══════════════════ -->
+  <section class="reveal" style="margin-bottom: 100px;">
+    <div style="text-align: center; max-width: 700px; margin: 0 auto 40px auto;">
+      <h2 class="section-title" style="display:inline-block;">Thước Phim Truyền Thống</h2>
+      <p class="section-desc">Video toàn cảnh về công tác huấn luyện, sẵn sàng chiến đấu và các hoạt động đền ơn đáp nghĩa của cán bộ chiến sĩ.</p>
+    </div>
+
+    <!-- KHUNG VIDEO CHUẨN 16:9 -->
+    <div class="media-box-wrapper video-large-wrapper">
+      <!-- 💡 BỎ LINK VIDEO CỦA BẠN VÀO THẺ VIDEO DƯỚI ĐÂY -->
+      <video controls playsinline poster="images/Poster.png">
+        <source src="images/Video1.mp4" type="video/mp4">
+        Trình duyệt không hỗ trợ xem video trực tiếp.
+      </video>
+      <!-- Khi chưa có video, khung đen này sẽ hiển thị bảng hướng dẫn bên dưới -->
+      <div class="media-icon" style="color: #fff; opacity: .4;">🎬</div>
+      <div class="media-label" style="color: #fff; opacity: .4;">Khung Video Giới thiệu chính thức (Tỷ lệ 16:9)</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ SECTION 3: CƠ CẤU TỔ CHỨC (BAO GỒM KHUNG ẢNH CHÂN DUNG) ═══════════════════ -->
+  <section class="reveal" style="margin-bottom: 60px;">
+    <div style="text-align: center; max-width: 700px; margin: 0 auto 40px auto;">
+      <h2 class="section-title" style="display:inline-block;">Ban Chỉ Huy Đương Nhiệm</h2>
+      <p class="section-desc">Bộ máy lãnh đạo, điều hành công tác quốc phòng, quân sự địa phương.</p>
+    </div>
+
+    <div class="grid-3">
+      <!-- THÀNH VIÊN 1 -->
+      <div class="glass-card">
+        <div class="avatar-placeholder">
+          <!-- 💡 BỎ HÌNH CHÂN DUNG VÀO ĐÂY -->
+          <!-- <img src="images/avatar1.jpg" alt="Chỉ huy trưởng"> -->
+          👤
+        </div>
+        <div class="member-role">Chỉ huy trưởng</div>
+        <h3 class="member-name">Đồng chí Nguyễn Văn A</h3>
+        <p class="member-desc">Phụ trách chung, điều hành toàn diện công tác quân sự, quốc phòng và tác chiến trên địa bàn.</p>
+      </div>
+
+      <!-- THÀNH VIÊN 2 -->
+      <div class="glass-card">
+        <div class="avatar-placeholder">
+          <!-- 💡 BỎ HÌNH CHÂN DUNG VÀO ĐÂY -->
+          <!-- <img src="images/avatar2.jpg" alt="Chính trị viên"> -->
+          👤
+        </div>
+        <div class="member-role">Chính trị viên</div>
+        <h3 class="member-name">Đồng chí Trần Văn B</h3>
+        <p class="member-desc">Phụ trách công tác Đảng, công tác chính trị, xây dựng lực lượng về mặt tư tưởng và đạo đức.</p>
+      </div>
+
+      <!-- THÀNH VIÊN 3 -->
+      <div class="glass-card">
+        <div class="avatar-placeholder">
+          <!-- 💡 BỎ HÌNH CHÂN DUNG VÀO ĐÂY -->
+          <!-- <img src="images/avatar3.jpg" alt="Phó chỉ huy trưởng"> -->
+          👤
+        </div>
+        <div class="member-role">Phó chỉ huy trưởng</div>
+        <h3 class="member-name">Đồng chí Lê Văn C</h3>
+        <p class="member-desc">Trực tiếp tham mưu huấn luyện, hậu cần kỹ thuật và quản lý quân số lực lượng dân quân tự vệ.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════════ FOOTER ĐỒNG BỘ TRANG CHỦ ═══════════════════ -->
+<footer class="saas-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2>BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ</h2>
+      <p>Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Cơ quan quân sự cơ sở thuộc huyện Củ Chi, Thành phố Hồ Chí Minh.</p>
+    </div>
+    <div class="footer-col">
+      <h3>Liên kết nhanh</h3>
+      <ul>
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="gioi-thieu.html">Giới thiệu</a></li>
+        <li><a href="#">Tin tức công vụ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thông tin liên hệ</h3>
+      <p style="color:var(--text-muted); line-height:1.6;">
+        📍 Địa chỉ: Đường Bình Mỹ, Xã Bình Mỹ, Huyện Củ Chi, TP.HCM<br>
+        📞 Điện thoại trực ban: (028) XXXX XXXX<br>
+        🕒 Giờ làm việc: Hành chính (Trực chiến 24/7)
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 Cổng Thông Tin Ban CHQS Xã Bình Mỹ. Quy chuẩn thiết kế giao diện số hóa quốc phòng.
+  </div>
+</footer>
+
+<script>
+// 1. HIỆU ỨNG CUỘN HIỆN CHỮ (SCROLL REVEAL)
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+      revealObserver.unobserve(entry.target); 
+    }
+  });
+}, { threshold: 0.1 });
+revealElements.forEach(el => revealObserver.observe(el));
+
+// 2. GIAO DIỆN SÁNG / TỐI (THEME TOGGLE)
+const themeToggle = document.getElementById('theme-toggle');
+themeToggle.addEventListener('click', () => {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  if (currentTheme === 'dark') {
+    document.documentElement.removeAttribute('data-theme');
+    themeToggle.innerText = '☀️';
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeToggle.innerText = '🌙';
+  }
+});
+</script>
+
+</body>
+</html>

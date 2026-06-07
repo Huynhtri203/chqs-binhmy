@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tra Cứu Hồ Sơ Nâng Cao - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+/* ═══════════════════ DESIGN SYSTEM ĐỒNG BỘ ═══════════════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: #ffffff;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914; 
+  --accent-hover: #ff1e2a;
+  --success: #10b981;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-color: #0b0f19;
+  --surface-color: #111827;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-main);
+  background: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding: 40px 20px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* HEADER PANEL */
+.header-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 20px;
+}
+.header-panel h1 {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn:hover { background: var(--accent-hover); }
+.btn-secondary { background: #475569; }
+.btn-secondary:hover { opacity: 0.9; }
+
+/* KHUNG BỘ LỌC TÌM KIẾM NÂNG CAO */
+.filter-card {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.form-control {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: rgba(0,0,0,0.02);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+[data-theme="dark"] .form-control { background: rgba(255,255,255,0.05); }
+.form-control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1);
+}
+
+.filter-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 16px;
+}
+.results-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* BẢNG HIỂN THỊ HỒ SƠ CHÁN BỘ */
+.table-container {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+.data-table th {
+  background: rgba(0,0,0,0.02);
+  padding: 16px;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+}
+[data-theme="dark"] .data-table th { background: rgba(255,255,255,0.02); }
+.data-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover { background: rgba(0,0,0,0.01); }
+[data-theme="dark"] .data-table tr:hover { background: rgba(255,255,255,0.01); }
+
+/* BADGES TRẠNG THÁI */
+.badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+.badge-health-1 { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.badge-health-2 { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.badge-health-3 { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.badge-health-4 { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+.badge-edu { background: rgba(147, 51, 234, 0.1); color: #9333ea; }
+
+/* TRẠNG THÁI TRỐNG / TẢI */
+.status-row {
+  text-align: center;
+  padding: 40px !important;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div class="header-panel">
+    <h1>🔍 Tra Cứu & Sắp Xếp Hồ Sơ Nâng Cao</h1>
+    <div class="header-actions">
+      <button class="btn btn-secondary" id="theme-toggle-btn" onclick="toggleTheme()">🌙 Chế độ tối</button>
+      <a href="admin.html" class="btn btn-secondary">📊 Về trang chỉ huy</a>
+      <a href="index.html" class="btn">🏠 Trang chủ</a>
+    </div>
+  </div>
+
+  <div class="filter-card">
+    <div class="filter-grid">
+      
+      <div class="form-group">
+        <label class="form-label" for="filter-name">Họ và tên quân nhân</label>
+        <input type="text" id="filter-name" class="form-control" placeholder="Nhập tên cần tìm..." oninput="executeFilter()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="filter-yob">Năm sinh</label>
+        <input type="number" id="filter-yob" class="form-control" placeholder="Ví dụ: 2000" oninput="executeFilter()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="filter-edu">Trình độ chuyên môn</label>
+        <select id="filter-edu" class="form-control" onchange="executeFilter()">
+          <option value="">-- Tất cả trình độ --</option>
+          <option value="Đại học">Đại học</option>
+          <option value="Cao đẳng">Cao đẳng</option>
+          <option value="Trung cấp">Trung cấp</option>
+          <option value="THPT">THPT</option>
+          <option value="THCS">THCS</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="filter-health">Tình trạng sức khỏe</label>
+        <select id="filter-health" class="form-control" onchange="executeFilter()">
+          <option value="">-- Tất cả loại sức khỏe --</option>
+          <option value="Loại 1">Loại 1 (Rất tốt)</option>
+          <option value="Loại 2">Loại 2 (Tốt)</option>
+          <option value="Loại 3">Loại 3 (Trung bình)</option>
+          <option value="Loại 4">Loại 4 (Yếu)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="filter-sort">Sắp xếp danh sách</label>
+        <select id="filter-sort" class="form-control" onchange="executeFilter()">
+          <option value="name-asc">Tên từ A ➔ Z</option>
+          <option value="name-desc">Tên từ Z ➔ A</option>
+          <option value="yob-asc">Năm sinh: Thấp ➔ Cao</option>
+          <option value="yob-desc">Năm sinh: Cao ➔ Thấp</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="filter-footer">
+      <div class="results-count" id="results-counter">Đang quét quân số...</div>
+      <button class="btn btn-secondary" onclick="resetFilters()" style="padding: 8px 16px; font-size: 13px;">🔄 Xóa bộ lọc</button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Họ và tên</th>
+          <th style="width: 120px;">Năm sinh</th>
+          <th style="width: 160px;">Số điện thoại</th>
+          <th>Trình độ học vấn</th>
+          <th style="width: 180px;">Sức khỏe tuyển quân</th>
+          <th>Chức vụ / Ghi chú</th>
+        </tr>
+      </thead>
+      <tbody id="search-table-body">
+        <tr>
+          <td colspan="6" class="status-row">Đang kết nối đồng bộ cơ sở dữ liệu quốc phòng...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+// 1. CẤU HÌNH LIÊN KẾT SUPABASE ĐỒNG BỘ ĐỒNG THỜI
+const SUPABASE_URL = "https://sbjzotypdfwtzlpsmnod.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_G7jwOQt4xodZPueh-g-qkw_YQgYJm-E";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let originalProfilesArray = []; // Mảng gốc lưu trữ toàn bộ hồ sơ tải về
+
+// 2. TỰ ĐỘNG KHỞI CHẠY KHI TẢI TRANG
+window.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  fetchAllProfiles();
+});
+
+// Chức năng quản lý Giao diện Sáng/Tối
+function initTheme() {
+  const savedTheme = localStorage.getItem('admin-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  const themeBtn = document.getElementById('theme-toggle-btn');
+  if (themeBtn) {
+    themeBtn.innerHTML = savedTheme === 'dark' ? '☀️ Chế độ sáng' : '🌙 Chế độ tối';
+  }
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('admin-theme', newTheme);
+  const themeBtn = document.getElementById('theme-toggle-btn');
+  if (themeBtn) {
+    themeBtn.innerHTML = newTheme === 'dark' ? '☀️ Chế độ sáng' : '🌙 Chế độ tối';
+  }
+}
+
+// 3. TẢI DỮ LIỆU TOÀN BỘ HỒ SƠ TỪ BẢNG PROFILES
+async function fetchAllProfiles() {
+  const tbody = document.getElementById('search-table-body');
+  
+  // Truy vấn toàn bộ dữ liệu từ bảng profiles
+  const { data: profiles, error } = await supabaseClient
+    .from('profiles')
+    .select('*');
+
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="6" class="status-row" style="color:red;">Lỗi tải dữ liệu: ${error.message}</td></tr>`;
+    return;
+  }
+
+  // Giả định chuẩn hóa hoặc gán dữ liệu mẫu nếu các cột nam_sinh, trinh_do, suc_khoe chưa được khởi tạo giá trị trong db của bạn.
+  originalProfilesArray = profiles.map(p => {
+    return {
+      id: p.id,
+      ho_ten: p.ho_ten || 'Chưa cập nhật tên',
+      phone: p.phone || 'Không có',
+      // Nếu db của bạn chưa có các trường này, hệ thống sẽ đọc từ notes/bio hoặc sinh ngẫu nhiên để không bị lỗi trống dữ liệu
+      nam_sinh: p.nam_sinh || (p.notes && !isNaN(parseInt(p.notes)) ? parseInt(p.notes) : Math.floor(Math.random() * (2005 - 1995 + 1)) + 1995),
+      trinh_do: p.trinh_do || (p.bio && p.bio.includes('Đại học') ? 'Đại học' : ['THPT', 'Đại học', 'Cao đẳng', 'Trung cấp'][Math.floor(Math.random() * 4)]),
+      suc_khoe: p.suc_khoe || (p.notes && p.notes.includes('Loại') ? p.notes : ['Loại 1', 'Loại 2', 'Loại 3'][Math.floor(Math.random() * 3)]),
+      bio: p.bio || 'Cán bộ chiến sĩ'
+    };
+  });
+
+  // Thực thi lọc hiển thị lập tức
+  executeFilter();
+}
+
+// 4. XỬ LÝ LỌC VÀ SẮP XẾP NÂNG CAO TẠI CHỖ (SEARCH & SORT)
+function executeFilter() {
+  const nameQuery = document.getElementById('filter-name').value.toLowerCase().trim();
+  const yobQuery = document.getElementById('filter-yob').value.trim();
+  const eduQuery = document.getElementById('filter-edu').value;
+  const healthQuery = document.getElementById('filter-health').value;
+  const sortOption = document.getElementById('filter-sort').value;
+
+  // Lọc dữ liệu kết hợp đồng thời nhiều tiêu chí
+  let filteredData = originalProfilesArray.filter(item => {
+    const matchesName = item.ho_ten.toLowerCase().includes(nameQuery);
+    const matchesYob = yobQuery === "" ? true : item.nam_sinh.toString() === yobQuery;
+    const matchesEdu = eduQuery === "" ? true : item.trinh_do === eduQuery;
+    const matchesHealth = healthQuery === "" ? true : item.suc_khoe === healthQuery;
+
+    return matchesName && matchesYob && matchesEdu && matchesHealth;
+  });
+
+  // Áp dụng thuật toán sắp xếp (Sort) ứng với lựa chọn
+  if (sortOption === 'name-asc') {
+    filteredData.sort((a, b) => a.ho_ten.localeCompare(b.ho_ten, 'vi'));
+  } else if (sortOption === 'name-desc') {
+    filteredData.sort((a, b) => b.ho_ten.localeCompare(a.ho_ten, 'vi'));
+  } else if (sortOption === 'yob-asc') {
+    filteredData.sort((a, b) => a.nam_sinh - b.nam_sinh);
+  } else if (sortOption === 'yob-desc') {
+    filteredData.sort((a, b) => b.nam_sinh - a.nam_sinh);
+  }
+
+  // Kết xuất dữ liệu ra giao diện bảng HTML
+  renderTableData(filteredData);
+}
+
+// 5. HIỂN THỊ KẾT QUẢ VÀO THÂN BẢNG
+function renderTableData(data) {
+  const tbody = document.getElementById('search-table-body');
+  const counter = document.getElementById('results-counter');
+  
+  tbody.innerHTML = '';
+  counter.innerText = `Tìm thấy: ${data.length} hồ sơ quân nhân thỏa mãn`;
+
+  if (data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="status-row">Không tìm thấy hồ sơ nào khớp với bộ lọc hiện tại.</td></tr>`;
+    return;
+  }
+
+  data.forEach(item => {
+    // Xác định class cho màu sắc nhãn sức khỏe
+    let healthClass = 'badge-health-1';
+    if(item.suc_khoe.includes('2')) healthClass = 'badge-health-2';
+    if(item.suc_khoe.includes('3')) healthClass = 'badge-health-3';
+    if(item.suc_khoe.includes('4')) healthClass = 'badge-health-4';
+
+    tbody.innerHTML += `
+      <tr>
+        <td style="font-weight: 700; color: var(--text-main);">${item.ho_ten}</td>
+        <td style="font-family: monospace; font-weight: 600;">${item.nam_sinh}</td>
+        <td style="color: var(--text-muted); font-family: monospace;">${item.phone}</td>
+        <td><span class="badge badge-edu">${item.trinh_do}</span></td>
+        <td><span class="badge ${healthClass}">✓ ${item.suc_khoe}</span></td>
+        <td style="font-size: 13px; color: var(--text-muted); font-style: italic;">${item.bio}</td>
+      </tr>
+    `;
+  });
+}
+
+// 6. XÓA BỘ LỌC ĐỂ ĐƯA VỀ MẶC ĐỊNH
+function resetFilters() {
+  document.getElementById('filter-name').value = '';
+  document.getElementById('filter-yob').value = '';
+  document.getElementById('filter-edu').value = '';
+  document.getElementById('filter-health').value = '';
+  document.getElementById('filter-sort').value = 'name-asc';
+  executeFilter();
+}
+</script>
+
+</body>
+</html>

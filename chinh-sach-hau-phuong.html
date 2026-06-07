@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chính Sách Hậu Phương & Tra Cứu BHYT - Ban CHQS Xã Bình Mỹ</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════ 1. BIẾN ĐỒNG BỘ GIAO DIỆN (SÁNG / TỐI) ═══════════════════ */
+    :root {
+      --bg-gradient: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      --card-bg: rgba(255, 255, 255, 0.75);
+      --card-border: rgba(139, 26, 26, 0.1);
+      --text-primary: #0f172a;
+      --text-muted: #475569;
+      --primary-red: #8B1A1A;
+      --primary-red-hover: #b22222;
+      --accent-gold: #C9A227;
+      --glow-effect: rgba(139, 26, 26, 0.05);
+      --radius: 16px;
+      --font-stack: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(180deg, #090d16 0%, #020617 100%);
+      --card-bg: rgba(15, 23, 42, 0.6);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary-red: #E50914;
+      --primary-red-hover: #ff2a35;
+      --accent-gold: #F0C040;
+      --glow-effect: rgba(229, 9, 20, 0.15);
+    }
+
+    /* ═══════════════════ 2. ĐỊNH DẠNG CƠ BẢN & CHỐNG LỖI ═══════════════════ */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-stack); }
+    html, body { min-height: 100vh; background: var(--bg-gradient); color: var(--text-primary); transition: background 0.3s, color 0.3s; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    
+    .container { max-width: 1040px; margin: 0 auto; padding: 100px 24px 60px; }
+
+    /* ═══════════════════ 3. HEADER NATIVE CAO CẤP ═══════════════════ */
+    .header {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+      background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border); transition: background 0.3s;
+    }
+    [data-theme="dark"] .header { background: rgba(2, 6, 23, 0.7); }
+    
+    .header-inner { max-width: 1040px; margin: 0 auto; padding: 0 24px; height: 74px; display: flex; align-items: center; justify-content: space-between; }
+    
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .brand img { width: 42px; height: 42px; object-fit: contain; }
+    .brand-text h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; color: var(--primary-red); }
+    .brand-text p { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 1px; }
+    
+    .nav-menu { display: flex; align-items: center; gap: 24px; }
+    .nav-link { font-size: 14px; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .nav-link:hover, .nav-link.active { color: var(--primary-red); font-weight: 600; }
+    
+    .theme-toggle { background: none; border: none; cursor: pointer; font-size: 20px; padding: 8px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.2s; }
+    .theme-toggle:hover { background: rgba(0,0,0,0.05); }
+    [data-theme="dark"] .theme-toggle:hover { background: rgba(255,255,255,0.08); }
+
+    /* ═══════════════════ 4. HERO SECTION ═══════════════════ */
+    .hero { text-align: center; margin-bottom: 48px; position: relative; }
+    .badge { display: inline-block; background: rgba(139, 26, 26, 0.08); color: var(--primary-red); padding: 6px 16px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+    [data-theme="dark"] .badge { background: rgba(229, 9, 20, 0.15); }
+    .hero h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 900; letter-spacing: -0.03em; margin-bottom: 14px; line-height: 1.2; }
+    .hero p { font-size: 15px; color: var(--text-muted); max-width: 680px; margin: 0 auto; line-height: 1.6; }
+
+    /* ═══════════════════ 5. THẺ LAYOUT & HIỆU ỨNG GLASSMORPHISM ═══════════════════ */
+    .grid-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 32px; }
+    
+    .card {
+      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius);
+      padding: 32px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02); transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .card:hover { transform: translateY(-4px); border-color: var(--primary-red); box-shadow: 0 12px 30px var(--glow-effect); }
+    .card-full { grid-column: span 2; }
+
+    .card h3 { font-size: 18px; font-weight: 800; margin-bottom: 20px; color: var(--primary-red); display: flex; align-items: center; gap: 10px; }
+    
+    /* Danh sách chế độ chính sách */
+    .policy-list { list-style: none; }
+    .policy-item { position: relative; padding-left: 24px; margin-bottom: 18px; line-height: 1.6; font-size: 14.5px; }
+    .policy-item::before { content: "✦"; position: absolute; left: 0; top: 0; color: var(--accent-gold); font-weight: bold; }
+    .policy-item strong { color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 2px; }
+    .policy-item span { color: var(--text-muted); }
+
+    /* ═══════════════════ 6. CỔNG CALL TO ACTION TRA CỨU BHYT ═══════════════════ */
+    .cta-box { text-align: center; background: linear-gradient(135deg, rgba(139, 26, 26, 0.03) 0%, rgba(201, 162, 39, 0.03) 100%); position: relative; overflow: hidden; }
+    .cta-box::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary-red); }
+    
+    .cta-button {
+      display: inline-flex; align-items: center; gap: 10px; background: var(--primary-red); color: #ffffff;
+      padding: 14px 32px; border-radius: 30px; font-size: 15px; font-weight: 700; text-decoration: none;
+      box-shadow: 0 10px 20px var(--glow-effect); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 10px; cursor: pointer; border: none;
+    }
+    .cta-button:hover { background: var(--primary-red-hover); transform: scale(1.03); box-shadow: 0 12px 24px var(--glow-effect); }
+    .cta-button svg { width: 18px; height: 18px; transition: transform 0.2s; }
+    .cta-button:hover svg { transform: translate(2px, -2px); }
+
+    .hint-text { font-size: 13px; color: var(--text-muted); margin-top: 16px; line-height: 1.5; }
+
+    /* ═══════════════════ 7. HIỆU ỨNG CUỘN HIỆN (REVEAL ANIMATION) ═══════════════════ */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    /* ═══════════════════ 8. FOOTER CHUẨN ĐỒNG BỘ ═══════════════════ */
+    .footer { border-top: 1px solid var(--card-border); padding: 40px 24px; margin-top: 60px; text-align: center; background: rgba(0,0,0,0.01); }
+    [data-theme="dark"] .footer { background: rgba(255,255,255,0.01); }
+    .footer p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .footer-links { margin-top: 12px; display: flex; justify-content: center; gap: 20px; }
+    .footer-links a { font-size: 13px; color: var(--primary-red); text-decoration: none; font-weight: 500; }
+    .footer-links a:hover { text-decoration: underline; }
+
+    /* ═══════════════════ 9. ĐÁP ỨNG RESPONSIVE (MOBILE & TABLET) ═══════════════════ */
+    @media (max-width: 820px) {
+      .grid-cards { grid-template-columns: 1fr; }
+      .card-full { grid-column: span 1; }
+      .nav-menu { display: none; } /* Ẩn bớt nav phụ trên mobile để chống tràn */
+    }
+    @media (max-width: 480px) {
+      .container { padding-top: 90px; padding-left: 16px; padding-right: 16px; }
+      .card { padding: 24px; }
+      .cta-button { width: 100%; justify-content: center; padding: 14px 20px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc Huy">
+        <div class="brand-text">
+          <h1>BAN CHQS XÃ BÌNH MỸ</h1>
+          <p>Hậu phương quân đội</p>
+        </div>
+      </a>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link">Trang chủ</a>
+        <a href="gioi-thieu.html" class="nav-link">Giới thiệu</a>
+        <a href="dang-ky-DQTV.html" class="nav-link">Đăng ký DQTV</a>
+        <a href="#" class="nav-link active">Chính sách</a>
+      </nav>
+      <button class="theme-toggle" id="theme-btn" aria-label="Đổi chế độ sáng tối">☀️</button>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <section class="hero reveal">
+      <span class="badge">An sinh quốc phòng</span>
+      <h2>Chính Sách Hậu Phương Quân Đội</h2>
+      <p>Cổng thông tin tổng hợp các chế độ ưu đãi bảo hiểm, chính sách trợ cấp của Đảng và Nhà nước dành riêng cho chiến sĩ, quân nhân chuyên nghiệp, lực lượng DQTV và thân nhân tại địa phương.</p>
+    </section>
+
+    <div class="grid-cards">
+      
+      <div class="card reveal">
+        <h3><span>🛡️</span> Chế độ cho Thân nhân chiến sĩ</h3>
+        <ul class="policy-list">
+          <li class="policy-item">
+            <strong>Cấp thẻ BHYT miễn phí</strong>
+            <span>Bố đẻ, mẹ đẻ, vợ/chồng, con đẻ hoặc con nuôi hợp pháp của hạ sĩ quan, binh sĩ tại ngũ được ngân sách Nhà nước bảo đảm cấp thẻ BHYT phục vụ khám chữa bệnh miễn phí.</span>
+          </li>
+          <li class="policy-item">
+            <strong>Trợ cấp khó khăn đột xuất</strong>
+            <span>Gia đình gặp thiên tai, hỏa hoạn, sụp đổ nhà cửa hoặc thân nhân ốm đau nặng kéo dài từ 01 tháng trở lên được xét duyệt nhận các gói hỗ trợ an sinh từ hội đồng xã.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3><span>🎖️</span> Quyền lợi Quân nhân xuất ngũ</h3>
+        <ul class="policy-list">
+          <li class="policy-item">
+            <strong>Giải quyết trợ cấp một lần</strong>
+            <span>Nhận đầy đủ các khoản chi trả trợ cấp xuất ngũ, bảo hiểm xã hội một lần cùng gói trợ cấp tạo việc làm bằng tiền mặt tương đương 6 tháng lương cơ sở.</span>
+          </li>
+          <li class="policy-item">
+            <strong>Thẻ học nghề miễn phí</strong>
+            <span>Được cấp 01 thẻ học nghề có giá trị sử dụng trong vòng 1 năm kể từ ngày xuất ngũ tại tất cả các trung tâm đào tạo nghề, trường cao đẳng công lập được chỉ định.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card card-full cta-box reveal">
+        <h3><span>💳</span> Cổng liên kết tra cứu thời hạn sử dụng thẻ BHYT</h3>
+        <p style="color: var(--text-muted); font-size: 14.5px; line-height: 1.6; max-width: 780px; margin: 0 auto 20px;">
+          Để bảo đảm quyền lợi khám chữa bệnh và kiểm tra chính xác thời gian sử dụng, thông tin thẻ Bảo hiểm y tế của quân nhân hoặc thân nhân gia đình, quý công dân vui lòng nhấn vào liên kết bên dưới để truy cập trực tiếp vào hệ thống dữ liệu quốc gia của Cơ quan Bảo hiểm Xã hội Việt Nam.
+        </p>
+        
+        <a href="https://baohiemxahoi.gov.vn/tracuu/Pages/tra-cuu-thoi-han-su-dung-the-bhyt.aspx" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           class="cta-button">
+          <span>Truy Cập Cổng Tra Cứu BHXH Việt Nam</span>
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path>
+          </svg>
+        </a>
+
+        <div class="hint-text">
+          <strong>💡 Lưu ý khi tra cứu:</strong> Quý vị cần chuẩn bị sẵn mã số định danh BHXH (hoặc mã ghi trên thẻ BHYT cũ), Họ tên, Ngày sinh và tích chọn vào ô xác thực <i>"Tôi không phải là người máy"</i> trước khi nhấn nút tra cứu trên hệ thống tổng đài.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer reveal">
+    <p>© 2026 Bản quyền dữ liệu thuộc về Ban Chỉ huy Quân sự Xã Bình Mỹ, Huyện Củ Chi, TP. Hồ Chí Minh.</p>
+    <div class="footer-links">
+      <a href="index.html">Trang chủ</a>
+      <a href="gioi-thieu.html">Giới thiệu</a>
+      <a href="dang-ky-DQTV.html">Đăng ký DQTV</a>
+    </div>
+  </footer>
+
+  <script>
+    // 1. Hiệu ứng cuộn màn hình hiển thị mượt mà (Scroll Reveal)
+    const revealElements = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.05 });
+    revealElements.forEach(el => observer.observe(el));
+
+    // 2. Logic bật/tắt Dark Mode lưu trạng thái thông minh vào LocalStorage
+    const themeBtn = document.getElementById('theme-btn');
+    
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeBtn.innerText = '🌙';
+    }
+
+    themeBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      if (currentTheme === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        themeBtn.innerText = '☀️';
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeBtn.innerText = '🌙';
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+  </script>
+</body>
+</html>
