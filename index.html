@@ -132,7 +132,13 @@ body::before {
   opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
-.nav-item:hover .dropdown { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+@media (min-width: 769px) {
+  .nav-item:hover .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+}
 .dropdown a {
   display: flex; align-items: center; gap: 10px; padding: 10px 16px;
   border-radius: 8px; font-size: 14px; color: var(--text-muted); transition: all 0.2s;
@@ -449,10 +455,23 @@ body::before {
     opacity: 1;
     visibility: visible;
     transform: none;
-    border: none;
-    padding: 8px 0 0 12px;
-    background: transparent;
-    box-shadow: none;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 6px;
+    margin: 8px 0 0 8px;
+    background: var(--surface-color);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .dropdown a {
+    color: var(--text-main);
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+  .dropdown a:hover {
+    background: rgba(229, 9, 20, 0.08);
+    color: var(--accent);
   }
   .nav-item.open .dropdown { display: block; }
 
@@ -572,7 +591,7 @@ body::before {
     </div>
     <div class="glass-card hover-glow video-card-transparent">
       <div class="media-placeholder">
-        <video src="images/video1.mp4" controls playsinline></video>
+        <video src="images/Video1.mp4" controls playsinline></video>
       </div>
       <h3 class="card-title">Hội thao Quốc phòng</h3>
       <p class="card-desc">Đội dân quân xã Bình Mỹ xuất sắc đạt giải Nhì toàn đoàn tại Hội thao Quốc phòng.</p>
