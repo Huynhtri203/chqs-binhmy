@@ -5,245 +5,725 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tuyển Sinh Quân Sự - Xã Bình Mỹ</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <style>
-  :root {
-    --primary: #1e3a8a; /* Xanh Navy hiện đại */
-    --primary-dark: #172554;
-    --primary-light: #eff6ff;
-    --bg-color: #f8fafc;
-    --surface: #ffffff;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --border: #e2e8f0;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --radius: 12px;
+  /* ======= OVERRIDE & THÊM CHO TRANG TUYỂN SINH ======= */
+  .page-hero {
+    width: 100%;
+    background: linear-gradient(135deg, #1A3A6B 0%, #0D2347 60%, #071628 100%);
+    padding: 40px 16px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
   }
-  
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Be Vietnam Pro', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; }
-  
-  /* HEADER & HERO */
-  .hero-section {
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-    color: white; padding: 60px 20px; text-align: center; position: relative; overflow: hidden;
+  .page-hero::before {
+    content: '🎓';
+    position: absolute;
+    font-size: 180px;
+    opacity: .04;
+    top: -20px; right: -10px;
+    pointer-events: none;
   }
-  .hero-section::after {
-    content: '🎓'; position: absolute; font-size: 150px; opacity: 0.05; right: -20px; top: -20px;
+  .page-hero-inner { max-width: 760px; margin: 0 auto; }
+  .page-hero h2 {
+    font-size: 26px; font-weight: 800;
+    color: #fff; line-height: 1.3;
+    letter-spacing: .02em;
+    margin-bottom: 8px;
+  }
+  .page-hero p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
   }
   .hero-badge {
-    display: inline-block; background: #bfdbfe; color: #1e3a8a; font-size: 13px; font-weight: 700;
-    padding: 6px 16px; border-radius: 99px; margin-bottom: 20px; position: relative; z-index: 2;
+    display: inline-block;
+    background: var(--gold);
+    color: #3D2000;
+    font-size: 12px; font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
   }
-  .hero-section h1 { font-size: 32px; font-weight: 800; margin-bottom: 12px; position: relative; z-index: 2; }
-  .hero-section p { font-size: 16px; opacity: 0.9; max-width: 600px; margin: 0 auto; position: relative; z-index: 2; }
 
-  /* CONTAINER & CARDS */
-  .container { max-width: 800px; margin: -30px auto 40px; padding: 0 16px; position: relative; z-index: 10; }
-  .card {
-    background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow);
-    padding: 24px; margin-bottom: 24px; border: 1px solid var(--border); transition: transform 0.2s;
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    max-width: 760px;
+    margin: 0 auto;
+    width: 100%;
   }
-  .card-header { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--primary-light); padding-bottom: 16px; margin-bottom: 20px; }
-  .card-header-icon {
-    width: 40px; height: 40px; background: var(--primary-light); color: var(--primary);
-    border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+  .nav-tab {
+    flex: 1;
+    padding: 14px 12px;
+    text-align: center;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+    margin-bottom: -2px;
   }
-  .card-header h2 { font-size: 18px; font-weight: 700; color: var(--primary-dark); }
+  .nav-tab:hover { color: #1A3A6B; }
+  .nav-tab.active {
+    color: #1A3A6B;
+    border-bottom-color: #1A3A6B;
+  }
 
-  /* SCHOOL GRID */
-  .school-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 600px) { .school-grid { grid-template-columns: 1fr; } }
-  .school-item {
-    padding: 16px; border: 1px solid var(--border); border-radius: 8px; background: #f8fafc;
+  /* CONTENT CARD */
+  .content-card {
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
   }
-  .school-item:hover { border-color: var(--primary); box-shadow: var(--shadow); }
-  .school-name { font-weight: 700; color: var(--primary-dark); margin-bottom: 4px; }
-  .school-tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; background: #dbeafe; color: #1e40af; border-radius: 4px; }
+  .card-header {
+    background: linear-gradient(90deg, #0D2347, #1A3A6B);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-header-icon { font-size: 20px; }
+  .card-header h3 {
+    font-size: 15px; font-weight: 700;
+    color: #fff;
+  }
+  .card-body { padding: 20px 24px; }
 
-  /* MODERN FORM */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-  .input-group { margin-bottom: 16px; }
-  .input-group label { display: block; font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
-  .input-control {
-    width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 8px;
-    font-family: inherit; font-size: 15px; color: var(--text-main); background: #f8fafc; transition: all 0.3s;
+  /* TRƯỜNG TABLE */
+  .school-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
   }
-  .input-control:focus { outline: none; border-color: var(--primary); background: var(--surface); box-shadow: 0 0 0 3px var(--primary-light); }
-  textarea.input-control { min-height: 100px; resize: vertical; }
-  
-  .btn-submit {
-    width: 100%; background: var(--primary); color: white; border: none; padding: 16px;
-    border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s;
-    display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px;
+  .school-card {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    background: #FAFAF8;
+    transition: border-color .2s, box-shadow .2s;
   }
-  .btn-submit:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-  .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+  .school-card:hover {
+    border-color: #1A3A6B;
+    box-shadow: 0 4px 12px rgba(26,58,107,0.1);
+  }
+  .school-name {
+    font-size: 14px; font-weight: 700;
+    color: #1A3A6B;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .school-type {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+  .type-dh  { background: #D6EAF8; color: #1A5276; }
+  .type-cd  { background: #D5F5E3; color: #1E8449; }
+  .type-tc  { background: #FEF9E7; color: #7D6608; }
+  .school-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
 
-  .alert { padding: 16px; background: #dcfce7; border: 1px solid #86efac; border-radius: 8px; color: #166534; font-weight: 600; display: none; margin-top: 16px; text-align: center; }
-  .error-text { color: #dc2626; font-size: 13px; font-weight: 600; margin-top: 8px; display: none; }
+  /* INFO LIST */
+  .info-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .info-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    background: #FAFAF8;
+    border-radius: 8px;
+    border-left: 3px solid #1A3A6B;
+  }
+  .info-item-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .info-item-text { flex: 1; }
+  .info-item-label {
+    font-size: 12px; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 2px;
+  }
+  .info-item-value {
+    font-size: 14px; font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* TIMELINE */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 20px;
+    position: relative;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 19px; top: 40px;
+    width: 2px; bottom: 0;
+    background: var(--border);
+  }
+  .timeline-dot {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: #D6EAF8;
+    border: 2px solid #1A3A6B;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .timeline-content { flex: 1; padding-top: 8px; }
+  .timeline-date {
+    font-size: 12px; font-weight: 700;
+    color: #1A3A6B;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 4px;
+  }
+  .timeline-title {
+    font-size: 15px; font-weight: 600;
+    color: var(--text); margin-bottom: 4px;
+  }
+  .timeline-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .checklist-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    background: #FAFAF8;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .check-box {
+    width: 22px; height: 22px;
+    border-radius: 4px;
+    border: 2px solid #1A3A6B;
+    background: #D6EAF8;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+    color: #1A3A6B;
+  }
+  .checklist-item span { font-size: 14px; color: var(--text); font-weight: 500; }
+
+  /* FORM */
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 13px; font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 8px;
+  }
+  .form-control {
+    width: 100%;
+    height: 48px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0 16px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    background: #FAFAF8;
+    transition: border-color .2s;
+  }
+  .form-control:focus { border-color: #1A3A6B; background: #fff; }
+  .form-control::placeholder { color: #bbb; font-weight: 400; }
+  textarea.form-control {
+    height: auto; padding: 12px 16px;
+    resize: vertical; min-height: 80px;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-note {
+    font-size: 12px; color: var(--text-muted);
+    margin-top: 6px; line-height: 1.5;
+  }
+
+  /* BTN XANH NAVY */
+  .btn-navy {
+    height: 48px;
+    padding: 0 24px;
+    background: #1A3A6B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%;
+    margin-top: 12px;
+  }
+  .btn-navy:hover { background: #0D2347; }
+  .btn-navy:active { transform: scale(0.97); }
+  .btn-navy svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+  /* ALERT */
+  .alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 13px; line-height: 1.6;
+    margin-bottom: 16px;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .alert-warn  { background: #FEF9E7; border: 1px solid #F7DC6F; color: #7D6608; }
+  .alert-info  { background: #EBF5FB; border: 1px solid #AED6F1; color: #1A5276; }
+  .alert span  { font-size: 18px; flex-shrink: 0; }
+
+  /* SUCCESS */
+  .success-msg {
+    display: none;
+    background: #D5F5E3;
+    border: 1px solid #A9DFBF;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    color: #1E8449;
+    font-size: 14px; font-weight: 600;
+    margin-top: 16px;
+  }
+
+  /* NAV NHANH */
+  .page-nav {
+    display: flex; gap: 10px;
+    margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .page-nav a {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    text-decoration: none;
+    border: 1.5px solid var(--border);
+    color: var(--text-muted);
+    transition: all .2s;
+    background: var(--surface);
+  }
+  .page-nav a:hover { border-color: #1A3A6B; color: #1A3A6B; }
+
+  .err-msg {
+    margin-top: 10px; font-size: 13px;
+    color: var(--red); display: none;
+    align-items: center; gap: 6px;
+  }
+
+  @media (max-width: 620px) {
+    .school-grid  { grid-template-columns: 1fr; }
+    .form-row     { grid-template-columns: 1fr; }
+    .page-hero h2 { font-size: 20px; }
+    .card-body    { padding: 16px; }
+  }
 </style>
 </head>
 <body>
 
-<div class="hero-section">
-  <div class="hero-badge">🎓 Năm học 2026 – 2027</div>
-  <h1>TUYỂN SINH TRƯỜNG QUÂN ĐỘI</h1>
-  <p>Cơ hội học tập, rèn luyện và phục vụ Tổ quốc trong môi trường quân đội chính quy, hiện đại</p>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg"
+         style="width:52px;height:52px;object-fit:contain;flex-shrink:0;">
+    <div class="header-text">
+      <h1>BAN CHQS XÃ BÌNH MỸ</h1>
+      <p>Xã Bình Mỹ – TP. Hồ Chí Minh</p>
+    </div>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Chuyển chế độ sáng/tối">🌙</button>
+  </div>
+</div>
+<div class="stripe"></div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="hero-badge">🎓 Năm học 2026 – 2027</div>
+    <h2>TUYỂN SINH TRƯỜNG QUÂN ĐỘI</h2>
+    <p>Cơ hội học tập, rèn luyện và phục vụ Tổ quốc trong môi trường quân đội chính quy, hiện đại</p>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div style="width:100%;background:var(--surface);border-bottom:1px solid var(--border);">
+  <div class="nav-tabs">
+    <a class="nav-tab" href="tuyen-quan.html">🪖 Tuyển Quân</a>
+    <a class="nav-tab active" href="tuyen-sinh.html">🎓 Tuyển Sinh</a>
+    <a class="nav-tab" href="index.html">🔍 Tra Cứu</a>
+  </div>
 </div>
 
 <div class="container">
-  
-  <div class="card">
+
+  <!-- NAV NHANH -->
+  <div class="page-nav" style="margin-top:0;padding-top:20px;">
+    <a href="#truong">🏫 Các trường</a>
+    <a href="#dieu-kien">✅ Điều kiện</a>
+    <a href="#lich">📅 Lịch thi</a>
+    <a href="#ho-so">📄 Hồ sơ</a>
+    <a href="#dang-ky">📝 Đăng ký</a>
+  </div>
+
+  <!-- THÔNG BÁO -->
+  <div class="alert alert-warn">
+    <span>⚠️</span>
+    <div>Thí sinh đăng ký tuyển sinh trường quân đội phải liên hệ Ban CHQS xã để được xét duyệt lý lịch và làm thủ tục trước khi nộp hồ sơ về trường.</div>
+  </div>
+
+  <!-- CÁC TRƯỜNG -->
+  <div class="content-card" id="truong">
     <div class="card-header">
-      <div class="card-header-icon">🏫</div>
-      <h2>Các trường quân đội tiêu biểu</h2>
+      <span class="card-header-icon">🏫</span>
+      <h3>CÁC TRƯỜNG QUÂN ĐỘI TUYỂN SINH NĂM 2026</h3>
     </div>
-    <div class="school-grid">
-      <div class="school-item">
-        <div class="school-name">Học viện Kỹ thuật Quân sự</div>
-        <div class="school-tag">Hệ Đại học</div>
+    <div class="card-body">
+      <div class="alert alert-info">
+        <span>ℹ️</span>
+        <div>Danh sách dưới đây là các trường quân đội tiêu biểu. Thông tin chi tiết về chỉ tiêu và ngành học vui lòng liên hệ Ban CHQS xã hoặc truy cập website chính thức của từng trường.</div>
       </div>
-      <div class="school-item">
-        <div class="school-name">Học viện Hậu cần</div>
-        <div class="school-tag">Hệ Đại học</div>
-      </div>
-      <div class="school-item">
-        <div class="school-name">Trường Sĩ quan Lục quân 2</div>
-        <div class="school-tag">Hệ Đại học</div>
-      </div>
-      <div class="school-item">
-        <div class="school-name">Học viện Quân Y</div>
-        <div class="school-tag">Hệ Đại học</div>
+      <div class="school-grid">
+        <div class="school-card">
+          <div class="school-name">Học viện Kỹ thuật Quân sự</div>
+          <span class="school-type type-dh">Đại học</span>
+          <div class="school-detail">Đào tạo kỹ sư kỹ thuật quân sự. Xét tuyển theo điểm thi THPT Quốc gia.</div>
+        </div>
+        <div class="school-card">
+          <div class="school-name">Trường Sĩ quan Lục quân 2</div>
+          <span class="school-type type-dh">Đại học</span>
+          <div class="school-detail">Đào tạo sĩ quan chỉ huy tham mưu lục quân. Đóng tại Đồng Nai.</div>
+        </div>
+        <div class="school-card">
+          <div class="school-name">Học viện Hậu cần</div>
+          <span class="school-type type-dh">Đại học</span>
+          <div class="school-detail">Đào tạo cán bộ hậu cần, tài chính, kế toán trong Quân đội.</div>
+        </div>
+        <div class="school-card">
+          <div class="school-name">Trường Quân sự Quân khu 7</div>
+          <span class="school-type type-tc">Trung cấp</span>
+          <div class="school-detail">Đào tạo hạ sĩ quan, chuyên môn nghiệp vụ quân sự khu vực phía Nam.</div>
+        </div>
+        <div class="school-card">
+          <div class="school-name">Trường Cao đẳng Kỹ thuật Quân sự</div>
+          <span class="school-type type-cd">Cao đẳng</span>
+          <div class="school-detail">Đào tạo kỹ thuật viên quân sự các chuyên ngành cơ điện, điện tử, tin học.</div>
+        </div>
+        <div class="school-card">
+          <div class="school-name">Học viện Quân y</div>
+          <span class="school-type type-dh">Đại học</span>
+          <div class="school-detail">Đào tạo bác sĩ, dược sĩ và cán bộ y tế phục vụ trong Quân đội Nhân dân Việt Nam.</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="card" id="form-dang-ky">
+  <!-- ĐIỀU KIỆN -->
+  <div class="content-card" id="dieu-kien">
     <div class="card-header">
-      <div class="card-header-icon">📝</div>
-      <h2>Đăng ký sơ tuyển trực tuyến</h2>
+      <span class="card-header-icon">✅</span>
+      <h3>ĐIỀU KIỆN DỰ TUYỂN</h3>
     </div>
-    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">* Đăng ký online để Ban CHQS xã nắm danh sách, hỗ trợ làm hồ sơ xét duyệt lý lịch nhanh chóng.</p>
-    
-    <form id="tuyenSinhForm" onsubmit="submitForm(event)">
-      <div class="form-grid">
-        <div class="input-group">
-          <label>Họ và tên khai sinh *</label>
-          <input type="text" id="hoten" class="input-control" placeholder="Nguyễn Văn A" required>
+    <div class="card-body">
+      <ul class="info-list">
+        <li class="info-item">
+          <span class="info-item-icon">👤</span>
+          <div class="info-item-text">
+            <div class="info-item-label">Đối tượng</div>
+            <div class="info-item-value">Công dân Việt Nam (nam hoặc nữ tùy trường) đang học lớp 12 hoặc đã tốt nghiệp THPT. Độ tuổi thông thường từ 17 đến 21 tuổi (tùy từng trường, ngành học)</div>
+          </div>
+        </li>
+        <li class="info-item">
+          <span class="info-item-icon">🏥</span>
+          <div class="info-item-text">
+            <div class="info-item-label">Sức khỏe</div>
+            <div class="info-item-value">Đạt tiêu chuẩn sức khỏe loại 1 hoặc loại 2 theo quy định của Bộ Quốc phòng. Thị lực mắt không kính đạt 8/10 trở lên (tùy ngành). Không mắc các bệnh mãn tính, truyền nhiễm</div>
+          </div>
+        </li>
+        <li class="info-item">
+          <span class="info-item-icon">📚</span>
+          <div class="info-item-text">
+            <div class="info-item-label">Học vấn & điểm thi</div>
+            <div class="info-item-value">Tốt nghiệp THPT. Điểm xét tuyển theo kết quả thi THPT Quốc gia, tùy trường và ngành (thông thường từ 18 – 24 điểm/3 môn tổ hợp). Một số trường có thêm vòng thi thể lực</div>
+          </div>
+        </li>
+        <li class="info-item">
+          <span class="info-item-icon">🚫</span>
+          <div class="info-item-text">
+            <div class="info-item-label">Tiêu chuẩn chính trị</div>
+            <div class="info-item-value">Bản thân và gia đình có lý lịch rõ ràng, trong sạch. Không có tiền án, tiền sự. Không nghiện ma túy, không có hành vi vi phạm pháp luật. Chấp hành tốt chủ trương, đường lối của Đảng</div>
+          </div>
+        </li>
+        <li class="info-item">
+          <span class="info-item-icon">📏</span>
+          <div class="info-item-text">
+            <div class="info-item-label">Thể hình (tham khảo)</div>
+            <div class="info-item-value">Nam: Chiều cao từ 1,64m, cân nặng từ 50kg. Nữ: Chiều cao từ 1,58m, cân nặng từ 45kg (tiêu chuẩn cụ thể tùy từng trường)</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- LỊCH TUYỂN SINH -->
+  <div class="content-card" id="lich">
+    <div class="card-header">
+      <span class="card-header-icon">📅</span>
+      <h3>LỊCH TUYỂN SINH NĂM 2026</h3>
+    </div>
+    <div class="card-body">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot">📋</div>
+          <div class="timeline-content">
+            <div class="timeline-date">Tháng 01 – 02/2026</div>
+            <div class="timeline-title">Đăng ký sơ tuyển tại xã</div>
+            <div class="timeline-desc">Thí sinh đến Ban CHQS Xã Bình Mỹ đăng ký, nộp hồ sơ sơ tuyển. Ban CHQS xác minh lý lịch và làm hồ sơ gửi lên huyện</div>
+          </div>
         </div>
-        <div class="input-group">
-          <label>Số CCCD *</label>
-          <input type="text" id="cccd" class="input-control" placeholder="12 số CCCD" maxlength="12" pattern="\d{12}" required>
+        <div class="timeline-item">
+          <div class="timeline-dot">🏥</div>
+          <div class="timeline-content">
+            <div class="timeline-date">Tháng 3/2026</div>
+            <div class="timeline-title">Khám sức khỏe sơ tuyển</div>
+            <div class="timeline-desc">Hội đồng khám sức khỏe tuyển sinh quân sự Xã Bình Mỹ tổ chức khám, phân loại sức khỏe cho thí sinh</div>
+          </div>
         </div>
-        <div class="input-group">
-          <label>Ngày tháng năm sinh *</label>
-          <input type="date" id="dob" class="input-control" required>
+        <div class="timeline-item">
+          <div class="timeline-dot">📝</div>
+          <div class="timeline-content">
+            <div class="timeline-date">Tháng 6/2026</div>
+            <div class="timeline-title">Thi THPT Quốc gia</div>
+            <div class="timeline-desc">Thí sinh tham dự kỳ thi THPT Quốc gia. Điểm thi là căn cứ xét tuyển chính vào các trường quân đội</div>
+          </div>
         </div>
-        <div class="input-group">
-          <label>Số điện thoại liên hệ *</label>
-          <input type="tel" id="phone" class="input-control" placeholder="0901234567" required>
+        <div class="timeline-item">
+          <div class="timeline-dot">📤</div>
+          <div class="timeline-content">
+            <div class="timeline-date">Tháng 7/2026</div>
+            <div class="timeline-title">Nộp hồ sơ xét tuyển</div>
+            <div class="timeline-desc">Thí sinh nộp hồ sơ đăng ký xét tuyển theo quy định của từng trường sau khi có kết quả thi THPT</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot">📣</div>
+          <div class="timeline-content">
+            <div class="timeline-date">Tháng 8/2026</div>
+            <div class="timeline-title">Công bố kết quả & nhập học</div>
+            <div class="timeline-desc">Các trường công bố danh sách trúng tuyển. Thí sinh đủ điều kiện làm thủ tục nhập học theo lịch của trường</div>
+          </div>
         </div>
       </div>
-      
-      <div class="input-group">
-        <label>Địa chỉ thường trú *</label>
-        <input type="text" id="addr" class="input-control" placeholder="Số nhà, ấp, xã Bình Mỹ..." required>
+    </div>
+  </div>
+
+  <!-- HỒ SƠ -->
+  <div class="content-card" id="ho-so">
+    <div class="card-header">
+      <span class="card-header-icon">📄</span>
+      <h3>HỒ SƠ ĐĂNG KÝ SƠ TUYỂN</h3>
+    </div>
+    <div class="card-body">
+      <div class="alert alert-info">
+        <span>ℹ️</span>
+        <div>Hồ sơ sơ tuyển nộp tại Ban CHQS Xã Bình Mỹ. Sau khi được xét duyệt, Ban CHQS hướng dẫn thí sinh hoàn thiện hồ sơ chính thức theo yêu cầu của từng trường.</div>
+      </div>
+      <ul class="checklist">
+        <li class="checklist-item"><div class="check-box">1</div><span>Căn cước công dân (bản photo công chứng)</span></li>
+        <li class="checklist-item"><div class="check-box">2</div><span>Học bạ THPT hoặc bảng điểm (bản photo công chứng)</span></li>
+        <li class="checklist-item"><div class="check-box">3</div><span>Giấy chứng nhận sức khỏe (do bệnh viện huyện/tỉnh cấp)</span></li>
+        <li class="checklist-item"><div class="check-box">4</div><span>Kết quả xét nghiệm ma túy (còn hiệu lực trong vòng 3 tháng)</span></li>
+        <li class="checklist-item"><div class="check-box">5</div><span>Tờ khai lý lịch theo mẫu (nhận tại Ban CHQS xã)</span></li>
+        <li class="checklist-item"><div class="check-box">6</div><span>Giấy khai sinh (bản photo công chứng)</span></li>
+        <li class="checklist-item"><div class="check-box">7</div><span>Hộ khẩu thường trú (bản photo)</span></li>
+        <li class="checklist-item"><div class="check-box">8</div><span>04 ảnh thẻ 3x4cm (chụp không quá 6 tháng, nền trắng)</span></li>
+        <li class="checklist-item"><div class="check-box">9</div><span>Giấy chứng nhận ưu tiên (nếu có): con thương binh, liệt sĩ...</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FORM ĐĂNG KÝ -->
+  <div class="content-card" id="dang-ky">
+    <div class="card-header">
+      <span class="card-header-icon">📝</span>
+      <h3>ĐĂNG KÝ SƠ TUYỂN TRỰC TUYẾN</h3>
+    </div>
+    <div class="card-body">
+      <div class="alert alert-info">
+        <span>ℹ️</span>
+        <div>Đăng ký online để Ban CHQS xã nắm danh sách và liên hệ hướng dẫn. Bạn vẫn cần đến nộp hồ sơ trực tiếp theo lịch hẹn.</div>
       </div>
 
-      <div class="form-grid">
-        <div class="input-group">
-          <label>Trường / Nguyện vọng đăng ký *</label>
-          <select id="school" class="input-control" required>
-            <option value="">-- Chọn trường --</option>
-            <option value="HV KTQS">Học viện Kỹ thuật Quân sự</option>
-            <option value="SQLQ 2">Trường Sĩ quan Lục quân 2</option>
-            <option value="HV Hậu Cần">Học viện Hậu cần</option>
-            <option value="HV Quân Y">Học viện Quân y</option>
-            <option value="Khác">Trường khác (Ghi chú bên dưới)</option>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Họ và tên khai sinh *</label>
+          <input type="text" class="form-control" id="f-hoten" placeholder="Nhập đầy đủ họ và tên">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Số CCCD *</label>
+          <input type="text" class="form-control" id="f-cccd" maxlength="12" inputmode="numeric"
+            placeholder="12 chữ số" oninput="this.value=this.value.replace(/\D/g,'')">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ngày tháng năm sinh *</label>
+          <input type="date" class="form-control" id="f-dob">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Giới tính</label>
+          <select class="form-control" id="f-gender">
+            <option value="">-- Chọn --</option>
+            <option>Nam</option>
+            <option>Nữ</option>
           </select>
         </div>
-        <div class="input-group">
-          <label>Điểm thi THPT dự kiến (Tổ hợp 3 môn)</label>
-          <input type="text" id="score" class="input-control" placeholder="VD: 24.5">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Số điện thoại *</label>
+          <input type="tel" class="form-control" id="f-phone" placeholder="Số liên lạc của bạn">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Điểm thi THPT (dự kiến)</label>
+          <input type="text" class="form-control" id="f-score" placeholder="VD: Toán 8.0, Lý 7.5, Hóa 8.0">
         </div>
       </div>
 
-      <div class="input-group">
-        <label>Ghi chú bổ sung</label>
-        <textarea id="note" class="input-control" placeholder="Ngành học mong muốn hoặc câu hỏi thêm..."></textarea>
+      <div class="form-group">
+        <label class="form-label">Địa chỉ thường trú *</label>
+        <input type="text" class="form-control" id="f-addr" placeholder="Số nhà, ấp, xã Bình Mỹ...">
       </div>
 
-      <div id="error-msg" class="error-text"></div>
+      <div class="form-group">
+        <label class="form-label">Trường / Ngành muốn đăng ký *</label>
+        <select class="form-control" id="f-school">
+          <option value="">-- Chọn trường --</option>
+          <option>Học viện Kỹ thuật Quân sự</option>
+          <option>Trường Sĩ quan Lục quân 2</option>
+          <option>Học viện Hậu cần</option>
+          <option>Trường Quân sự Quân khu 7</option>
+          <option>Trường Cao đẳng Kỹ thuật Quân sự</option>
+          <option>Học viện Quân y</option>
+          <option>Trường khác (ghi rõ bên dưới)</option>
+        </select>
+      </div>
 
-      <button type="submit" id="btn-submit" class="btn-submit">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        Gửi Đăng Ký Sơ Tuyển
+      <div class="form-group">
+        <label class="form-label">Ghi chú thêm</label>
+        <textarea class="form-control" id="f-note" placeholder="Thông tin bổ sung, trường khác muốn đăng ký..."></textarea>
+      </div>
+
+      <div class="err-msg" id="f-err" style="margin-bottom:10px;">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0;">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+        </svg>
+        <span id="f-err-text"></span>
+      </div>
+
+      <button class="btn-navy" onclick="submitForm()">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path d="M5 13l4 4L19 7"/>
+        </svg>
+        Gửi đăng ký sơ tuyển
       </button>
 
-      <div id="success-alert" class="alert">
-        🎉 Đăng ký sơ tuyển thành công! Ban CHQS sẽ gọi điện hướng dẫn bạn.
+      <div class="success-msg" id="success-msg">
+        ✅ Đăng ký thành công! Ban CHQS xã sẽ liên hệ với bạn trong vòng 3–5 ngày làm việc để hướng dẫn các bước tiếp theo.
       </div>
-    </form>
+      <p class="form-note">* Thông tin bắt buộc. Dữ liệu chỉ dùng cho mục đích quản lý tuyển sinh quân sự của Ban CHQS Xã Bình Mỹ.</p>
+    </div>
   </div>
+
+  <!-- FOOTER -->
+  <div class="footer">Ban Chỉ huy Quân sự Xã Bình Mỹ · TP. Hồ Chí Minh</div>
+  <div class="footer">Liên hệ: zalo: 09875948.. |
+    <a href="https://www.facebook.com/share/18g8qhhaEB/?mibextid=wwXIfr" target="_blank" style="color:#572db4;">Facebook</a>
+  </div>
+  <div class="footer" style="margin-top:8px;">
+    <a href="index.html" style="color:#1A3A6B;font-weight:600;text-decoration:none;">← Về trang tra cứu</a>
+  </div>
+
 </div>
 
 <script>
-// ==========================================
-// 1. DÁN LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
-// ==========================================
-const API_URL = "https://script.google.com/macros/s/AKfycbzrM9INW4jmX9dz1tLtTCKlTY0vhYMbqWafq9O9buZGwQM0xBwCqzCRP3bUuOS2snxl/exec"; 
+async function submitForm() {
+  const FORM_API = 'https://script.google.com/macros/s/AKfycbxwOc9GgXX4TseUVxb8pEj40D6dx__iGMO6xBSfYP9_lnvyQ-PK_KuCnjVW6cMnIcf-/exec';
 
-async function submitForm(e) {
-  e.preventDefault(); 
-  
-  const btn = document.getElementById('btn-submit');
-  const alertBox = document.getElementById('success-alert');
-  const errorBox = document.getElementById('error-msg');
-  
-  // Dữ liệu bám sát theo code script chuẩn[cite: 5]
-  const payload = {
-    loai: 'Tuyển sinh',
-    hoten: document.getElementById('hoten').value.trim(),
-    cccd: document.getElementById('cccd').value.trim(),
-    dob: document.getElementById('dob').value,
-    phone: document.getElementById('phone').value.trim(),
-    addr: document.getElementById('addr').value.trim(),
-    edu: document.getElementById('school').value,
-    job: document.getElementById('score').value.trim(),
-    note: document.getElementById('note').value.trim()
-  };
+  const hoten  = document.getElementById('f-hoten').value.trim();
+  const cccd   = document.getElementById('f-cccd').value.trim();
+  const dob    = document.getElementById('f-dob').value;
+  const phone  = document.getElementById('f-phone').value.trim();
+  const addr   = document.getElementById('f-addr').value.trim();
+  const school = document.getElementById('f-school').value;
+  const score  = document.getElementById('f-score').value.trim();
+  const note   = document.getElementById('f-note').value.trim();
+  const err    = document.getElementById('f-err');
+  const errTxt = document.getElementById('f-err-text');
 
+  err.style.display = 'none';
+
+  if (!hoten)             { errTxt.textContent = 'Vui lòng nhập họ và tên.'; err.style.display = 'flex'; return; }
+  if (cccd.length !== 12) { errTxt.textContent = 'Số CCCD phải đủ 12 chữ số.'; err.style.display = 'flex'; return; }
+  if (!dob)               { errTxt.textContent = 'Vui lòng nhập ngày sinh.'; err.style.display = 'flex'; return; }
+  if (!phone)             { errTxt.textContent = 'Vui lòng nhập số điện thoại.'; err.style.display = 'flex'; return; }
+  if (!addr)              { errTxt.textContent = 'Vui lòng nhập địa chỉ thường trú.'; err.style.display = 'flex'; return; }
+  if (!school)            { errTxt.textContent = 'Vui lòng chọn trường muốn đăng ký.'; err.style.display = 'flex'; return; }
+
+  // Đổi nút thành đang gửi
+  const btn = document.querySelector('.btn-navy');
   btn.disabled = true;
-  btn.innerHTML = '⏳ Đang xử lý hồ sơ...';
-  errorBox.style.display = 'none';
-  alertBox.style.display = 'none';
+  btn.style.background = '#aaa';
+  btn.innerHTML = 'Đang gửi...';
 
   try {
-    await fetch(API_URL, {
+    await fetch(FORM_API, {
       method: 'POST',
-      mode: 'no-cors', 
+      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        loai:  'Tuyển sinh',
+        hoten, cccd, dob, phone, addr,
+        edu:   school,
+        job:   score,
+        note
+      })
     });
 
-    alertBox.style.display = 'block';
-    document.getElementById('tuyenSinhForm').reset();
-    btn.innerHTML = '✅ Đã gửi thành công';
-    
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Gửi Lại Đăng Ký';
-    }, 3000);
+    document.getElementById('success-msg').style.display = 'block';
+    window.scrollTo({ top: document.getElementById('success-msg').offsetTop - 100, behavior: 'smooth' });
 
-  } catch(err) {
-    errorBox.textContent = '❌ Có lỗi xảy ra. Vui lòng kiểm tra mạng và thử lại!';
-    errorBox.style.display = 'block';
+  } catch(e) {
+    errTxt.textContent = 'Gửi thất bại. Vui lòng thử lại!';
+    err.style.display = 'flex';
     btn.disabled = false;
-    btn.innerHTML = 'Gửi Đăng Ký Sơ Tuyển';
+    btn.style.background = '';
+    btn.innerHTML = `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width:17px;height:17px;"><path d="M5 13l4 4L19 7"/></svg> Gửi đăng ký sơ tuyển`;
   }
 }
 </script>
+<script src="theme.js"></script>
 </body>
 </html>
