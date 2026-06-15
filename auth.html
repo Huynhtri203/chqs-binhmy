@@ -1,312 +1,291 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xác Thực Hệ Thống - Ban CHQS Xã Bình Mỹ</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-/* ═══════════════════ DESIGN TOKENS (ĐỒNG BỘ HỆ THỐNG) ═══════════════════ */
-:root {
-  --bg-color: #f8fafc;
-  --surface-color: rgba(255, 255, 255, 0.8);
-  --border-color: rgba(0, 0, 0, 0.1);
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --accent: #E50914; 
-  --accent-hover: #ff1e2a;
-  --radius: 12px;
-  --font-main: 'Inter', sans-serif;
-}
-
-[data-theme="dark"] {
-  --bg-color: #000000;
-  --surface-color: rgba(10, 10, 10, 0.8);
-  --border-color: rgba(255, 255, 255, 0.1);
-  --text-main: #ffffff;
-  --text-muted: #888888;
-}
-
-/* ═══════════════════ RESET & BASE ═══════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { font-family: var(--font-main); background: var(--bg-color); color: var(--text-main); height: 100%; overflow: hidden; }
-
-body {
-  display: flex; align-items: center; justify-content: center;
-  background: radial-gradient(circle at 50% 30%, rgba(229, 9, 20, 0.08) 0%, transparent 60%), var(--bg-color);
-}
-
-/* ═══════════════════ AUTH CONTAINER ═══════════════════ */
-.auth-wrapper { width: 100%; max-width: 440px; padding: 20px; position: relative; }
-
-.glass-card {
-  background: var(--surface-color); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-color); border-radius: var(--radius); padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* BANNER QUÂN HIỆU */
-.auth-header { text-align: center; margin-bottom: 32px; }
-.auth-header img { width: 55px; height: 55px; margin-bottom: 12px; }
-.auth-header h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
-.auth-header p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
-
-/* LAYOUT BLOCK FORM */
-.auth-panel { display: none; }
-.auth-panel.active { display: block; animation: fadeIn 0.4s ease forwards; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* FORM ELEMENTS */
-.form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-label { font-size: 13px; font-weight: 600; color: var(--text-main); }
-.form-input {
-  width: 100%; background: rgba(0, 0, 0, 0.02); border: 1px solid var(--border-color); color: var(--text-main);
-  padding: 12px 16px; border-radius: 8px; font-size: 14px; outline: none; transition: all 0.2s;
-}
-[data-theme="dark"] .form-input { background: rgba(255, 255, 255, 0.03); }
-.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15); }
-.form-input:disabled { background: rgba(0, 0, 0, 0.05); color: var(--text-muted); cursor: not-allowed; font-weight: 600; }
-[data-theme="dark"] .form-input:disabled { background: rgba(255, 255, 255, 0.06); }
-
-/* BUTTONS */
-.btn-submit {
-  width: 100%; background: var(--accent); color: #fff; border: none; padding: 14px; border-radius: 8px;
-  font-size: 14px; font-weight: 600; transition: all 0.2s; cursor: pointer;
-  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.25); margin-top: 8px;
-}
-.btn-submit:hover { background: var(--accent-hover); transform: translateY(-1px); }
-.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-/* BOTTOM TOGGLE LINK */
-.auth-footer { text-align: center; margin-top: 24px; font-size: 13px; color: var(--text-muted); }
-.auth-link { color: var(--accent); font-weight: 600; text-decoration: none; margin-left: 4px; cursor: pointer; }
-.auth-link:hover { text-decoration: underline; }
-
-.back-home {
-  position: absolute; top: -40px; left: 20px; font-size: 13px; font-weight: 500;
-  color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 6px;
-}
-.back-home:hover { color: var(--text-main); }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống Tài khoản Công dân</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    .auth-box {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 30px 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+    .auth-toggle {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+    }
+    .auth-toggle button {
+      padding: 10px 20px;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+    .auth-toggle button.active {
+      color: var(--red);
+      border-bottom: 3px solid var(--red);
+      margin-bottom: -2px;
+    }
+    .form-panel { display: none; }
+    .form-panel.active { display: block; }
+    .or-separator {
+      text-align: center;
+      margin: 20px 0;
+      position: relative;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .or-separator::before, .or-separator::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: var(--border);
+    }
+    .or-separator::before { left: 0; }
+    .or-separator::after { right: 0; }
+    .google-btn-flex {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .user-profile {
+      text-align: center;
+      padding: 20px 0;
+    }
+    .avatar-large {
+      width: 70px;
+      height: 70px;
+      background: var(--red-light);
+      color: var(--red);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .btn-logout {
+      background: #7B1113;
+      color: white;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      margin-top: 16px;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
 
-<div class="auth-wrapper">
-  <a href="index.html" class="back-home">⬅️ Trở lại Cổng thông tin</a>
-  
-  <div class="glass-card">
-    <div class="auth-header">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
-      <h1 id="panel-title">Hệ Thống Xác Thực</h1>
-      <p id="panel-desc">Ban Chỉ Huy Quân Sự Xã Bình Mỹ</p>
-    </div>
+  <div class="container">
+    
+    <div id="auth-container" class="auth-box">
+      <div class="auth-toggle">
+        <button id="tab-login" class="active" onclick="switchTab('login')">ĐĂNG NHẬP</button>
+        <button id="tab-register" onclick="switchTab('register')">ĐĂNG KÝ</button>
+      </div>
 
-    <div id="login-panel" class="auth-panel active">
-      <form id="form-login" onsubmit="return false;">
-        <div class="form-group">
-          <label for="login-email">Địa chỉ Email công vụ</label>
-          <input type="email" class="form-input" id="login-email" placeholder="name@example.com" required>
+      <div id="auth-error" class="err-msg" style="margin-bottom: 15px;"></div>
+
+      <div id="panel-login" class="form-panel active">
+        <form onsubmit="handleAuth(event, 'login')">
+          <div class="input-group">
+            <label class="search-label">Email</label>
+            <input type="email" id="login-email" class="field-input" required placeholder="nhap@email.com">
+          </div>
+          <div class="input-group">
+            <label class="search-label">Mật khẩu</label>
+            <input type="password" id="login-pass" class="field-input" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn-search" style="margin-top: 10px;">Đăng Nhập</button>
+        </form>
+
+        <div class="or-separator">Hoặc đăng nhập bằng</div>
+        
+        <div class="google-btn-flex">
+          <div id="g_id_onload"
+               data-client_id="ĐIỀN_CLIENT_ID_GOOGLE_CỦA_BẠN_VÀO_ĐÂY"
+               data-callback="handleCredentialResponse"
+               data-auto_prompt="false">
+          </div>
+          <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left"></div>
         </div>
-        <div class="form-group">
-          <label for="login-password">Mật khẩu bảo mật</label>
-          <input type="password" class="form-input" id="login-password" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn-submit">Xác nhận đăng nhập</button>
-      </form>
-      <div class="auth-footer">
-        Chưa có tài khoản chiến sĩ? <span class="auth-link" onclick="switchMode('register')">Đăng ký ngay</span>
+      </div>
+
+      <div id="panel-register" class="form-panel">
+        <form onsubmit="handleAuth(event, 'register')">
+          <div class="input-group">
+            <label class="search-label">Họ và Tên</label>
+            <input type="text" id="reg-name" class="field-input" required placeholder="Nguyễn Văn A">
+          </div>
+          <div class="input-group">
+            <label class="search-label">Email</label>
+            <input type="email" id="reg-email" class="field-input" required placeholder="nhap@email.com">
+          </div>
+          <div class="input-group">
+            <label class="search-label">Mật khẩu</label>
+            <input type="password" id="reg-pass" class="field-input" required placeholder="Tối thiểu 6 ký tự">
+          </div>
+          <button type="submit" class="btn-search" style="margin-top: 10px;">Tạo Tài Khoản</button>
+        </form>
       </div>
     </div>
 
-    <div id="register-panel" class="auth-panel">
-      <form id="form-register" onsubmit="return false;">
-        <div class="form-group">
-          <label for="reg-fullname">Họ và tên cán bộ / chiến sĩ</label>
-          <input type="text" class="form-input" id="reg-fullname" placeholder="Ví dụ: Nguyễn Văn A" required>
-        </div>
-        <div class="form-group">
-          <label for="reg-email">Địa chỉ Email đăng ký</label>
-          <input type="email" class="form-input" id="reg-email" placeholder="username@gmail.com" required>
-        </div>
-        <div class="form-group">
-          <label for="reg-password">Mật khẩu khởi tạo (Từ 6 ký tự)</label>
-          <input type="password" class="form-input" id="reg-password" placeholder="••••••••" required>
+    <div id="profile-container" class="auth-box" style="display: none;">
+      <div class="user-profile">
+        <div class="avatar-large" id="user-avatar">?</div>
+        <h2 id="user-display-name" style="margin-bottom: 4px;">Xin chào!</h2>
+        <p id="user-display-email" style="color: var(--text-muted); font-size: 14px;"></p>
+        
+        <div style="margin-top: 20px; padding: 12px; background: var(--surface-alt); border-radius: var(--radius); font-size: 13px; text-align: left;">
+          ✅ Bạn đã đăng nhập vào hệ thống Cổng thông tin. Lịch sử truy cập đã được ghi nhận trên hệ thống dữ liệu đám mây.
         </div>
         
-        <div class="form-group">
-          <label>Cấp độ tài khoản mặc định</label>
-          <input type="text" class="form-input" value="Thành viên / Độc giả (Chỉ xem & tương tác)" disabled>
-        </div>
-
-        <button type="submit" class="btn-submit">Gửi yêu cầu khởi tạo tài khoản</button>
-      </form>
-      <div class="auth-footer">
-        Đã có tài khoản nghiệp vụ? <span class="auth-link" onclick="switchMode('login')">Đăng nhập</span>
+        <button class="btn-logout" onclick="logout()">Đăng Xuất</button>
       </div>
     </div>
 
   </div>
-</div>
 
-<script>
-// 1. CẤU HÌNH KẾT NỐI SUPABASE
-const SUPABASE_URL = "https://sbjzotypdfwtzlpsmnod.supabase.co"; 
-const SUPABASE_ANON_KEY = "sb_publishable_G7jwOQt4xodZPueh-g-qkw_YQgYJm-E"; 
+  <script>
+    // Dán link Web App Apps Script ở Bước 1 vào đây
+    const APPS_SCRIPT_URL = "THAY_LINK_WEB_APP_APPS_SCRIPT_CỦA_BẠN_VÀO_ĐÂY";
 
-if (!window.supabaseClient) {
-  window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
-const supabaseClient = window.supabaseClient;
-
-// 2. CHUYỂN ĐỔI QUA LẠI GIỮA ĐĂNG NHẬP / ĐĂNG KÝ
-function switchMode(mode) {
-  const loginPanel = document.getElementById('login-panel');
-  const registerPanel = document.getElementById('register-panel');
-  const title = document.getElementById('panel-title');
-  
-  if (mode === 'register') {
-    loginPanel.classList.remove('active');
-    registerPanel.classList.add('active');
-    title.innerText = "Đăng Ký Thành Viên";
-  } else {
-    registerPanel.classList.remove('active');
-    loginPanel.classList.add('active');
-    title.innerText = "Hệ Thống Xác Thực";
-  }
-}
-
-// 3. XỬ LÝ ĐĂNG KÝ TÀI KHOẢN MỚI CHỈ ĐƯỢC PHÂN QUYỀN LÀ USER
-const registerForm = document.getElementById('form-register');
-if (registerForm) {
-  registerForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const fullname = document.getElementById('reg-fullname').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const password = document.getElementById('reg-password').value;
-    const btn = this.querySelector('.btn-submit');
-
-    if(password.length < 6) {
-      alert('Mật khẩu bắt buộc phải từ 6 ký tự trở lên để đảm bảo an toàn!');
-      return;
+    function switchTab(tab) {
+      document.getElementById('auth-error').style.display = 'none';
+      if(tab === 'login') {
+        document.getElementById('tab-login').classList.add('active');
+        document.getElementById('tab-register').classList.remove('active');
+        document.getElementById('panel-login').classList.add('active');
+        document.getElementById('panel-register').classList.remove('active');
+      } else {
+        document.getElementById('tab-register').classList.add('active');
+        document.getElementById('tab-login').classList.remove('active');
+        document.getElementById('panel-register').classList.add('active');
+        document.getElementById('panel-login').classList.remove('active');
+      }
     }
 
-    btn.disabled = true;
-    btn.innerText = "⏳ Đang tạo tài khoản...";
+    // Xử lý đăng ký / đăng nhập thường
+    async function handleAuth(event, action) {
+      event.preventDefault();
+      const errEl = document.getElementById('auth-error');
+      errEl.style.display = 'none';
 
-    // Bước A: Tạo tài khoản xác thực trong hệ thống Supabase Auth
-    const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-      email: email,
-      password: password
-    });
+      let payload = { action: action };
 
-    if (authError) {
-      alert("Lỗi đăng ký: " + authError.message);
-      btn.disabled = false;
-      btn.innerText = "Gửi yêu cầu khởi tạo tài khoản";
-      return;
-    }
-
-    if(authData && authData.user) {
-      // Bước B: Đồng bộ thông tin vào bảng 'profiles' với quyền CHỈ LÀ 'user'
-      const { error: profileError } = await supabaseClient
-        .from('profiles')
-        .insert([
-          { 
-            id: authData.user.id, 
-            ho_ten: fullname, 
-            role: 'user' // Khóa cứng quyền user tại đây, không thể thay đổi từ client
-          }
-        ]);
-
-      if(profileError) {
-        console.error("Lỗi đồng bộ thông tin quyền hạn:", profileError.message);
+      if(action === 'register') {
+        payload.name = document.getElementById('reg-name').value;
+        payload.email = document.getElementById('reg-email').value;
+        payload.password = document.getElementById('reg-pass').value;
+      } else {
+        payload.email = document.getElementById('login-email').value;
+        payload.password = document.getElementById('login-pass').value;
+        payload.type = 'Normal';
       }
 
-      alert("🎉 Đăng ký hoàn tất! Tài khoản độc giả của đồng chí đã được kích hoạt.");
-      switchMode('login');
-      document.getElementById('login-email').value = email;
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const res = await response.json();
+
+        if(res.ok) {
+          if(action === 'register') {
+            alert(res.msg);
+            switchTab('login');
+          } else {
+            // Đăng nhập thành công, lưu trạng thái
+            saveSession(payload.email, res.name);
+          }
+        } else {
+          errEl.textContent = "⚠️ " + res.msg;
+          errEl.style.display = 'flex';
+        }
+      } catch (e) {
+        errEl.textContent = "⚠️ Lỗi kết nối hệ thống dữ liệu.";
+        errEl.style.display = 'flex';
+      }
     }
 
-    btn.disabled = false;
-    btn.innerText = "Gửi yêu cầu khởi tạo tài khoản";
-  });
-}
+    // Xử lý phản hồi từ Google khi Đăng nhập bằng Google thành công
+    async function handleCredentialResponse(response) {
+      // Giải mã dữ liệu JWT token trả về từ phía Google để lấy Email và Tên
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
 
-// 4. XỬ LÝ ĐĂNG NHẬP HỆ THỐNG VÀ ĐIỀU HƯỚNG THEO CẤP BẬC
-const loginForm = document.getElementById('form-login');
-if (loginForm) {
-  loginForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    const btn = this.querySelector('.btn-submit');
+      const googleUser = JSON.parse(jsonPayload);
+      
+      // Gửi sang Sheets để lưu và ghi lịch sử log đăng nhập
+      let payload = {
+        action: 'login',
+        type: 'Google',
+        email: googleUser.email,
+        name: googleUser.name
+      };
 
-    btn.disabled = true;
-    btn.innerText = "⏳ Đang xác thực thông tin...";
-
-    const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
-
-    if (authError) {
-      alert("Đăng nhập thất bại: " + authError.message);
-      btn.disabled = false;
-      btn.innerText = "Xác nhận đăng nhập";
-      return;
+      try {
+        await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        saveSession(googleUser.email, googleUser.name);
+      } catch (e) {
+        alert("Lỗi đồng bộ dữ liệu tài khoản Google.");
+      }
     }
 
-    // Truy vấn quyền từ bảng profiles để điều hướng
-    const { data: profile, error: profileError } = await supabaseClient
-      .from('profiles')
-      .select('role, ho_ten')
-      .eq('id', authData.user.id)
-      .single();
-
-    if (profileError || !profile) {
-      alert("Tài khoản hợp lệ nhưng chưa được đồng bộ thông tin phân quyền.");
-      btn.disabled = false;
-      btn.innerText = "Xác nhận đăng nhập";
-      return;
+    function saveSession(email, name) {
+      localStorage.setItem('user_email', email);
+      localStorage.setItem('user_name', name);
+      checkSession();
     }
 
-    // Lưu thông tin tạm thời vào trình duyệt
-    localStorage.setItem('user_fullname', profile.ho_ten);
+    function checkSession() {
+      const email = localStorage.getItem('user_email');
+      const name = localStorage.getItem('user_name');
 
-    // Ghi nhận nhật ký đăng nhập thành công
-    await supabaseClient.from('activity_logs').insert([
-      { user_id: authData.user.id, action: 'LOGIN', details: `Cán bộ/Chiến sĩ ${profile.ho_ten} truy cập hệ thống` }
-    ]);
-
-    // ĐIỀU HƯỚNG TỰ ĐỘNG THEO QUYỀN HẠN
-    if (profile.role === 'admin') {
-      alert(`👨‍✈️ Xin chào Chỉ huy Quản trị: ${profile.ho_ten}. Chuyển hướng tới Trung tâm điều hành!`);
-      window.location.href = "admin.html";
-    } else {
-      alert(`🎖️ Xin chào Chiến sĩ/Độc giả: ${profile.ho_ten}. Đăng nhập thành công!`);
-      window.location.href = "profile.html"; // Chuyển sang trang profile cá nhân chỉ xem dữ liệu
+      if(email && name) {
+        document.getElementById('auth-container').style.display = 'none';
+        document.getElementById('profile-container').style.display = 'block';
+        document.getElementById('user-display-name').textContent = name;
+        document.getElementById('user-display-email').textContent = email;
+        document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+      } else {
+        document.getElementById('auth-container').style.display = 'block';
+        document.getElementById('profile-container').style.display = 'none';
+      }
     }
-  });
-}
 
-// TỰ ĐỘNG PHÁT HIỆN CHẾ ĐỘ QUA URL (?mode=register)
-document.addEventListener('DOMContentLoaded', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const mode = urlParams.get('mode');
-  if (mode === 'register') {
-    switchMode('register');
-  }
-});
-</script>
+    async function logout() {
+      const email = localStorage.getItem('user_email');
+      if(email) {
+        // Gửi lệnh ghi nhận Đăng xuất lên file Google Sheet lịch sử
+        try {
+          await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'logout', email: email })
+          });
+        } catch(e){}
+      }
+      localStorage.removeItem('user_email');
+      localStorage.removeItem('user_name');
+      checkSession();
+    }
 
+    // Tự động kiểm tra trạng thái đăng nhập khi tải trang
+    window.onload = checkSession;
+  </script>
 </body>
 </html>
