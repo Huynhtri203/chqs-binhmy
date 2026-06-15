@@ -5,286 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tra cứu thông tin Công dân - Xã Bình Mỹ</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<style>
-  :root {
-    --red: #C0392B;
-    --red-dark: #922B21;
-    --red-light: #FADBD8;
-    --gold: #D4A017;
-    --gold-light: #FEF9E7;
-    --bg: #F5F5F0;
-    --surface: #FFFFFF;
-    --text: #1A1A1A;
-    --text-muted: #6B6B6B;
-    --border: #E0DDD5;
-    --shadow: 0 2px 16px rgba(0,0,0,0.08);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Be Vietnam Pro', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 16px 48px;
-  }
-
-  .header {
-    width: 100%;
-    background: var(--red-dark);
-    padding: 0;
-    margin-bottom: 0;
-  }
-  .header-inner {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 20px 24px 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .header-text h1 {
-    font-size: 15px;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: .03em;
-    line-height: 1.3;
-  }
-  .header-text p {
-    font-size: 12px;
-    color: rgba(255,255,255,0.7);
-    margin-top: 2px;
-  }
-
-  .stripe {
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, var(--gold) 0%, #F0C040 50%, var(--gold) 100%);
-  }
-
-  .container {
-    width: 100%;
-    max-width: 760px;
-    margin-top: 28px;
-  }
-
-  .search-card {
-    background: var(--surface);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    padding: 28px 28px 24px;
-    margin-bottom: 20px;
-  }
-
-  .search-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: .07em;
-    margin-bottom: 10px;
-    display: block;
-  }
-
-  .field-input {
-    width: 100%;
-    height: 48px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    padding: 0 16px;
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--text);
-    outline: none;
-    transition: border-color .2s;
-    background: #FAFAF8;
-  }
-  .field-input:focus {
-    border-color: var(--red);
-    background: #fff;
-  }
-  .field-input::placeholder { color: #bbb; font-weight: 400; }
-
-  /* reCAPTCHA */
-  .recaptcha-wrap {
-    margin-top: 16px;
-    display: flex;
-    justify-content: center;
-  }
-
-  .btn-search {
-    height: 48px;
-    padding: 0 24px;
-    background: var(--red);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .15s, transform .1s;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%;
-    margin-top: 12px;
-  }
-  .btn-search:hover { background: var(--red-dark); }
-  .btn-search:active { transform: scale(0.97); }
-  .btn-search svg { width: 17px; height: 17px; flex-shrink: 0; }
-
-  .err-msg {
-    margin-top: 10px;
-    font-size: 13px;
-    color: var(--red);
-    display: none;
-    align-items: center;
-    gap: 6px;
-  }
-  .err-msg svg { width: 15px; height: 15px; flex-shrink: 0; }
-
-  .hint {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 10px;
-  }
-
-  .loading {
-    display: none;
-    text-align: center;
-    padding: 40px;
-    color: var(--text-muted);
-    font-size: 14px;
-  }
-  .spinner {
-    width: 32px; height: 32px;
-    border: 3px solid var(--border);
-    border-top-color: var(--red);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-    margin: 0 auto 12px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .result-card {
-    background: var(--surface);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    display: none;
-    animation: fadeUp .3s ease;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .result-header {
-    background: var(--red);
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .avatar {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    border: 2px solid rgba(255,255,255,0.4);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 700; color: #fff;
-    flex-shrink: 0;
-  }
-  .result-header-text h2 { font-size: 16px; font-weight: 700; color: #fff; }
-  .result-header-text p { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
-
-  .result-body { padding: 0; }
-
-  .section {
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-  }
-  .section:last-child { border-bottom: none; }
-
-  .section-title {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .09em;
-    color: var(--red);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--red-light);
-  }
-
-  .fields-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px 20px;
-  }
-  .fields-grid.full { grid-template-columns: 1fr; }
-
-  .field { display: flex; flex-direction: column; gap: 3px; }
-  .field-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: .06em;
-  }
-  .field-value {
-    font-size: 14px;
-    color: var(--text);
-    font-weight: 500;
-    line-height: 1.5;
-    white-space: pre-line;
-  }
-  .field-value.big { font-size: 15px; font-weight: 600; }
-
-  .stt-badge {
-    display: inline-block;
-    background: var(--gold-light);
-    color: #7A5C00;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 20px;
-    border: 1px solid #E8D080;
-  }
-
-  .footer {
-    margin-top: 12px;
-    font-size: 12px;
-    color: #aaa;
-    text-align: center;
-  }
-
-  @media (max-width: 620px) {
-    .search-card { padding: 20px 16px; }
-    .fields-grid { grid-template-columns: 1fr; }
-    .result-header { padding: 14px 16px; }
-    .section { padding: 14px 16px; }
-    .header-text h1 { font-size: 13px; }
-    .recaptcha-wrap { transform: scale(0.9); transform-origin: left center; }
-  }
-</style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="header">
   <div class="header-inner">
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg"
@@ -293,12 +19,23 @@
       <h1>HỆ THỐNG TRA CỨU THÔNG TIN CÔNG DÂN TUỔI 17</h1>
       <p>Nhập số Căn cước công dân và Họ tên để xem thông tin cá nhân</p>
     </div>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Chuyển chế độ sáng/tối">🌙</button>
   </div>
 </div>
 <div class="stripe"></div>
+  <!-- NAV TABS -->
+<div style="width:100%;background:var(--surface);border-bottom:1px solid var(--border);">
+  <div style="max-width:760px;margin:0 auto;display:flex;">
+    <a href="tuyen-quan.html" style="flex:1;padding:14px 12px;text-align:center;font-size:13px;font-weight:600;color:#6B6B6B;text-decoration:none;border-bottom:3px solid transparent;">🪖 Tuyển Quân</a>
+    <a href="tuyen-sinh.html" style="flex:1;padding:14px 12px;text-align:center;font-size:13px;font-weight:600;color:#6B6B6B;text-decoration:none;border-bottom:3px solid transparent;">🎓 Tuyển Sinh</a>
+    <a href="index.html" style="flex:1;padding:14px 12px;text-align:center;font-size:13px;font-weight:600;color:#C0392B;text-decoration:none;border-bottom:3px solid #C0392B;">🔍 Tra Cứu</a>
+  </div>
+</div>
 
+<!-- NỘI DUNG CHÍNH -->
 <div class="container">
 
+  <!-- FORM TÌM KIẾM -->
   <div class="search-card">
     <span class="search-label">Số Căn cước công dân (CCCD)</span>
     <input class="field-input" type="text" id="inp" maxlength="12" inputmode="numeric"
@@ -332,11 +69,13 @@
     <p class="hint">Phải nhập đúng số CCCD, họ tên và xác nhận không phải robot mới tra cứu được</p>
   </div>
 
+  <!-- LOADING -->
   <div class="loading" id="loading">
     <div class="spinner"></div>
     Đang tra cứu dữ liệu...
   </div>
 
+  <!-- KẾT QUẢ -->
   <div class="result-card" id="result">
     <div class="result-header">
       <div class="avatar" id="r-avatar">?</div>
@@ -428,105 +167,36 @@
     </div>
   </div>
 
+  <!-- FOOTER -->
   <div class="footer">Hệ thống tra cứu nội bộ · Chỉ hiển thị thông tin của cá nhân tra cứu</div>
-  <!-- <div class="footer">Liên hệ thắc mắc: zalo: 09875948..@ByTri</div> -->
+  <div class="footer">Liên hệ thắc mắc: zalo: 09875948..@ByTri</div>
   <div class="footer">Mọi thắc mắc liên hệ:
     <a href="https://www.facebook.com/share/18g8qhhaEB/?mibextid=wwXIfr" target="_blank" style="color:#572db4;">Facebook</a>
   </div>
 
-  <!-- QR Code -->
+  <!-- QR CODE -->
   <div style="text-align:center;margin-top:24px;">
     <p style="font-size:12px;color:#aaa;margin-bottom:10px;">Quét mã QR để truy cập</p>
     <div id="qrcode" style="display:inline-block;padding:10px;background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);"></div>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script>
-    new QRCode(document.getElementById("qrcode"), {
-      text: "https://www.facebook.com/share/1CjGYQHaGD/?mibextid=wwXIfr",
-      width: 150,
-      height: 150,
-    });
-  </script>
+
+  <div class="footer" style="margin-top:8px;">
+    <a href="index.html" style="color:var(--red);font-weight:600;text-decoration:none;">← Về trang chủ</a>
+  </div>
 
 </div>
 
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbyi4VmL5I82LckseuzSGaysLpLaRnksKZXNgz8TilkxkYody-3oMMXIcnzxE5nmyoa1/exec';
-
-function show(id, val) {
-  document.getElementById(id).textContent = val || '—';
-}
-
-function initials(name) {
-  if (!name) return '?';
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0][0].toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
-function setErr(msg) {
-  document.getElementById('err-text').textContent = msg;
-  document.getElementById('err').style.display = 'flex';
-}
-
-function clearErr() {
-  document.getElementById('err').style.display = 'none';
-}
-
-async function lookup() {
-  const cccd    = document.getElementById('inp').value.trim();
-  const hoten   = document.getElementById('inp-hoten').value.trim();
-  const captcha = grecaptcha.getResponse();
-
-  clearErr();
-  document.getElementById('result').style.display = 'none';
-  document.getElementById('loading').style.display = 'none';
-
-  if (!cccd)              { setErr('Vui lòng nhập số CCCD.'); return; }
-  if (cccd.length !== 12) { setErr('Số CCCD phải đủ 12 chữ số.'); return; }
-  if (!hoten)             { setErr('Vui lòng nhập họ và tên.'); return; }
-  if (!captcha)           { setErr('Vui lòng xác nhận "Tôi không phải robot".'); return; }
-
-  document.getElementById('loading').style.display = 'block';
-
-  try {
-    const url = `${API_URL}?cccd=${encodeURIComponent(cccd)}&hoten=${encodeURIComponent(hoten)}`;
-    const res  = await fetch(url);
-    const json = await res.json();
-
-    document.getElementById('loading').style.display = 'none';
-
-    if (!json.ok) {
-      setErr('Không tìm thấy thông tin. Kiểm tra lại số CCCD và họ tên khai sinh.');
-      grecaptcha.reset();
-      return;
-    }
-
-    const d = json.data;
-    const tenKhaiSinh = d.hoten || d.hotenGop.split('\n')[0].trim();
-
-    show('r-gcn', d.gcn);
-    show('r-cccd', d.cccd);
-    show('r-name', tenKhaiSinh);
-    document.getElementById('r-cccd-disp').textContent = 'CCCD: ' + d.cccd;
-    document.getElementById('r-stt').textContent = d.stt ? 'STT ' + d.stt : '—';
-    document.getElementById('r-avatar').textContent = initials(tenKhaiSinh);
-    show('r-hoten', d.hotenGop);
-    show('r-trinhdoVH', d.trinhdoVH);
-    show('r-noicu', d.noicu);
-    show('r-thanhphan', d.thanhphan);
-    show('r-cmkt', d.cmkt);
-    show('r-chame', d.chame);
-
-    document.getElementById('result').style.display = 'block';
-    grecaptcha.reset();
-
-  } catch(e) {
-    document.getElementById('loading').style.display = 'none';
-    setErr('Không thể kết nối dữ liệu. Vui lòng thử lại sau.');
-    grecaptcha.reset();
-  }
-}
+  new QRCode(document.getElementById("qrcode"), {
+    text: "https://huynhtri203.github.io/Tracuu_cccd/",
+    width: 150,
+    height: 150,
+  });
 </script>
+<script src="main.js"></script>
+<script src="theme.js"></script>
+
 </body>
 </html>
