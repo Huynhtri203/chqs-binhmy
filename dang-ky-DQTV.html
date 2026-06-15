@@ -236,7 +236,7 @@ textarea.form-input { resize: vertical; min-height: 90px; }
 
         <div class="form-group">
           <label class="form-label">Địa chỉ thường trú / tạm trú tại xã *</label>
-          <input type="text" id="addr" class="form-input" required placeholder="Số nhà, Tổ, Ấp..., Xã Bình Mỹ">
+          <input type="text" id="addr" class="form-input" required placeholder="Số nhà, Đường, Ấp..., Xã Bình Mỹ">
         </div>
 
         <div class="form-grid-inputs">
@@ -298,7 +298,7 @@ textarea.form-input { resize: vertical; min-height: 90px; }
     <div class="footer-col">
       <h3>Thông tin liên hệ</h3>
       <p style="color:var(--text-muted); line-height:1.6;">
-        📍 Địa chỉ: Đường Bình Mỹ, Xã Bình Mỹ, Huyện Củ Chi, TP.HCM<br>
+        📍 Địa chỉ:149 Đường Trung An, Xã Bình Mỹ, TP.HCM<br>
         📞 Điện thoại trực ban: 028.xxx.xxx<br>
         🕒 Giờ làm việc: Hành chính (Trực chiến 24/7)
       </p>
@@ -338,8 +338,7 @@ themeToggle.addEventListener('click', () => {
 // ========================================================
 // 3. KẾT NỐI API DATABASE GOOGLE SHEET (VIA APP SCRIPT)
 // ========================================================
-// ⚠️ Thay bằng đường dẫn API Web App lấy từ Google Apps Script của bạn
-const FORM_API = "https://script.google.com/macros/s/AKfycbxwOc9GgXX4TseUVxb8pEj40D6dx__iGMO6xBSfYP9_lnvyQ-PK_KuCnjVW6cMnIcf-/exec";
+const FORM_API = "https://script.google.com/macros/s/AKfycbxXKZlct0sa5A46m9p_vjKqc38W4CdtzrKzJVN7-piFeuNEQlJIR2VyZOfzfxW5NIoB/exec";
 
 document.getElementById('dqtv-form').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -369,21 +368,25 @@ document.getElementById('dqtv-form').addEventListener('submit', async function(e
   alertBox.style.display = 'none';
 
   try {
-    // Gửi phương thức POST bất đồng bộ tới Apps Script Google Sheet bằng chế độ no-cors giống trang tuyển quân
+    // ⚠️ Apps Script yêu cầu gửi dạng text (no-cors) để tránh CORS preflight lỗi
+    // Dữ liệu JSON được nhúng vào field "data" của FormData
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(payload));
+
     await fetch(FORM_API, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      mode: 'no-cors',   // ← BẮT BUỘC với Apps Script khi gọi từ trình duyệt
+      body: formData
     });
 
-    // Cập nhật trạng thái thành công lên giao diện người dùng
+    // Với no-cors, response luôn là opaque (không đọc được body)
+    // → Coi là thành công nếu fetch không throw lỗi mạng
+    alertBox.textContent = '✅ Đăng ký thông tin thành công! Ban Chỉ huy Quân sự xã sẽ rà soát hồ sơ và liên hệ trực tiếp.';
     alertBox.style.display = 'block';
-    this.reset(); // Làm sạch form
+    this.reset();
     btn.style.background = '#22c55e';
     btn.innerHTML = '✅ Đã gửi hồ sơ thành công';
     
-    // Khôi phục nút sau 4 giây
     setTimeout(() => {
       btn.disabled = false;
       btn.style.background = '';
@@ -391,7 +394,7 @@ document.getElementById('dqtv-form').addEventListener('submit', async function(e
     }, 4000);
 
   } catch(err) {
-    errorBox.textContent = '❌ Không thể thiết lập kết nối dữ liệu. Vui lòng kiểm tra lại mạng mạng!';
+    errorBox.textContent = '❌ Không thể kết nối. Vui lòng kiểm tra lại mạng và thử lại.';
     errorBox.style.display = 'block';
     btn.disabled = false;
     btn.style.background = '';
