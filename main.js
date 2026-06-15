@@ -1,64 +1,87 @@
-document.addEventListener("DOMContentLoaded", () => {
-  
-  // 1. Scroll Reveal Logic
-  const revealElements = document.querySelectorAll('.reveal');
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-      }
-    });
-  }, { threshold: 0.1 });
+// ===========================
+// CẤU HÌNH API
+// ===========================
+const API_URL = 'https://script.google.com/macros/s/AKfycbzKqZNlfsxmxy4_sWy15AL_3oJtAHXXnTGgIeEeklz65tnKta5pnD5unlz4wjaoaKHchQ/exec';
 
-  revealElements.forEach(el => revealObserver.observe(el));
+// ===========================
+// HÀM TIỆN ÍCH
+// ===========================
+function show(id, val) {
+  document.getElementById(id).textContent = val || '—';
+}
 
-  // 2. Counter Animation
-  const counters = document.querySelectorAll('.counter');
-  counters.forEach(counter => {
-    const updateCount = () => {
-      const target = +counter.getAttribute('data-target');
-      const count = +counter.innerText;
-      const speed = 200; // Tốc độ chạy số
-      const inc = target / speed;
+function initials(name) {
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
-      if (count < target) {
-        counter.innerText = Math.ceil(count + inc);
-        setTimeout(updateCount, 15);
-      } else {
-        counter.innerText = target;
-      }
-    };
-    
-    // Kích hoạt khi cuộn tới
-    const counterObserver = new IntersectionObserver((entries) => {
-      if(entries[0].isIntersecting) updateCount();
-    });
-    counterObserver.observe(counter);
-  });
+function setErr(msg) {
+  document.getElementById('err-text').textContent = msg;
+  document.getElementById('err').style.display = 'flex';
+}
 
-  // 3. 3D Tilt & Border Glow (Tracking Mouse)
-  const cards = document.querySelectorAll('.card-3d');
-  cards.forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      // Update CSS Variables for Border Glow
-      card.style.setProperty('--mouse-x', `${x}px`);
-      card.style.setProperty('--mouse-y', `${y}px`);
+function clearErr() {
+  document.getElementById('err').style.display = 'none';
+}
 
-      // 3D Tilt calculation
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const rotateX = ((y - centerY) / centerY) * -10; // Giới hạn góc nghiêng 10 độ
-      const rotateY = ((x - centerX) / centerX) * 10;
-      
-      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    });
+// ===========================
+// HÀM TRA CỨU CHÍNH
+// ===========================
+async function lookup() {
+  const cccd    = document.getElementById('inp').value.trim();
+  const hoten   = document.getElementById('inp-hoten').value.trim();
+  const captcha = grecaptcha.getResponse();
 
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-    });
-  });
-});
+  clearErr();
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('loading').style.display = 'none';
+
+  // Kiểm tra đầu vào
+  if (!cccd)              { setErr('Vui lòng nhập số CCCD.'); return; }
+  if (cccd.length !== 12) { setErr('Số CCCD phải đủ 12 chữ số.'); return; }
+  if (!hoten)             { setErr('Vui lòng nhập họ và tên.'); return; }
+  if (!captcha)           { setErr('Vui lòng xác nhận "Tôi không phải robot".'); return; }
+
+  document.getElementById('loading').style.display = 'block';
+
+  try {
+    const url  = `${API_URL}?cccd=${encodeURIComponent(cccd)}&hoten=${encodeURIComponent(hoten)}`;
+    const res  = await fetch(url);
+    const json = await res.json();
+
+    document.getElementById('loading').style.display = 'none';
+
+    if (!json.ok) {
+      setErr('Không tìm thấy thông tin. Kiểm tra lại số CCCD và họ tên khai sinh.');
+      grecaptcha.reset();
+      return;
+    }
+
+    // Hiển thị kết quả
+    const d = json.data;
+    const tenKhaiSinh = d.hoten || d.hotenGop.split('\n')[0].trim();
+
+    show('r-gcn', d.gcn);
+    show('r-cccd', d.cccd);
+    show('r-name', tenKhaiSinh);
+    document.getElementById('r-cccd-disp').textContent = 'CCCD: ' + d.cccd;
+    document.getElementById('r-stt').textContent = d.stt ? 'STT ' + d.stt : '—';
+    document.getElementById('r-avatar').textContent = initials(tenKhaiSinh);
+    show('r-hoten', d.hotenGop);
+    show('r-trinhdoVH', d.trinhdoVH);
+    show('r-noicu', d.noicu);
+    show('r-thanhphan', d.thanhphan);
+    show('r-cmkt', d.cmkt);
+    show('r-chame', d.chame);
+
+    document.getElementById('result').style.display = 'block';
+    grecaptcha.reset();
+
+  } catch (e) {
+    document.getElementById('loading').style.display = 'none';
+    setErr('Không thể kết nối dữ liệu. Vui lòng thử lại sau.');
+    grecaptcha.reset();
+  }
+}
