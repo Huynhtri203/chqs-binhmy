@@ -20,18 +20,18 @@ const SHOWCASE_DATA = [
   },
   {
     type: 'image',
-    src: 'https://images.unsplash.com/photo-1508847154043-be12a62861c1?q=80&w=1200&auto=format&fit=crop', // <--- SỬA ĐƯỜNG DẪN ẢNH TẠI ĐÂY
-    title: 'Tinh Thần Chiến Sĩ',
-    subtitle: 'Vững bước dưới lá quân kỳ',
-    desc: 'Trực quan hóa hình tượng người lính kiên trung, bảo vệ bình yên Tổ quốc và đồng hành cùng nhân dân trong công cuộc dựng xây đất nước.'
+    src: 'images/Nen2.png', // <--- SỬA ĐƯỜNG DẪN ẢNH TẠI ĐÂY
+    title: 'Công nghệ & Truyền Thông',
+    subtitle: '1',
+    desc: 'Mô phỏng'
   },
   {
     type: 'video',
-    src: 'images/video1.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO 2 TẠI ĐÂY
+    src: 'images/NenCongNghe.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO 2 TẠI ĐÂY
     poster: 'images/video-poster.jpg',
-    title: 'Hành Quân Dã Ngoại',
-    subtitle: 'Nâng cao kỹ năng thực chiến',
-    desc: 'Các đợt hành quân dã ngoại, cắm trại dã chiến giúp rèn luyện khả năng cơ động và thích ứng địa hình hiểm trở.'
+    title: 'Công nghệ',
+    subtitle: 'Mô Phỏng',
+    desc: '2'
   },
   {
     type: 'image',

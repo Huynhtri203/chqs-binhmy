@@ -11,7 +11,7 @@
 
 const HERO_BANNER_CONFIG = {
   type: 'video', // 'video' hoặc 'image'
-  src: 'images/CodeGioiThieu.mp4', // <--- SỬA ĐƯỜNG DẪN ẢNH HOẶC VIDEO BANNER CHÍNH TẠI ĐÂY
+  src: 'images/VideoMophong.mp4', // <--- SỬA ĐƯỜNG DẪN ẢNH HOẶC VIDEO BANNER CHÍNH TẠI ĐÂY
   poster: 'images/video-poster.jpg',
   headline: 'BẢO VỆ TỔ QUỐC',
   subheading: 'LỰC LƯỢNG VŨ TRANG NHÂN DÂN XÃ BÌNH MỸ',
