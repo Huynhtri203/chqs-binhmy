@@ -490,3 +490,585 @@ body.dark .hamburger-bar {
     order: 3; /* Đưa về vị trí cuối cùng bên phải */
   }
 }
+
+/* ═══════════════════ MULTIMEDIA INTERACTIVE SHOWCASE ═══════════════════ */
+.interactive-showcase-container {
+  width: 100%;
+  margin-top: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.showcase-header {
+  margin-bottom: 32px;
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+  align-items: center;
+}
+
+/* Khung WebGL lơ lửng */
+.showcase-media-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  z-index: 2;
+}
+
+#showcase-webgl-canvas {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.showcase-media-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+#showcase-main-media {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(20px);
+}
+
+#showcase-main-media img,
+#showcase-main-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Các góc trang trí HUD công nghệ cao */
+.showcase-hud-border {
+  position: absolute;
+  inset: 12px;
+  border: 1px dashed rgba(229, 9, 20, 0.15);
+  pointer-events: none;
+  border-radius: calc(var(--radius) - 4px);
+}
+
+.showcase-hud-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--accent);
+  pointer-events: none;
+}
+
+.showcase-hud-corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+.showcase-hud-corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+.showcase-hud-corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+.showcase-hud-corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+/* Bảng thông tin bên phải */
+.showcase-info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 280px;
+  padding: 32px;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .showcase-info-panel {
+  background: rgba(20, 20, 20, 0.6);
+}
+
+.showcase-text-content {
+  margin-bottom: 24px;
+}
+
+.showcase-info-subtitle {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.showcase-info-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: var(--text-color);
+}
+
+.showcase-info-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Bộ điều khiển chuyển đổi (Indicators) */
+.showcase-control-wrapper {
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+}
+
+.showcase-control-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.showcase-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.indicator-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(229, 9, 20, 0.04);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  min-width: 80px;
+  text-align: left;
+}
+
+.indicator-pill:hover {
+  background: rgba(229, 9, 20, 0.08);
+  border-color: rgba(229, 9, 20, 0.3);
+  color: var(--text-color);
+  transform: translateY(-2px);
+}
+
+.indicator-pill.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(229, 9, 20, 0.3);
+}
+
+.indicator-number {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.indicator-type {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+.indicator-pill.active .indicator-type {
+  opacity: 1;
+}
+
+/* Tối ưu hóa phản hồi (Responsive) */
+@media (max-width: 992px) {
+  .showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  
+  .showcase-info-panel {
+    min-height: auto;
+    padding: 24px;
+  }
+}
+
+/* ═══════════════════ PARALLAX HERO SECTION (Full-Screen 100vh) ═══════════════════ */
+.parallax-hero-section {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+#hero-parallax-media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  will-change: transform;
+}
+
+.hero-parallax-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.2) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  z-index: 2;
+}
+
+.hero-parallax-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  max-width: 900px;
+  padding: 0 24px;
+}
+
+.hero-parallax-text-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-parallax-badge {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(229, 9, 20, 0.2);
+  padding: 8px 20px;
+  border-radius: 30px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(229, 9, 20, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.hero-parallax-title {
+  font-size: clamp(2.5rem, 6.5vw, 6rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin-bottom: 24px;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  perspective: 400px;
+}
+
+/* Các lớp span bao bọc từng ký tự phục vụ cho hoạt họa trượt chữ nghệ thuật của GSAP */
+.char-span {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.hero-parallax-desc {
+  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 650px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.hero-parallax-buttons {
+  display: flex;
+  gap: 16px;
+  z-index: 4;
+}
+
+.hero-parallax-cta {
+  padding: 12px 28px !important;
+  font-size: 14px !important;
+  border-radius: 30px !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 25px rgba(229, 9, 20, 0.4) !important;
+}
+
+/* Mũi tên chỉ dẫn nghệ thuật cuộn xuống */
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 3;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.mouse-icon {
+  width: 24px;
+  height: 40px;
+  border: 2px solid #ffffff;
+  border-radius: 12px;
+  position: relative;
+}
+
+.mouse-icon .wheel {
+  width: 4px;
+  height: 8px;
+  background-color: #ffffff;
+  border-radius: 2px;
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: scrollWheel 1.5s infinite;
+}
+
+@keyframes scrollWheel {
+  100% {
+    top: 24px;
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════ HORIZONTAL MARQUEE CAROUSEL (NotebookLM Style) ═══════════════════ */
+.marquee-carousel-section {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow: hidden;
+  padding: 60px 0;
+  z-index: 5;
+}
+
+.marquee-header {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.marquee-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  display: flex;
+  position: relative;
+  cursor: grab;
+  padding: 20px 0;
+  scrollbar-width: none; /* Hide scrollbar Firefox */
+}
+
+.marquee-wrapper::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome/Safari */
+}
+
+.marquee-wrapper.dragging {
+  cursor: grabbing;
+}
+
+.marquee-track {
+  display: flex;
+  gap: 24px;
+  padding-left: 24px;
+  will-change: transform;
+  /* Chạy tự động vô tận sử dụng CSS Animation keyframes */
+  animation: infiniteMarquee 35s linear infinite;
+}
+
+@keyframes infiniteMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Chuyển dịch đúng một nửa chiều rộng track (phần gốc) để nối tiếp trơn tru */
+    transform: translateX(calc(-50% - 12px)); 
+  }
+}
+
+.marquee-card {
+  flex-shrink: 0;
+  width: clamp(280px, 80vw, 360px);
+  min-height: 200px;
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s, box-shadow 0.3s;
+}
+
+[data-theme="dark"] .marquee-card {
+  background: rgba(20, 20, 20, 0.6);
+}
+
+.marquee-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  border-color: rgba(229, 9, 20, 0.3);
+  box-shadow: 0 20px 40px rgba(229, 9, 20, 0.08);
+}
+
+/* Thẻ Review chữ */
+.review-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-color);
+  font-style: italic;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.review-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+}
+
+.author-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.author-role {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+  display: block;
+}
+
+/* Thẻ Media (Ảnh/Video) */
+.card-type-video,
+.card-type-image {
+  padding: 0;
+  overflow: hidden;
+}
+
+.card-media-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #000;
+}
+
+.card-media-wrapper img,
+.card-media-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.marquee-card:hover .card-media-wrapper img,
+.marquee-card:hover .card-media-wrapper video {
+  transform: scale(1.05);
+}
+
+.card-info {
+  padding: 20px 24px 24px 24px;
+  text-align: left;
+}
+
+.card-info-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-color);
+}
+
+.card-info-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Biểu tượng nút phát nhấp nháy cho video tự phát */
+.card-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.video-playing + .card-video-overlay {
+  opacity: 0;
+}
+
+.play-pulse-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  padding-left: 3px;
+  box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.6);
+  animation: pulsePlayButton 2s infinite;
+}
+
+@keyframes pulsePlayButton {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(229, 9, 20, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(229, 9, 20, 0);
+  }
+}
