@@ -19,15 +19,15 @@ const SHOWCASE_DATA = [
     desc: 'Lực lượng vũ trang xã Bình Mỹ luôn tích cực học tập, rèn luyện kỹ thuật chiến đấu và nâng cao thể lực sẵn sàng ứng phó mọi tình huống.'
   },
   {
-    type: 'image',
-    src: 'images/Nen2.png', // <--- SỬA ĐƯỜNG DẪN ẢNH TẠI ĐÂY
+    type: 'video',
+    src: 'images/VD5.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO TẠI ĐÂY
     title: 'Công nghệ & Truyền Thông',
     subtitle: '1',
     desc: 'Mô phỏng'
   },
   {
     type: 'video',
-    src: 'images/NenCongNghe.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO 2 TẠI ĐÂY
+    src: 'images/VD4.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO 2 TẠI ĐÂY
     poster: 'images/video-poster.jpg',
     title: 'Công nghệ',
     subtitle: 'Mô Phỏng',
