@@ -100,12 +100,14 @@ class InteractiveShowcase {
       video.muted = true;
       video.loop = true;
       video.playsInline = true;
+      video.preload = 'none'; // 🎯 Tối ưu: Không tải video cho đến khi cần
       video.controls = true;
       if (data.poster) video.setAttribute('poster', data.poster);
       
       // Thêm hiệu ứng gợn nhẹ bằng CSS cho video
       video.style.filter = 'contrast(1.05) brightness(0.95)';
       this.mediaContent.appendChild(video);
+      // VideoOptimizer sẽ tự động nhận diện và quản lý video này
     } else {
       const img = document.createElement('img');
       img.src = data.src;

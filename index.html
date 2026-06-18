@@ -1206,14 +1206,14 @@ body::before {
   <div class="grid-2 reveal" id="video-container">
     <div class="glass-card hover-glow video-card-transparent">
       <div class="media-placeholder">
-        <video src="images/Video.mp4" controls playsinline></video>
+        <video src="images/Video.mp4" controls playsinline preload="none"></video>
       </div>
       <h3 class="card-title">Hành quân rèn luyện</h3>
       <p class="card-desc">Hành quân rèn luyện hàng tuần để nâng cao năng lực sức khỏe và duy trì nề nếp.</p>
     </div>
     <div class="glass-card hover-glow video-card-transparent">
       <div class="media-placeholder">
-        <video src="images/Video1.mp4" controls playsinline></video>
+        <video src="images/video1.mp4" controls playsinline preload="none"></video>
       </div>
       <h3 class="card-title">Hành quân rèn luyện</h3>
       <p class="card-desc">Video mô tả hoạt động của lực lượng vũ trang xã Bình Mỹ.</p>
@@ -1280,7 +1280,7 @@ body::before {
       </div>
       <div class="video-intro-right">
         <div class="video-block-wrapper">
-          <video autoplay muted loop controls poster="images/video-poster.jpg" preload="metadata" playsinline>
+          <video autoplay muted loop controls poster="images/video-poster.jpg" preload="none" playsinline>
             <source src="images/VD3.mp4" type="video/mp4">
           </video>
         </div>
@@ -1694,6 +1694,8 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
     });
   });
 </script>
+<!-- 🎯 VIDEO OPTIMIZATION: Lazy-load video khi xuất hiện trên màn hình -->
+<script src="video-optimization.js"></script>
 <script src="lang.js"></script>
 <script src="main.js"></script>
 </body>

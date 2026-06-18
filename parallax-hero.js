@@ -49,11 +49,13 @@ class ParallaxHero {
       video.muted = true;
       video.loop = true;
       video.playsInline = true;
+      video.preload = 'none'; // 🎯 Tối ưu: Không tải video cho đến khi cần
       if (HERO_BANNER_CONFIG.poster) video.setAttribute('poster', HERO_BANNER_CONFIG.poster);
       video.style.width = '100%';
       video.style.height = '100%';
       video.style.objectFit = 'cover';
       this.mediaContainer.appendChild(video);
+      // VideoOptimizer sẽ tự động nhận diện và quản lý video này
     } else {
       const img = document.createElement('img');
       img.src = HERO_BANNER_CONFIG.src;

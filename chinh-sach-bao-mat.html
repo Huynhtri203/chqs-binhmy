@@ -189,7 +189,8 @@
             muted 
             loop 
             playsinline 
-            controls>
+            controls
+            preload="none">
           </video>
 
           <div class="video-overlay-hud"></div>
@@ -274,5 +275,7 @@
       }
     });
   </script>
+<!-- 🎯 VIDEO OPTIMIZATION: Lazy-load video khi xuất hiện trên màn hình -->
+<script src="video-optimization.js"></script>
 </body>
 </html>
