@@ -22,9 +22,9 @@ const MARQUEE_ITEMS = [
   },
   {
     type   : 'image',
-    src    : 'images/Toan2.jpg',
-    title  : 'Tăng gia',
-    desc   : 'Toàn đơn vị',
+    src    : 'images/Toan3.jpg',
+    title  : 'Tăng gia sản xuất với mô hình - Nuôi ếch',
+    desc   : 'Hoạt động chăm sóc và phát triển mô hình nuôi ếch trong khu tăng gia sản xuất của đơn vị.',
   },
   {
     type   : 'review',
