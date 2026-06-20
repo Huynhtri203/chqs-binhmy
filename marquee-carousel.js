@@ -22,8 +22,8 @@ const MARQUEE_ITEMS = [
   },
   {
     type   : 'image',
-    src    : 'images/thien.jpg',
-    title  : 'Luyện tập Thực Hành Chiến Thuật',
+    src    : 'images/Toan2.jpg',
+    title  : 'Tăng gia',
     desc   : 'Toàn đơn vị',
   },
   {
