@@ -35,7 +35,7 @@ const MARQUEE_ITEMS = [
   },
   {
     type   : 'video',
-    src    : 'images/videotoan.mp4',
+    src    : 'images/VD3.mp4',
     poster : 'images/toan.jpg',
     title  : 'ẹc ẹc',
     desc   : 'éc éc éc',
