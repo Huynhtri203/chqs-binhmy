@@ -12,7 +12,7 @@
 const SHOWCASE_DATA = [
   {
     type: 'video',
-    src: 'images/Video.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO 1 TẠI ĐÂY
+    src: 'images/VdHanhQuan2.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO 1 TẠI ĐÂY
     poster: 'images/video-poster.jpg',
     title: 'Kỷ Luật & Sức Mạnh',
     subtitle: 'Huấn luyện Dân quân tự vệ xã Bình Mỹ',
