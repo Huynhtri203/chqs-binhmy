@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tăng Gia Sản Xuất - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════ DESIGN TOKENS (ĐỒNG BỘ TRANG CHỦ) ═══════════════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255, 255, 255, 0.8);
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.3);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914;
+  --accent-hover: #ff1e2a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+
+  /* Gallery specific */
+  --card-radius: 24px;
+  --card-w: 340px;
+  --card-h: 220px;
+  --marquee-gap: 20px;
+  --marquee-speed: 36s;
+}
+
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(10, 10, 10, 0.8);
+  --surface-hover: #141414;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-glow: rgba(229, 9, 20, 0.5);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+}
+
+/* ═══════════════════ RESET & GLOBAL ═══════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-family: var(--font-main); background: var(--bg-color); color: var(--text-main); }
+body { overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1;
+  background: radial-gradient(circle at 50% 0%, rgba(229, 9, 20, 0.10) 0%, transparent 50%),
+              radial-gradient(circle at 0% 100%, rgba(255,255,255,0.02) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* ═══════════════════ HEADER (ĐỒNG BỘ gioi-thieu.html) ═══════════════════ */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(247, 242, 242, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; letter-spacing: -0.03em; }
+.brand img { width: 40px; height: 40px; }
+
+.nav-menu { display: flex; align-items: center; gap: 32px; }
+.nav-item { font-size: 14px; font-weight: 500; color: var(--text-muted); transition: color 0.2s; padding: 24px 0; }
+.nav-item:hover, .nav-item.active { color: var(--text-main); }
+
+.btn-saas {
+  background: #fff; color: #000; padding: 8px 18px; border-radius: 22px;
+  font-size: 14px; font-weight: 600; transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(17, 17, 17, 0.15);
+}
+.btn-saas:hover { background: #e0e0e0; transform: scale(1.02); }
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 10px 10px rgba(229,9,20,0.3); }
+
+/* ═══════════════════ HERO SECTION ═══════════════════ */
+.hero {
+  padding-top: 140px;
+  padding-bottom: 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+
+.badge-hero {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(229, 9, 20, 0.09); color: var(--accent);
+  padding: 6px 18px; border-radius: 99px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  border: 1px solid rgba(229, 9, 20, 0.18);
+  margin-bottom: 28px;
+}
+.badge-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+.hero-title {
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 22px;
+  background: linear-gradient(160deg, var(--text-main) 0%, var(--text-muted) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.hero-desc {
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  color: var(--text-muted);
+  max-width: 640px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff;
+  padding: 13px 30px; border-radius: 99px;
+  font-size: 14px; font-weight: 700;
+  box-shadow: 0 12px 28px rgba(229, 9, 20, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.hero-cta:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 18px 36px rgba(229, 9, 20, 0.42);
+}
+.hero-cta svg { width: 16px; height: 16px; }
+
+/* Stats bar */
+.stats-row {
+  display: flex; align-items: center; justify-content: center; gap: 40px;
+  margin-top: 52px; padding-top: 36px;
+  border-top: 1px solid var(--border-color);
+}
+.stat-item { text-align: center; }
+.stat-num { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.04em; color: var(--text-main); }
+.stat-label { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-top: 4px; }
+.stat-sep { width: 1px; height: 40px; background: var(--border-color); }
+
+/* ═══════════════════ MARQUEE GALLERY ═══════════════════ */
+.gallery-section {
+  padding: 80px 0 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Edge fade masks */
+.gallery-section::before,
+.gallery-section::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; width: 160px; z-index: 10;
+  pointer-events: none;
+}
+.gallery-section::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-color) 0%, transparent 100%);
+}
+.gallery-section::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-color) 0%, transparent 100%);
+}
+
+/* Section header */
+.gallery-header {
+  max-width: 1200px; margin: 0 auto 48px; padding: 0 24px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.gallery-header-left h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800; letter-spacing: -0.03em;
+  position: relative; display: inline-block;
+}
+.gallery-header-left h2::after {
+  content: ''; display: block; width: 40px; height: 3px;
+  background: var(--accent); border-radius: 2px; margin-top: 10px;
+}
+.gallery-header-left p {
+  font-size: 14px; color: var(--text-muted); margin-top: 12px; max-width: 400px; line-height: 1.6;
+}
+.gallery-count {
+  font-size: 12px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+/* Track & marquee */
+.marquee-track {
+  display: flex;
+  gap: var(--marquee-gap);
+  width: max-content;
+  animation: marquee-scroll var(--marquee-speed) linear infinite;
+}
+
+.marquee-track:hover { animation-play-state: paused; }
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(calc(-50% - var(--marquee-gap) / 2)); }
+}
+
+/* ═══════════════════ IMAGE CARDS ═══════════════════ */
+.img-card {
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.img-card:hover {
+  transform: scale(1.05) translateY(-4px);
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.28);
+  z-index: 5;
+}
+
+/* Placeholder gradient bg per card */
+.img-card-bg {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3.5rem;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.img-card:hover .img-card-bg { transform: scale(1.08); }
+
+/* Real image (once set) */
+.img-card img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 1;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.img-card:hover img { transform: scale(1.08); }
+
+/* Dark gradient overlay at bottom */
+.img-card-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(to top,
+    rgba(0,0,0,0.72) 0%,
+    rgba(0,0,0,0.22) 45%,
+    transparent 100%);
+}
+
+/* Card label */
+.img-card-label {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+  padding: 18px 20px 20px;
+}
+.img-card-tag {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 5px;
+}
+.img-card-name {
+  font-size: 15px; font-weight: 700; color: #fff;
+  line-height: 1.3;
+}
+
+/* ═══════════════════ SECOND ROW (OPPOSITE DIRECTION) ═══════════════════ */
+.marquee-row { overflow: hidden; margin-bottom: 20px; }
+
+.marquee-track.reverse {
+  animation-name: marquee-scroll-reverse;
+  animation-duration: calc(var(--marquee-speed) * 1.15);
+}
+@keyframes marquee-scroll-reverse {
+  from { transform: translateX(calc(-50% - var(--marquee-gap) / 2)); }
+  to   { transform: translateX(0); }
+}
+
+/* ═══════════════════ FEATURE PILLS ═══════════════════ */
+.feature-pills {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+  max-width: 900px; margin: 56px auto 0; padding: 0 24px;
+}
+.pill {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--surface-color); border: 1px solid var(--border-color);
+  border-radius: 99px; padding: 8px 16px;
+  font-size: 13px; font-weight: 500; color: var(--text-muted);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+.pill:hover { border-color: var(--accent); color: var(--text-main); }
+.pill-icon { font-size: 15px; }
+
+/* ═══════════════════ FOOTER (ĐỒNG BỘ gioi-thieu.html) ═══════════════════ */
+.saas-footer {
+  background: rgba(255, 255, 255, 0.4); border-top: 1px solid var(--border-color);
+  padding: 4rem 2rem 2rem 2rem; margin-top: 6rem; font-size: 14px;
+}
+[data-theme="dark"] .saas-footer { background: rgba(10, 10, 10, 0.8); }
+.footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 48px; }
+.footer-brand h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+.footer-brand p { color: var(--text-muted); line-height: 1.6; }
+.footer-col h3 { font-size: 14px; font-weight: 600; text-transform: uppercase; margin-bottom: 16px; color: var(--text-main); }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 10px; }
+.footer-col ul li a { color: var(--text-muted); transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--accent); }
+.footer-bottom { max-width: 1200px; margin: 4rem auto 0; padding-top: 1.5rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 13px; }
+
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════ RESPONSIVE ═══════════════════ */
+@media (max-width: 992px) {
+  .footer-container { grid-template-columns: 1fr; gap: 32px; }
+  .gallery-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .stats-row { gap: 24px; }
+}
+@media (max-width: 768px) {
+  .nav-menu { display: none; }
+  :root {
+    --card-w: 260px;
+    --card-h: 175px;
+    --marquee-speed: 28s;
+  }
+  .gallery-section::before,
+  .gallery-section::after { width: 60px; }
+  .stats-row { gap: 16px; flex-wrap: wrap; }
+  .stat-sep { display: none; }
+}
+@media (max-width: 480px) {
+  :root { --card-w: 220px; --card-h: 150px; }
+  .hero-inner { padding-bottom: 48px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HEADER (ĐỒNG BỘ) ═══════════════════ -->
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
+      <span>BAN CHQS BÌNH MỸ</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="index.html"      class="nav-item">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item">Giới thiệu</a>
+      <a href="tin-tuc.html"    class="nav-item">Tin tức</a>
+      <a href="lien-he.html"    class="nav-item">Liên hệ</a>
+    </nav>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button id="theme-toggle" style="background:none; color:var(--text-main); font-size:24px;">☀️</button>
+      <button class="btn-saas btn-primary">Cổng Dịch Vụ</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="hero reveal">
+  <div class="hero-inner">
+    <div class="badge-hero">
+      <span class="badge-dot"></span>
+      Hậu cần quân sự · Bình Mỹ
+    </div>
+
+    <h1 class="hero-title">Tăng Gia Sản Xuất</h1>
+
+    <p class="hero-desc">
+      Hoạt động tăng gia sản xuất góp phần nâng cao đời sống bộ đội, bảo đảm nguồn thực phẩm sạch và phát huy hiệu quả công tác hậu cần.
+    </p>
+
+    <a href="#gallery" class="hero-cta" aria-label="Xem hình ảnh hoạt động">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+      Xem Hình Ảnh Hoạt Động
+    </a>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num" data-target="6">6+</div>
+        <div class="stat-label">Mô hình sản xuất</div>
+      </div>
+      <div class="stat-sep" aria-hidden="true"></div>
+      <div class="stat-item">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Thực phẩm sạch</div>
+      </div>
+      <div class="stat-sep" aria-hidden="true"></div>
+      <div class="stat-item">
+        <div class="stat-num">365</div>
+        <div class="stat-label">Ngày hoạt động / năm</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ GALLERY MARQUEE ═══════════════════ -->
+<section class="gallery-section" id="gallery">
+
+  <div class="gallery-header reveal">
+    <div class="gallery-header-left">
+      <h2>Hình Ảnh Hoạt Động</h2>
+      <p>Ghi lại những khoảnh khắc tăng gia sản xuất thực tế tại đơn vị — từ vườn rau xanh đến khu chăn nuôi.</p>
+    </div>
+    <div class="gallery-count">6 chuyên mục · Cập nhật liên tục</div>
+  </div>
+
+  <!-- ROW 1 → phải sang trái -->
+  <div class="marquee-row" aria-label="Hình ảnh hoạt động tăng gia hàng 1">
+    <div class="marquee-track" id="row1">
+
+      <!-- CARD: Nuôi ếch -->
+      <article class="img-card" style="background: linear-gradient(135deg,#134e2a,#1a7a3c);">
+        <div class="img-card-bg">🐸</div>
+        <!-- <img src="images/nuoi-ech.jpg" alt="Nuôi ếch" loading="lazy"> -->
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Chăn nuôi</div>
+          <div class="img-card-name">Nuôi Ếch</div>
+        </div>
+      </article>
+
+      <article class="img-card" style="background: linear-gradient(135deg,#134e2a,#1a7a3c);">
+      <img src="images/Toan2.jpg" alt="Nuôi ếch" loading="lazy">
+          <div class="img-card-overlay"></div>
+          <div class="img-card-label">
+          <div class="img-card-tag">Chăn nuôi</div>
+          <div class="img-card-name">Nuôi Ếch</div>
+          </div>
+      </article>
+
+      <!-- CARD: Nuôi cá -->
+      <article class="img-card" style="background: linear-gradient(135deg,#0f3460,#1a6fa8);">
+        <div class="img-card-bg">🐟</div>
+        <!-- <img src="images/nuoi-ca.jpg" alt="Nuôi cá" loading="lazy"> -->
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Thủy sản</div>
+          <div class="img-card-name">Nuôi Cá</div>
+        </div>
+      </article>
+
+      <!-- CARD: Trồng rau xanh -->
+      <article class="img-card" style="background: linear-gradient(135deg,#2d5a1b,#4a8c2a);">
+        <div class="img-card-bg">🥬</div>
+        <!-- <img src="images/trong-rau.jpg" alt="Trồng rau xanh" loading="lazy"> -->
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Nông nghiệp</div>
+          <div class="img-card-name">Trồng Rau Xanh</div>
+        </div>
+      </article>
+
+      <!-- CARD: Chăn nuôi gia cầm -->
+      <article class="img-card" style="background: linear-gradient(135deg,#5c3a00,#a36a10);">
+        <div class="img-card-bg">🐔</div>
+        <!-- <img src="images/chan-nuoi-gia-cam.jpg" alt="Chăn nuôi gia cầm" loading="lazy"> -->
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Chăn nuôi</div>
+          <div class="img-card-name">Chăn Nuôi Gia Cầm</div>
+        </div>
+      </article>
+
+      <!-- CARD: Khu tăng gia tổng hợp -->
+      <article class="img-card" style="background: linear-gradient(135deg,#1a1a2e,#3a3a5e);">
+        <div class="img-card-bg">🌿</div>
+        <!-- <img src="images/khu-tang-gia.jpg" alt="Khu tăng gia tổng hợp" loading="lazy"> -->
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Tổng hợp</div>
+          <div class="img-card-name">Khu Tăng Gia Tổng Hợp</div>
+        </div>
+      </article>
+
+      <!-- CARD: Thu hoạch nông sản -->
+      <article class="img-card" style="background: linear-gradient(135deg,#7b1113,#b8962e);">
+        <div class="img-card-bg">🌾</div>
+        <!-- <img src="images/thu-hoach.jpg" alt="Thu hoạch nông sản" loading="lazy"> -->
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Thu hoạch</div>
+          <div class="img-card-name">Thu Hoạch Nông Sản</div>
+        </div>
+      </article>
+
+      <!-- DUPLICATED SET (seamless loop) -->
+      <article class="img-card" style="background: linear-gradient(135deg,#134e2a,#1a7a3c);" aria-hidden="true">
+        <div class="img-card-bg">🐸</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Chăn nuôi</div>
+          <div class="img-card-name">Nuôi Ếch</div>
+        </div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#0f3460,#1a6fa8);" aria-hidden="true">
+        <div class="img-card-bg">🐟</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Thủy sản</div>
+          <div class="img-card-name">Nuôi Cá</div>
+        </div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#2d5a1b,#4a8c2a);" aria-hidden="true">
+        <div class="img-card-bg">🥬</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Nông nghiệp</div>
+          <div class="img-card-name">Trồng Rau Xanh</div>
+        </div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#5c3a00,#a36a10);" aria-hidden="true">
+        <div class="img-card-bg">🐔</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Chăn nuôi</div>
+          <div class="img-card-name">Chăn Nuôi Gia Cầm</div>
+        </div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#1a1a2e,#3a3a5e);" aria-hidden="true">
+        <div class="img-card-bg">🌿</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Tổng hợp</div>
+          <div class="img-card-name">Khu Tăng Gia Tổng Hợp</div>
+        </div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#7b1113,#b8962e);" aria-hidden="true">
+        <div class="img-card-bg">🌾</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Thu hoạch</div>
+          <div class="img-card-name">Thu Hoạch Nông Sản</div>
+        </div>
+      </article>
+
+    </div><!-- /marquee-track row1 -->
+  </div><!-- /marquee-row -->
+
+  <!-- ROW 2 → ngược chiều -->
+  <div class="marquee-row" aria-label="Hình ảnh hoạt động tăng gia hàng 2">
+    <div class="marquee-track reverse" id="row2">
+
+      <article class="img-card" style="background: linear-gradient(135deg,#2d5a1b,#4a8c2a);">
+        <div class="img-card-bg">🥦</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Nông nghiệp</div>
+          <div class="img-card-name">Vườn Rau Hữu Cơ</div>
+        </div>
+      </article>
+
+      <article class="img-card" style="background: linear-gradient(135deg,#7b1113,#c0392b);">
+        <div class="img-card-bg">🐖</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Chăn nuôi</div>
+          <div class="img-card-name">Chăn Nuôi Heo</div>
+        </div>
+      </article>
+
+      <article class="img-card" style="background: linear-gradient(135deg,#0f3460,#2471a3);">
+        <div class="img-card-bg">🦆</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Thủy cầm</div>
+          <div class="img-card-name">Nuôi Vịt Đàn</div>
+        </div>
+      </article>
+
+      <article class="img-card" style="background: linear-gradient(135deg,#134e2a,#1e8449);">
+        <div class="img-card-bg">🌱</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Trồng trọt</div>
+          <div class="img-card-name">Ươm Cây Giống</div>
+        </div>
+      </article>
+
+      <article class="img-card" style="background: linear-gradient(135deg,#5c3a00,#8e6c1a);">
+        <div class="img-card-bg">🪣</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Hậu cần</div>
+          <div class="img-card-name">Sơ Chế Thực Phẩm</div>
+        </div>
+      </article>
+
+      <article class="img-card" style="background: linear-gradient(135deg,#1a1a2e,#4a235a);">
+        <div class="img-card-bg">🏡</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label">
+          <div class="img-card-tag">Cơ sở vật chất</div>
+          <div class="img-card-name">Nhà Kho Bảo Quản</div>
+        </div>
+      </article>
+
+      <!-- Duplicates for seamless loop -->
+      <article class="img-card" style="background: linear-gradient(135deg,#2d5a1b,#4a8c2a);" aria-hidden="true">
+        <div class="img-card-bg">🥦</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label"><div class="img-card-tag">Nông nghiệp</div><div class="img-card-name">Vườn Rau Hữu Cơ</div></div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#7b1113,#c0392b);" aria-hidden="true">
+        <div class="img-card-bg">🐖</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label"><div class="img-card-tag">Chăn nuôi</div><div class="img-card-name">Chăn Nuôi Heo</div></div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#0f3460,#2471a3);" aria-hidden="true">
+        <div class="img-card-bg">🦆</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label"><div class="img-card-tag">Thủy cầm</div><div class="img-card-name">Nuôi Vịt Đàn</div></div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#134e2a,#1e8449);" aria-hidden="true">
+        <div class="img-card-bg">🌱</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label"><div class="img-card-tag">Trồng trọt</div><div class="img-card-name">Ươm Cây Giống</div></div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#5c3a00,#8e6c1a);" aria-hidden="true">
+        <div class="img-card-bg">🪣</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label"><div class="img-card-tag">Hậu cần</div><div class="img-card-name">Sơ Chế Thực Phẩm</div></div>
+      </article>
+      <article class="img-card" style="background: linear-gradient(135deg,#1a1a2e,#4a235a);" aria-hidden="true">
+        <div class="img-card-bg">🏡</div>
+        <div class="img-card-overlay"></div>
+        <div class="img-card-label"><div class="img-card-tag">Cơ sở vật chất</div><div class="img-card-name">Nhà Kho Bảo Quản</div></div>
+      </article>
+
+    </div><!-- /marquee-track row2 -->
+  </div><!-- /marquee-row -->
+
+  <!-- Feature pills -->
+  <div class="feature-pills reveal">
+    <span class="pill"><span class="pill-icon">🌿</span> Thực phẩm sạch, an toàn</span>
+    <span class="pill"><span class="pill-icon">🪖</span> Nâng cao đời sống bộ đội</span>
+    <span class="pill"><span class="pill-icon">♻️</span> Sử dụng phế phẩm hữu cơ</span>
+    <span class="pill"><span class="pill-icon">💧</span> Tiết kiệm nước tưới</span>
+    <span class="pill"><span class="pill-icon">📦</span> Bảo quản và sơ chế tại chỗ</span>
+    <span class="pill"><span class="pill-icon">🤝</span> Hỗ trợ nhân dân địa phương</span>
+  </div>
+
+</section>
+
+<!-- ═══════════════════ FOOTER (ĐỒNG BỘ) ═══════════════════ -->
+<footer class="saas-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2>BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ</h2>
+      <p>Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu.</p>
+    </div>
+    <div class="footer-col">
+      <h3>Liên kết nhanh</h3>
+      <ul>
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="gioi-thieu.html">Giới thiệu</a></li>
+        <li><a href="tin-tuc.html">Tin tức công vụ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thông tin liên hệ</h3>
+      <p style="color:var(--text-muted); line-height:1.6;">
+        📍 Địa chỉ: 149 Đường Trung An, Xã Bình Mỹ, TP.HCM<br>
+        📞 Điện thoại trực ban: (028) XXXX XXXX<br>
+        🕒 Giờ làm việc: Hành chính (Trực chiến 24/7)
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 Cổng Thông Tin Ban CHQS Xã Bình Mỹ. Quy chuẩn thiết kế giao diện số hóa.
+  </div>
+</footer>
+
+<!-- ═══════════════════ SCRIPTS ═══════════════════ -->
+<script>
+/* ---------- Scroll Reveal ---------- */
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('active'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+revealEls.forEach(el => revealObs.observe(el));
+
+/* ---------- Theme Toggle ---------- */
+const themeToggle = document.getElementById('theme-toggle');
+themeToggle.addEventListener('click', () => {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (isDark) {
+    document.documentElement.removeAttribute('data-theme');
+    themeToggle.innerText = '☀️';
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeToggle.innerText = '🌙';
+  }
+});
+
+/* ---------- Pause marquee on focus (accessibility) ---------- */
+document.querySelectorAll('.img-card').forEach(card => {
+  card.setAttribute('tabindex', '0');
+  card.addEventListener('focus', () => {
+    card.closest('.marquee-track').style.animationPlayState = 'paused';
+  });
+  card.addEventListener('blur', () => {
+    card.closest('.marquee-track').style.animationPlayState = '';
+  });
+});
+
+/* ---------- Smooth scroll for CTA ---------- */
+document.querySelector('.hero-cta').addEventListener('click', e => {
+  e.preventDefault();
+  document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
+});
+</script>
+</body>
+</html>
