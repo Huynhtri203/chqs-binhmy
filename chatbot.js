@@ -281,7 +281,7 @@
       removeTyping();
       const ans = findAnswer(text);
       // Thay đổi thông báo mặc định thân thiện, hướng dẫn rõ ràng
-      addMsg(ans || '😔 Trợ lý chưa tìm thấy từ khóa phù hợp với câu hỏi của bà con. Bà con có thể thử nhập ngắn gọn hơn (Ví dụ: "tuổi đăng ký", "hoãn nvqs", "địa chỉ") hoặc liên hệ trực tiếp Ban chỉ huy tại văn phòng UBND Xã để được hỗ trợ kỹ hơn nhé!', 'bot');
+      addMsg(ans || '😔 Trợ lý chưa tìm thấy từ khóa phù hợp với câu hỏi của bà con. Bà con có thể thử nhập ngắn gọn hơn (Ví dụ: "tuổi đăng ký", "hoãn nvqs", "địa chỉ") hoặc liên hệ trực tiếp Ban chỉ huy để được hỗ trợ kỹ hơn nhé!', 'bot');
     }, 700);
   }
 
