@@ -1093,7 +1093,13 @@ body::before {
     <nav id="main-nav" class="nav-menu">
       <a href="index.html" class="nav-item" data-i18n="nav_home">Trang chủ</a>
       <a href="gioi-thieu.html" class="nav-item" data-i18n="nav_intro">Giới thiệu</a>
-      <a href="tin-tuc.html" class="nav-item" data-i18n="nav_news">Tin tức</a>
+      <div class="nav-item">
+        <span data-i18n="nav_news">Tin tức</span> ▾
+        <div class="dropdown">
+          <a href="tin-tuc.html">📰 <span>Tin tức & Sự kiện</span></a>
+          <a href="tang-gia-san-xuat.html">🌿 <span>Hoạt động tăng gia</span></a>
+        </div>
+      </div>
       <div class="nav-item">
         <span data-i18n="nav_services">Dịch vụ</span> ▾
         <div class="dropdown">
@@ -1647,14 +1653,15 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
   document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menu-toggle');
     const navMenu = document.getElementById('main-nav');
-    const serviceItem = document.querySelector('.nav-item .dropdown')?.parentElement;
+    // Lấy tất cả nav-item có dropdown (Tin tức + Dịch vụ)
+    const dropdownItems = document.querySelectorAll('.nav-item:has(.dropdown)');
 
     function closeMenu() {
       if (!navMenu || !menuToggle) return;
       navMenu.classList.remove('mobile-open');
       menuToggle.classList.remove('active');
       menuToggle.setAttribute('aria-expanded', 'false');
-      if (serviceItem) serviceItem.classList.remove('open');
+      dropdownItems.forEach(item => item.classList.remove('open'));
     }
 
     function openMenu() {
@@ -1678,16 +1685,20 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
       });
     }
 
-    if (serviceItem) {
-      serviceItem.addEventListener('click', (event) => {
+    // Gán toggle cho từng nav-item có dropdown
+    dropdownItems.forEach(item => {
+      item.addEventListener('click', (event) => {
         const clickedInsideDropdown = event.target.closest('.dropdown');
-
         if (window.innerWidth <= 768 && !clickedInsideDropdown) {
           event.preventDefault();
-          serviceItem.classList.toggle('open');
+          // Đóng các dropdown khác trước khi mở cái này
+          dropdownItems.forEach(other => {
+            if (other !== item) other.classList.remove('open');
+          });
+          item.classList.toggle('open');
         }
       });
-    }
+    });
 
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768) closeMenu();
@@ -1698,6 +1709,5 @@ document.getElementById('auth-submit-btn').addEventListener('click', async () =>
 <script src="video-optimization.js"></script>
 <script src="lang.js"></script>
 <script src="main.js"></script>
-<script src="chatbot.js"></script>
 </body>
 </html>
