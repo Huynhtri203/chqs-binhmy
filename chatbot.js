@@ -203,7 +203,7 @@
     { keys: ['tra cứu', 'hồ sơ cá nhân', 'xem thông tin', 'cccd', 'căn cước'],
       ans: '🔍 <b>Tra cứu hồ sơ điện tử:</b><br>Bà con có thể tự tra cứu trạng thái hồ sơ NVQS của con em mình trực tiếp trên web bằng cách vào mục <a href="tracuu.html" style="color:#117A65;font-weight:600;">Trang Tra Cứu</a>, chỉ cần nhập chính xác Số định danh (CCCD 12 số) và Họ tên.' },
     { keys: ['liên hệ', 'địa chỉ', 'ở đâu', 'giờ làm', 'zalo', 'facebook', 'điện thoại', 'số điện thoại', 'trụ sở'],
-      ans: '📞 <b>Thông tin liên hệ trực tiếp Ban CHQS Xã Bình Mỹ:</b><br>📍 <b>Địa chỉ:</b> Nằm trong khuôn viên UBND Xã Bình Mỹ (Đường Tỉnh Lộ 9, Xã Bình Mỹ, Huyện Củ Chi, TP.HCM).<br>⏰ <b>Giờ làm việc:</b> Sáng 07:30 – 11:30, Chiều 13:30 – 17:00 (Từ thứ Hai đến thứ Sáu).<br>👥 <b>Kênh tương tác:</b> <a href="https://www.facebook.com/share/18g8qhhaEB/?mibextid=wwXIfr" target="_blank" style="color:#117A65;font-weight:bold;">Trang Facebook Ban CHQS Xã</a>' },
+      ans: '📞 <b>Thông tin liên hệ trực tiếp Ban CHQS Xã Bình Mỹ:</b><br>📍 <b>Địa chỉ:</b> 149, Ấp chợ, Đường Trung An, Xã Bình Mỹ, Thành phố Hồ Chí Minh.<br>⏰ <b>Giờ làm việc:</b> Sáng 07:30 – 11:30, Chiều 13:30 – 17:00 (Từ thứ Hai đến thứ Sáu).<br>👥 <b>Kênh tương tác:</b> <a href="https://www.facebook.com/share/18g8qhhaEB/?mibextid=wwXIfr" target="_blank" style="color:#117A65;font-weight:bold;">Trang Facebook Ban CHQS Xã</a>' },
     { keys: ['xin chào', 'chào', 'hello', 'hi', 'có ai không'],
       ans: '👋 Xin kính chào bà con! Tôi có thể hỗ trợ giải đáp các thắc mắc về Luật nghĩa vụ quân sự, lịch tuyển quân hoặc thông tin liên hệ của Ban CHQS Xã Bình Mỹ. Bà con cần hỏi thông tin nào ạ?' },
     { keys: ['cảm ơn', 'thank', 'ok', 'tốt'],
