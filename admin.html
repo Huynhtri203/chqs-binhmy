@@ -12,7 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-/* ═══════════════════ DESIGN SYSTEM MẶC ĐỊNH ═══════════════════ */
+/* ═══════════════════ DESIGN SYSTEM ═══════════════════ */
 :root {
   --bg-color: #f1f5f9;
   --sidebar-bg: #ffffff;
@@ -25,8 +25,9 @@
   --success: #10b981;
   --radius: 12px;
   --font-main: 'Inter', sans-serif;
+  --sidebar-w: 260px;
+  --topbar-h: 60px;
 }
-
 [data-theme="dark"] {
   --bg-color: #0b0f19;
   --sidebar-bg: #111827;
@@ -37,132 +38,335 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
   font-family: var(--font-main);
   background: var(--bg-color);
   color: var(--text-main);
   display: flex;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* LAYOUT CHÍNH */
+/* ═══════════ SIDEBAR ═══════════ */
 .sidebar {
-  width: 280px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color);
-  padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh;
-  z-index: 100;
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  height: 100vh;
+  z-index: 200;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow-y: auto;
 }
-.main-content { margin-left: 280px; flex: 1; padding: 40px; min-height: 100vh; }
 
-.logo-block { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-left: 10px; }
-.logo-block img { width: 40px; height: 40px; }
-.logo-text h2 { font-size: 15px; font-weight: 800; }
-.logo-text p { font-size: 11px; color: var(--text-muted); }
+/* OVERLAY KHI MỞ SIDEBAR MOBILE */
+.sidebar-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+  z-index: 190;
+}
+.sidebar-overlay.active { display: block; }
 
-.menu-list { list-style: none; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: calc(100vh - 200px); }
+.logo-block { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; padding: 0 6px; }
+.logo-block img { width: 38px; height: 38px; flex-shrink: 0; }
+.logo-text h2 { font-size: 13px; font-weight: 800; line-height: 1.3; }
+.logo-text p { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+.menu-list { list-style: none; display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .menu-item {
-  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
-  border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;
-  color: var(--text-muted); transition: 0.2s; text-decoration: none;
+  display: flex; align-items: center; gap: 10px; padding: 11px 12px;
+  border-radius: 8px; cursor: pointer; font-size: 13.5px; font-weight: 600;
+  color: var(--text-muted); transition: 0.18s; text-decoration: none; white-space: nowrap;
 }
-.menu-item:hover, .menu-item.active { background: rgba(229,9,20,0.08); color: var(--accent); }
-.menu-separator { border-top: 1px solid var(--border-color); margin: 10px 0; padding-top: 10px; }
+.menu-item:hover, .menu-item.active { background: rgba(229,9,20,0.09); color: var(--accent); }
+.menu-separator { border-top: 1px solid var(--border-color); margin: 8px 0; }
 
 .admin-badge {
-  margin-top: auto; padding: 14px; background: rgba(0,0,0,0.03); border-radius: 8px;
-  font-size: 13px; text-align: center; font-weight: 500;
+  padding: 12px; background: rgba(0,0,0,0.03); border-radius: 8px;
+  font-size: 12px; text-align: center; font-weight: 500; margin-top: 12px;
 }
-[data-theme="dark"] .admin-badge { background: rgba(255,255,255,0.03); }
+[data-theme="dark"] .admin-badge { background: rgba(255,255,255,0.04); }
 
-/* SECTIONS */
-.data-section { display: none; animation: fadeIn 0.3s ease; }
-.data-section.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+/* ═══════════ TOPBAR MOBILE ═══════════ */
+.topbar {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  background: var(--sidebar-bg);
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 180;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.topbar-logo { display: flex; align-items: center; gap: 8px; }
+.topbar-logo img { width: 30px; height: 30px; }
+.topbar-logo span { font-size: 13px; font-weight: 800; }
+.hamburger-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-main); font-size: 22px; line-height: 1; padding: 4px;
+}
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+.topbar-actions .btn { padding: 7px 12px; font-size: 12px; }
+
+/* ═══════════ MAIN CONTENT ═══════════ */
+.main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  padding: 32px 36px;
+  min-height: 100vh;
+  min-width: 0;
+}
 
 /* HEADER PANEL */
-.header-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-.header-panel h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
-.header-actions { display: flex; gap: 10px; align-items: center; }
+.header-panel {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 28px; gap: 12px; flex-wrap: wrap;
+}
+.header-panel h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
-/* THỐNG KÊ ĐỒ THỊ/THÈ */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 24px; }
+/* ═══════════ SECTIONS ═══════════ */
+.data-section { display: none; animation: fadeIn 0.3s ease; }
+.data-section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══════════ STATS GRID ═══════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px; margin-bottom: 20px;
+}
 .stat-card {
-  background: var(--card-bg); border: 1px solid var(--border-color); padding: 24px;
-  border-radius: var(--radius); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+  background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px;
+  border-radius: var(--radius); box-shadow: 0 2px 6px rgba(0,0,0,0.03);
 }
-.stat-label { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
-.stat-value { font-size: 28px; font-weight: 800; color: var(--accent); }
+.stat-label { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.stat-value { font-size: 30px; font-weight: 800; color: var(--accent); }
 
+/* ═══════════ CHART BOX ═══════════ */
 .chart-box-wrapper {
-  background: var(--card-bg); border: 1px solid var(--border-color); padding: 30px;
-  border-radius: var(--radius); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-  margin-bottom: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  padding: 28px 24px; border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03); margin-bottom: 32px;
 }
+.chart-title {
+  font-size: 13px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 20px; text-align: center;
+}
+.chart-layout {
+  display: flex; align-items: center; justify-content: center;
+  gap: 32px; flex-wrap: wrap;
+}
+.chart-canvas-wrap {
+  position: relative;
+  width: 260px; height: 260px;
+  flex-shrink: 0;
+}
+.chart-center-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.chart-center-label .cl-total { font-size: 28px; font-weight: 800; color: var(--accent); }
+.chart-center-label .cl-sub { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+.chart-legend { display: flex; flex-direction: column; gap: 12px; min-width: 180px; }
+.legend-item { display: flex; align-items: center; gap: 10px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.legend-info { flex: 1; }
+.legend-label { font-size: 12px; font-weight: 600; color: var(--text-main); line-height: 1.3; }
+.legend-pct { font-size: 13px; font-weight: 800; margin-top: 2px; }
+.legend-bar-wrap { height: 4px; background: var(--border-color); border-radius: 99px; margin-top: 4px; overflow: hidden; }
+.legend-bar { height: 100%; border-radius: 99px; transition: width 0.8s ease; }
 
-/* BẢNG DỮ LIỆU & BIỂU MẪU */
-.action-bar { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+/* ═══════════ ACTION BAR & BUTTONS ═══════════ */
+.action-bar { display: flex; justify-content: flex-end; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
 .btn {
-  background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 8px;
-  font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s;
+  background: var(--accent); color: #fff; padding: 10px 18px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: 0.18s;
+  white-space: nowrap;
 }
-.btn:hover { background: var(--accent-hover); }
-.btn-secondary { background: var(--text-muted); margin-right: 10px; }
-.btn-secondary:hover { opacity: 0.9; }
+.btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-secondary { background: var(--text-muted); margin-right: 0; }
+.btn-secondary:hover { opacity: 0.85; transform: translateY(-1px); }
 
+/* ═══════════ FORM ═══════════ */
 .form-box {
   background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
-  padding: 30px; margin-bottom: 30px; display: none;
+  padding: 24px; margin-bottom: 20px; display: none;
 }
 .form-box.always-show { display: block; }
-.form-group { margin-bottom: 18px; }
-.form-label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); }
 .form-control {
-  width: 100%; padding: 12px; border-radius: 6px; border: 1px solid var(--border-color);
-  background: rgba(0,0,0,0.02); color: var(--text-main); font-family: inherit; font-size: 14px; outline: none;
+  width: 100%; padding: 11px 12px; border-radius: 7px; border: 1px solid var(--border-color);
+  background: rgba(0,0,0,0.02); color: var(--text-main); font-family: inherit; font-size: 14px; outline: none; transition: 0.18s;
 }
 [data-theme="dark"] .form-control { background: rgba(255,255,255,0.05); }
-.form-control:focus { border-color: var(--accent); }
+.form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(229,9,20,0.1); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
+/* ═══════════ TABLE ═══════════ */
 .data-table-container {
   background: var(--card-bg); border: 1px solid var(--border-color);
   border-radius: var(--radius); overflow: hidden;
 }
-.data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-.data-table th { background: rgba(0,0,0,0.02); padding: 16px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border-color); }
-[data-theme="dark"] .data-table th { background: rgba(255,255,255,0.02); }
-.data-table td { padding: 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+.table-scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px; min-width: 600px; }
+.data-table th {
+  background: rgba(0,0,0,0.025); padding: 14px 16px; font-weight: 700;
+  color: var(--text-muted); border-bottom: 1px solid var(--border-color);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+}
+[data-theme="dark"] .data-table th { background: rgba(255,255,255,0.025); }
+.data-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(229,9,20,0.02); }
 
 .role-select {
   padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color);
-  background: var(--card-bg); color: var(--text-main); font-weight: 600; cursor: pointer;
+  background: var(--card-bg); color: var(--text-main); font-weight: 600; cursor: pointer; font-size: 13px;
 }
 
-/* MODAL OVERLAY CHỈNH SỬA BÀI VIẾT */
+/* ═══════════ MOBILE TABLE CARDS ═══════════ */
+.mobile-card-list { display: none; flex-direction: column; gap: 12px; padding: 12px; }
+.mobile-card {
+  background: var(--card-bg); border: 1px solid var(--border-color);
+  border-radius: 10px; padding: 14px; font-size: 13px;
+}
+.mobile-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 8px; }
+.mobile-card-title { font-weight: 700; font-size: 14px; flex: 1; }
+.mobile-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.mobile-card-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; }
+.mobile-meta-item { font-size: 12px; color: var(--text-muted); }
+.mobile-meta-item b { color: var(--text-main); }
+
+/* ═══════════ MODAL ═══════════ */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 9999;
-  animation: fadeIn 0.2s ease;
+  -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;
+  z-index: 9999; padding: 16px;
 }
 .modal-content {
   background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius);
-  width: 100%; max-width: 650px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  width: 100%; max-width: 650px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
   max-height: 90vh; overflow-y: auto;
 }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
-.modal-title { font-size: 18px; font-weight: 800; color: var(--accent); }
-.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; }
+.modal-title { font-size: 17px; font-weight: 800; color: var(--accent); }
+.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); line-height: 1; }
 .modal-close:hover { color: var(--accent); }
 
-/* NHẬT KÝ */
-.log-item { padding: 12px 16px; border-bottom: 1px solid var(--border-color); font-size: 13px; display: flex; justify-content: space-between; }
-.log-time { color: var(--text-muted); font-family: monospace; }
+/* ═══════════ LOG ═══════════ */
+.log-item {
+  padding: 12px 16px; border-bottom: 1px solid var(--border-color);
+  font-size: 13px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.log-time { color: var(--text-muted); font-family: monospace; white-space: nowrap; }
 
-/* BẢN ĐỒ SỐ KHU VỰC */
-#map-container { height: 550px; width: 100%; border-radius: var(--radius); border: 1px solid var(--border-color); overflow: hidden; }
+/* ═══════════ MAP ═══════════ */
+#map-container { height: 500px; width: 100%; border-radius: var(--radius); border: 1px solid var(--border-color); overflow: hidden; }
+
+/* ══════════════════════════════
+   RESPONSIVE: TABLET (≤ 1024px)
+══════════════════════════════ */
+@media (max-width: 1024px) {
+  :root { --sidebar-w: 230px; }
+  .main-content { padding: 24px 24px; }
+  .stats-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .stat-value { font-size: 26px; }
+  .form-row { grid-template-columns: 1fr; }
+  .chart-canvas-wrap { width: 220px; height: 220px; }
+}
+
+/* ══════════════════════════════
+   RESPONSIVE: MOBILE (≤ 768px)
+══════════════════════════════ */
+@media (max-width: 768px) {
+  /* Ẩn sidebar mặc định, hiện topbar */
+  .sidebar { transform: translateX(-100%); box-shadow: none; width: 270px; }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.18); }
+  .topbar { display: flex; }
+  .main-content { margin-left: 0; padding: 16px; padding-top: calc(var(--topbar-h) + 16px); }
+
+  /* Ẩn header-panel desktop (theme/logout nằm trên topbar) */
+  .header-panel .header-actions { display: none; }
+  .header-panel h1 { font-size: 17px; }
+  .header-panel { margin-bottom: 16px; }
+
+  /* Stats 2 cột */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+  .stat-card { padding: 14px 12px; }
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 10px; }
+
+  /* Chart layout dọc */
+  .chart-canvas-wrap { width: 200px; height: 200px; }
+  .chart-legend { min-width: unset; width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 8px 16px; }
+  .legend-bar-wrap { display: none; }
+  .legend-info { min-width: 110px; }
+
+  /* Tables → ẩn, show card */
+  .table-scroll-wrap { display: none; }
+  .mobile-card-list { display: flex; }
+  .data-table-container { overflow: visible; background: none; border: none; border-radius: 0; }
+
+  /* Modal full-bottom */
+  .modal-content { padding: 20px 16px; max-height: 85vh; border-radius: 16px 16px 0 0; }
+  .modal-overlay { align-items: flex-end; padding: 0; }
+
+  /* Form */
+  .form-box { padding: 16px; }
+  .form-row { grid-template-columns: 1fr; }
+
+  /* Action bar */
+  .action-bar { justify-content: stretch; }
+  .action-bar .btn { width: 100%; text-align: center; }
+
+  /* Map */
+  #map-container { height: 360px; }
+
+  .chart-box-wrapper { padding: 18px 14px; }
+}
+
+/* ══════════════════════════════
+   RESPONSIVE: SMALL PHONE (≤ 400px)
+══════════════════════════════ */
+@media (max-width: 400px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .chart-canvas-wrap { width: 180px; height: 180px; }
+  .chart-center-label .cl-total { font-size: 22px; }
+}
 </style>
 </head>
 <body>
 
-<div class="sidebar">
+<!-- TOPBAR MOBILE -->
+<div class="topbar">
+  <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+  <div class="topbar-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Logo">
+    <span>HỆ THỐNG CHỈ HUY</span>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-secondary" id="theme-toggle-btn-mobile" onclick="toggleTheme()" style="background:#475569; padding:7px 10px; font-size:14px;">🌙</button>
+    <button class="btn" onclick="handleLogout()" style="background:#dc2626; padding:7px 10px; font-size:12px;">Xuất</button>
+  </div>
+</div>
+
+<!-- OVERLAY SIDEBAR MOBILE -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<div class="sidebar" id="main-sidebar">
   <div class="logo-block">
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
     <div class="logo-text">
@@ -223,11 +427,18 @@ body {
     </div>
 
     <div class="chart-box-wrapper">
-      <div class="stat-label" style="text-align: center; width: 100%; margin-bottom: 20px; font-size: 15px; letter-spacing: 0.03em;">
-        📊 BIỂU ĐỒ PHÂN TÍCH TỶ LỆ PHẦN TRĂM (%) CHUYÊN MỤC VĂN BẢN HÀNH CHÍNH & TIN TỨC
-      </div>
-      <div style="position: relative; width: 100%; max-width: 340px; max-height: 340px;">
-        <canvas id="categoryPieChart"></canvas>
+      <div class="chart-title">📊 Tỷ lệ (%) Chuyên mục Văn bản Hành chính &amp; Tin tức theo Chuyên mục</div>
+      <div class="chart-layout">
+        <div class="chart-canvas-wrap">
+          <canvas id="categoryPieChart"></canvas>
+          <div class="chart-center-label">
+            <span class="cl-total" id="chart-total">—</span>
+            <span class="cl-sub">Tổng nội dung</span>
+          </div>
+        </div>
+        <div class="chart-legend" id="chart-legend-custom">
+          <!-- Rendered by JS -->
+        </div>
       </div>
     </div>
   </div>
@@ -273,22 +484,25 @@ body {
     </div>
 
     <div class="data-table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th style="width: 90px;">Hình ảnh</th>
-            <th>Tiêu đề bài đăng</th>
-            <th style="width: 180px;">Chuyên mục</th>
-            <th style="width: 150px;">Ngày phát hành</th>
-            <th style="width: 160px; text-align: center;">Tác vụ điều hành</th>
-          </tr>
-        </thead>
-        <tbody id="posts-table-body">
-          <tr>
-            <td colspan="5" style="text-align: center; color: var(--text-muted);">Đang liên kết dữ liệu chỉ huy...</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">Ảnh</th>
+              <th>Tiêu đề bài đăng</th>
+              <th style="width: 160px;">Chuyên mục</th>
+              <th style="width: 130px;">Ngày</th>
+              <th style="width: 150px; text-align: center;">Tác vụ</th>
+            </tr>
+          </thead>
+          <tbody id="posts-table-body">
+            <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Đang liên kết dữ liệu chỉ huy...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mobile-card-list" id="posts-mobile-list">
+        <p style="text-align:center; color:var(--text-muted); padding:12px;">Đang tải...</p>
+      </div>
     </div>
   </div>
 
@@ -298,43 +512,51 @@ body {
     </div>
 
     <div class="data-table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Thời gian</th>
-            <th>Loại ca trực</th>
-            <th>Chỉ huy trực</th>
-            <th>Sĩ quan / Trực ban</th>
-            <th style="width: 180px; text-align: center;">Tác vụ điều hành</th>
-          </tr>
-        </thead>
-        <tbody id="admin-schedule-tbody">
-          <tr>
-            <td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">Đang tải dữ liệu điều động lịch...</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Thời gian</th>
+              <th>Loại ca trực</th>
+              <th>Chỉ huy trực</th>
+              <th>Sĩ quan / Trực ban</th>
+              <th style="width: 160px; text-align: center;">Tác vụ</th>
+            </tr>
+          </thead>
+          <tbody id="admin-schedule-tbody">
+              <tr>
+                <td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">Đang tải dữ liệu điều động lịch...</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mobile-card-list" id="schedule-mobile-list">
+        <p style="text-align:center; color:var(--text-muted); padding:12px;">Đang tải...</p>
+      </div>
     </div>
   </div>
 
   <div id="sec-users" class="data-section">
     <div class="data-table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Họ và tên</th>
-            <th>Số điện thoại</th>
-            <th>Vai trò hiện tại</th>
-            <th>Ghi chú cán bộ</th>
-            <th style="width: 200px; text-align: center;">Cấp quyền chỉ huy</th>
-          </tr>
-        </thead>
-        <tbody id="users-table-body">
-          <tr>
-            <td colspan="5" style="text-align: center; color: var(--text-muted);">Đang đồng bộ danh sách quân số...</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-scroll-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Họ và tên</th>
+              <th>Điện thoại</th>
+              <th>Vai trò</th>
+              <th>Ghi chú</th>
+              <th style="width: 180px; text-align: center;">Cấp quyền</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Đang đồng bộ danh sách quân số...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mobile-card-list" id="users-mobile-list">
+        <p style="text-align:center; color:var(--text-muted); padding:12px;">Đang tải...</p>
+      </div>
     </div>
   </div>
 
@@ -545,7 +767,7 @@ function switchTab(tabId) {
 function initTheme() {
   const savedTheme = localStorage.getItem('site-theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
-  document.getElementById('theme-toggle-btn').innerText = savedTheme === 'dark' ? '☀️ Chế độ sáng' : '🌙 Chế độ tối';
+  syncThemeBtns(savedTheme);
 }
 
 function toggleTheme() {
@@ -553,7 +775,7 @@ function toggleTheme() {
   const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', nextTheme);
   localStorage.setItem('site-theme', nextTheme);
-  document.getElementById('theme-toggle-btn').innerText = nextTheme === 'dark' ? '☀️ Chế độ sáng' : '🌙 Chế độ tối';
+  syncThemeBtns(nextTheme);
 }
 
 // 6. ĐĂNG XUẤT AN TOÀN TRÌNH DUYỆT
@@ -580,20 +802,117 @@ async function loadDashboardStats() {
   }
 }
 
+// ═══ SIDEBAR MOBILE TOGGLE ═══
+function toggleSidebar() {
+  const sb = document.getElementById('main-sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('active');
+}
+function closeSidebar() {
+  document.getElementById('main-sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+
+// Đóng sidebar khi click menu item trên mobile
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if(window.innerWidth <= 768) closeSidebar();
+  });
+});
+
+// Sync theme toggle mobile
+function syncThemeBtns(theme) {
+  const label = theme === 'dark' ? '☀️' : '🌙';
+  const labelFull = theme === 'dark' ? '☀️ Chế độ sáng' : '🌙 Chế độ tối';
+  const btnM = document.getElementById('theme-toggle-btn-mobile');
+  const btnD = document.getElementById('theme-toggle-btn');
+  if(btnM) btnM.innerText = label;
+  if(btnD) btnD.innerText = labelFull;
+}
+
+// ═══ BIỂU ĐỒ DONUT VỚI LEGEND TÙY CHỈNH ═══
+const CHART_DATA = {
+  labels: ['Tin tức quân sự', 'Thông báo / Tuyển quân', 'Chỉ đạo điều hành', 'Văn bản pháp luật'],
+  values: [35, 25, 20, 20],
+  colors: ['#E50914', '#10b981', '#3b82f6', '#f59e0b'],
+  keys: ['tin-tuc', 'thong-bao', 'chi-dao', 'van-ban']
+};
+
 let categoryChart = null;
-function renderChart() {
+
+async function renderChart() {
+  // Thử lấy số liệu thực từ Supabase theo category
+  let values = [...CHART_DATA.values];
+  let total = values.reduce((a, b) => a + b, 0);
+
+  try {
+    const results = await Promise.all(
+      CHART_DATA.keys.map(k =>
+        supabaseClient.from('posts').select('*', { count: 'exact', head: true }).eq('category', k)
+      )
+    );
+    const counts = results.map(r => r.count || 0);
+    const realTotal = counts.reduce((a, b) => a + b, 0);
+    if(realTotal > 0) {
+      values = counts;
+      total = realTotal;
+    }
+  } catch(e) { /* dùng dữ liệu mẫu */ }
+
+  // Cập nhật số giữa donut
+  const el = document.getElementById('chart-total');
+  if(el) el.innerText = total;
+
   const ctx = document.getElementById('categoryPieChart').getContext('2d');
   if (categoryChart) categoryChart.destroy();
+
   categoryChart = new Chart(ctx, {
-    type: 'pie',
+    type: 'doughnut',
     data: {
-      labels: ['Tin tức quân sự', 'Thông báo tuyển quân', 'Chỉ đạo điều hành', 'Văn bản pháp luật'],
+      labels: CHART_DATA.labels,
       datasets: [{
-        data: [35, 25, 20, 20],
-        backgroundColor: ['#E50914', '#10b981', '#3b82f6', '#f59e0b']
+        data: values,
+        backgroundColor: CHART_DATA.colors,
+        borderWidth: 3,
+        borderColor: 'var(--card-bg)',
+        hoverOffset: 8
       }]
     },
-    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+    options: {
+      responsive: true,
+      cutout: '68%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0;
+              return ` ${ctx.label}: ${ctx.raw} (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // Render legend tùy chỉnh
+  const legendEl = document.getElementById('chart-legend-custom');
+  if(!legendEl) return;
+  legendEl.innerHTML = '';
+  CHART_DATA.labels.forEach((label, i) => {
+    const val = values[i] || 0;
+    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
+    const color = CHART_DATA.colors[i];
+    legendEl.innerHTML += `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${color};"></div>
+        <div class="legend-info">
+          <div class="legend-label">${label}</div>
+          <div class="legend-pct" style="color:${color};">${pct}% <span style="font-size:11px;color:var(--text-muted);font-weight:500;">(${val} mục)</span></div>
+          <div class="legend-bar-wrap"><div class="legend-bar" style="width:${pct}%;background:${color};"></div></div>
+        </div>
+      </div>`;
   });
 }
 
@@ -613,20 +932,43 @@ async function loadPostsData() {
       return;
     }
     tbody.innerHTML = '';
+    const mobileList = document.getElementById('posts-mobile-list');
+    if(mobileList) mobileList.innerHTML = '';
     posts.forEach(post => {
       const date = new Date(post.created_at).toLocaleDateString('vi-VN');
+      const catLabel = {
+        'tin-tuc':'Tin tức quân sự','thong-bao':'Thông báo','chi-dao':'Chỉ đạo','van-ban':'Văn bản PL'
+      }[post.category] || post.category;
+      // Desktop row
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><img src="${post.image_url || 'https://via.placeholder.com/60'}" style="width:60px; height:40px; object-fit:cover; border-radius:4px;"></td>
         <td style="font-weight:600;">${post.title}</td>
-        <td><span class="role-select" style="background:rgba(0,0,0,0.04);">${post.category}</span></td>
+        <td><span style="background:rgba(0,0,0,0.04);padding:4px 8px;border-radius:5px;font-size:12px;">${catLabel}</span></td>
         <td>${date}</td>
         <td style="text-align:center;">
-          <button class="btn" style="padding:6px 12px; font-size:12px; background:#3b82f6; margin-right:4px;" onclick="openEditModal(${JSON.stringify(post).replace(/"/g, '&quot;')})">✏️ Sửa</button>
-          <button class="btn" style="padding:6px 12px; font-size:12px; background:#ef4444;" onclick="deletePost(${post.id}, '${post.title}')">🗑️ Xóa</button>
-        </td>
-      `;
+          <button class="btn" style="padding:6px 10px; font-size:12px; background:#3b82f6; margin-right:4px;" onclick="openEditModal(${JSON.stringify(post).replace(/"/g, '&quot;')})">✏️ Sửa</button>
+          <button class="btn" style="padding:6px 10px; font-size:12px; background:#ef4444;" onclick="deletePost(${post.id}, '${post.title}')">🗑️ Xóa</button>
+        </td>`;
       tbody.appendChild(tr);
+      // Mobile card
+      if(mobileList) {
+        const card = document.createElement('div');
+        card.className = 'mobile-card';
+        card.innerHTML = `
+          <div class="mobile-card-header">
+            <div class="mobile-card-title">${post.title}</div>
+            <div class="mobile-card-actions">
+              <button class="btn" style="padding:6px 10px;font-size:12px;background:#3b82f6;" onclick="openEditModal(${JSON.stringify(post).replace(/"/g, '&quot;')})">✏️</button>
+              <button class="btn" style="padding:6px 10px;font-size:12px;background:#ef4444;" onclick="deletePost(${post.id}, '${post.title}')">🗑️</button>
+            </div>
+          </div>
+          <div class="mobile-card-meta">
+            <span class="mobile-meta-item">📂 <b>${catLabel}</b></span>
+            <span class="mobile-meta-item">📅 <b>${date}</b></span>
+          </div>`;
+        mobileList.appendChild(card);
+      }
     });
   } catch (err) {
     console.error(err);
@@ -729,6 +1071,8 @@ async function loadAdminScheduleData() {
     }
 
     tbody.innerHTML = '';
+    const schedMobile = document.getElementById('schedule-mobile-list');
+    if(schedMobile) schedMobile.innerHTML = '';
     data.forEach(item => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -737,11 +1081,30 @@ async function loadAdminScheduleData() {
         <td><span style="color:var(--accent); font-weight:700;">👨‍✈️ ${item.commander}</span></td>
         <td>🎖️ ${item.officer}</td>
         <td style="text-align:center;">
-          <button class="btn" style="padding:6px 12px; font-size:12px; background:#3b82f6; margin-right:4px;" onclick="openEditScheduleModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Sửa</button>
-          <button class="btn" style="padding:6px 12px; font-size:12px; background:#ef4444;" onclick="deleteSchedule(${item.id}, '${item.date_string}')">🗑️ Xóa</button>
-        </td>
-      `;
+          <button class="btn" style="padding:6px 10px; font-size:12px; background:#3b82f6; margin-right:4px;" onclick="openEditScheduleModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Sửa</button>
+          <button class="btn" style="padding:6px 10px; font-size:12px; background:#ef4444;" onclick="deleteSchedule(${item.id}, '${item.date_string}')">🗑️ Xóa</button>
+        </td>`;
       tbody.appendChild(tr);
+      if(schedMobile) {
+        const card = document.createElement('div');
+        card.className = 'mobile-card';
+        card.innerHTML = `
+          <div class="mobile-card-header">
+            <div>
+              <div class="mobile-card-title" style="color:var(--accent);">${item.date_string}</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${item.shift_name}</div>
+            </div>
+            <div class="mobile-card-actions">
+              <button class="btn" style="padding:6px 10px;font-size:12px;background:#3b82f6;" onclick="openEditScheduleModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️</button>
+              <button class="btn" style="padding:6px 10px;font-size:12px;background:#ef4444;" onclick="deleteSchedule(${item.id}, '${item.date_string}')">🗑️</button>
+            </div>
+          </div>
+          <div class="mobile-card-meta">
+            <span class="mobile-meta-item">👨‍✈️ Chỉ huy: <b>${item.commander}</b></span>
+            <span class="mobile-meta-item">🎖️ Sĩ quan: <b>${item.officer}</b></span>
+          </div>`;
+        schedMobile.appendChild(card);
+      }
     });
   } catch (err) {
     console.error(err);
@@ -824,21 +1187,43 @@ async function loadUsersData() {
     const { data: profiles, error } = await supabaseClient.from('profiles').select('*');
     if (error) throw error;
     tbody.innerHTML = '';
+    const usersMobile = document.getElementById('users-mobile-list');
+    if(usersMobile) usersMobile.innerHTML = '';
     profiles.forEach(p => {
+      const roleColor = p.role === 'admin' ? 'var(--accent)' : '#2563eb';
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td style="font-weight:600;">${p.ho_ten || 'Chưa cập nhật'}</td>
         <td>${p.so_dien_thoai || '-'}</td>
-        <td><span style="text-transform: uppercase; font-weight:700; color: ${p.role==='admin'?'var(--accent)':'#2563eb'}">${p.role}</span></td>
+        <td><span style="text-transform:uppercase;font-weight:700;color:${roleColor}">${p.role}</span></td>
         <td>${p.ghi_chu || '-'}</td>
         <td style="text-align:center;">
           <select class="role-select" onchange="updateUserRole('${p.id}', this.value)">
             <option value="user" ${p.role==='user'?'selected':''}>User (Chiến sĩ)</option>
             <option value="admin" ${p.role==='admin'?'selected':''}>Admin (Chỉ huy)</option>
           </select>
-        </td>
-      `;
+        </td>`;
       tbody.appendChild(tr);
+      if(usersMobile) {
+        const card = document.createElement('div');
+        card.className = 'mobile-card';
+        card.innerHTML = `
+          <div class="mobile-card-header">
+            <div class="mobile-card-title">${p.ho_ten || 'Chưa cập nhật'}</div>
+            <span style="font-weight:700;color:${roleColor};font-size:12px;text-transform:uppercase;">${p.role}</span>
+          </div>
+          <div class="mobile-card-meta">
+            <span class="mobile-meta-item">📞 <b>${p.so_dien_thoai || '-'}</b></span>
+            <span class="mobile-meta-item">📝 ${p.ghi_chu || '-'}</span>
+          </div>
+          <div style="margin-top:10px;">
+            <select class="role-select" style="width:100%;" onchange="updateUserRole('${p.id}', this.value)">
+              <option value="user" ${p.role==='user'?'selected':''}>👤 User (Chiến sĩ)</option>
+              <option value="admin" ${p.role==='admin'?'selected':''}>⭐ Admin (Chỉ huy)</option>
+            </select>
+          </div>`;
+        usersMobile.appendChild(card);
+      }
     });
   } catch (err) {
     console.error(err);
@@ -859,15 +1244,68 @@ async function updateUserRole(userId, newRole) {
 let map;
 function initMap() {
   if (!document.getElementById('map')) return;
-  map = L.map('map').setView([11.0531, 106.6022], 14);
+
+  // Tọa độ chính xác: 149 Đường Trung An, Xã Bình Mỹ, Huyện Củ Chi, TP.HCM
+  const LAT = 10.9934712108178;
+  const LNG = 106.59234228872819;
+
+  map = L.map('map').setView([LAT, LNG], 17);
+
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    attribution: '© OpenStreetMap'
+    attribution: '© OpenStreetMap contributors'
   }).addTo(map);
-  
-  L.marker([11.0531, 106.6022]).addTo(map)
-    .bindPopup('<b>Ban CHQS Xã Bình Mỹ</b><br>Sở chỉ huy điều hành kíp trực.')
+
+  // Icon tùy chỉnh màu đỏ quân sự
+  const militaryIcon = L.divIcon({
+    className: '',
+    html: `<div style="
+      background:#E50914; width:36px; height:36px;
+      border-radius:50% 50% 50% 0; transform:rotate(-45deg);
+      border:3px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.4);
+      display:flex; align-items:center; justify-content:center;">
+      <span style="transform:rotate(45deg); font-size:16px; line-height:1;">⭐</span>
+    </div>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -38]
+  });
+
+  L.marker([LAT, LNG], { icon: militaryIcon })
+    .addTo(map)
+    .bindPopup(`
+      <div style="font-family:Inter,sans-serif; min-width:210px;">
+        <div style="font-weight:800; font-size:14px; color:#E50914; margin-bottom:6px;">
+          🏛️ Ban CHQS Xã Bình Mỹ
+        </div>
+        <div style="font-size:12px; color:#374151; line-height:1.7;">
+          📍 149 Đường Trung An<br>
+          Xã Bình Mỹ, Huyện Củ Chi<br>
+          TP. Hồ Chí Minh
+        </div>
+        <div style="margin-top:8px; font-size:11px; color:#6b7280;">
+          🛡️ Sở chỉ huy điều hành kíp trực
+        </div>
+        <a href="https://maps.app.goo.gl/F5MuLSzcBEz8ykoo9" target="_blank"
+          style="display:inline-block; margin-top:10px; font-size:12px; font-weight:600;
+          color:#E50914; text-decoration:none;">
+          🗺️ Xem trên Google Maps →
+        </a>
+      </div>
+    `)
     .openPopup();
+
+  // Vòng tròn giám sát địa bàn
+  L.circle([LAT, LNG], {
+    radius: 800,
+    color: '#E50914',
+    fillColor: '#E50914',
+    fillOpacity: 0.05,
+    weight: 1.5,
+    dashArray: '6, 4'
+  }).addTo(map).bindTooltip('📡 Vùng giám sát địa bàn (bán kính 800m)', {
+    permanent: false, direction: 'top'
+  });
 }
 
 // 12. TẢI NHẬT KÝ KIỂM TOÁN HOẠT ĐỘNG
