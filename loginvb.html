@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng nhập - Cổng Tra Cứu Văn Bản Tuyên Truyền</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════ DESIGN TOKENS (đồng bộ index.html) ══════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255,255,255,0.8);
+  --surface-solid: #ffffff;
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0,0,0,0.1);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914;
+  --accent-hover: #ff1e2a;
+  --input-bg: #f1f5f9;
+  --input-border: #cbd5e1;
+  --input-text: #0f172a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+  /* Military palette */
+  --mil-dark: #0d1b2a;
+  --mil-mid: #1b3a5c;
+  --mil-green: #1a3c2e;
+  --mil-gold: #c9a84c;
+}
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(10,10,10,0.8);
+  --surface-solid: #0a0a0a;
+  --surface-hover: #141414;
+  --border-color: rgba(255,255,255,0.1);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+  --input-bg: #111111;
+  --input-border: #333333;
+  --input-text: #ffffff;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-family:var(--font-main);height:100%}
+body{
+  min-height:100vh;
+  background:var(--bg-color);
+  color:var(--text-main);
+  -webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;
+  transition:background .4s,color .4s;
+  position:relative;overflow-x:hidden;
+}
+
+/* Ambient background */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%,rgba(13,27,42,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 90%,rgba(229,9,20,.06) 0%,transparent 55%);
+}
+
+/* ══════════ HEADER (1:1 đồng bộ index.html) ══════════ */
+.header{
+  position:fixed;top:0;left:0;width:100%;z-index:1000;
+  background:rgba(247,242,242,.72);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border-color);
+  transition:background .3s;
+}
+[data-theme="dark"] .header{background:rgba(8,8,8,.82)}
+.header-inner{
+  max-width:1200px;margin:0 auto;padding:0 24px;height:64px;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:0;
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;letter-spacing:-.02em;white-space:nowrap;flex-shrink:0;text-decoration:none;color:var(--text-main)}
+.brand img{width:36px;height:36px;filter:drop-shadow(0 0 8px rgba(210,219,105,.45))}
+.nav-menu{display:flex;align-items:center;justify-content:center;gap:4px}
+.nav-item{
+  position:relative;font-size:13.5px;font-weight:500;color:var(--text-muted);
+  transition:color .2s;padding:20px 12px;border-radius:6px;white-space:nowrap;
+  text-decoration:none;cursor:pointer;
+}
+.nav-item:hover{color:var(--text-main)}
+.dropdown{
+  position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--surface-solid);backdrop-filter:blur(20px);
+  border:1px solid var(--border-color);border-radius:var(--radius);
+  padding:8px;min-width:200px;
+  opacity:0;visibility:hidden;transition:all .3s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 20px 40px rgba(0,0,0,.2);
+}
+@media(min-width:769px){.nav-item:hover .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}}
+.dropdown a{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;font-size:14px;color:var(--text-muted);transition:all .2s;text-decoration:none}
+.dropdown a:hover{background:rgba(68,58,58,.05);color:var(--text-main)}
+.menu-toggle{display:none;flex-direction:column;justify-content:center;gap:4px;width:40px;height:40px;border-radius:10px;background:var(--surface-hover);border:1px solid var(--border-color);padding:8px;margin-left:8px;cursor:pointer}
+.menu-toggle span{display:block;width:100%;height:2px;background:var(--text-main);border-radius:999px;transition:transform .2s,opacity .2s}
+.menu-toggle.active span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.menu-toggle.active span:nth-child(2){opacity:0}
+.menu-toggle.active span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+#header-auth-box{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.header-divider{width:1px;height:20px;background:var(--border-color);margin:0 4px;flex-shrink:0}
+.btn-icon-header{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:none;color:var(--text-main);font-size:18px;transition:background .2s;flex-shrink:0;cursor:pointer;border:none;font-family:inherit}
+.btn-icon-header:hover{background:var(--surface-hover)}
+.btn-saas{background:var(--surface-hover);color:var(--text-main);padding:0 14px;height:32px;border-radius:8px;font-size:13px;font-weight:600;transition:all .2s;border:1px solid var(--border-color);white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;text-decoration:none;cursor:pointer;font-family:inherit}
+.btn-saas:hover{background:var(--border-color)}
+.btn-primary{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(229,9,20,.3)}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px)}
+
+/* ══════════ MAIN LOGIN AREA ══════════ */
+main{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:100px 24px 60px;position:relative;z-index:1;
+}
+
+.login-wrapper{
+  width:100%;max-width:440px;
+  display:flex;flex-direction:column;gap:24px;
+  animation:fadeUp .6s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* Crest / badge header */
+.login-crest{
+  display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;
+}
+.crest-seal{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--mil-dark),var(--mil-mid));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(13,27,42,.3),0 0 0 3px rgba(201,168,76,.3);
+  position:relative;
+}
+.crest-seal::after{
+  content:'';position:absolute;inset:-4px;border-radius:50%;
+  border:1px solid rgba(201,168,76,.25);pointer-events:none;
+}
+.crest-seal img{width:44px;height:44px;filter:brightness(1.05)}
+
+.login-sys-label{
+  font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text-muted);
+}
+.login-title{
+  font-size:1.35rem;font-weight:800;letter-spacing:-.03em;line-height:1.25;
+  color:var(--text-main);
+}
+.login-subtitle{font-size:13px;color:var(--text-muted);line-height:1.5}
+
+/* Card form */
+.login-card{
+  background:var(--surface-solid);
+  border:1px solid var(--border-color);
+  border-radius:20px;
+  padding:32px;
+  box-shadow:0 16px 48px rgba(0,0,0,.09),0 2px 8px rgba(0,0,0,.04);
+  position:relative;overflow:hidden;
+}
+.login-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--mil-dark),var(--accent),var(--mil-gold));
+}
+
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:20px}
+.form-label{font-size:13px;font-weight:600;color:var(--text-main)}
+.form-label span{color:var(--accent)}
+.form-input-wrap{position:relative}
+.form-icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  font-size:15px;pointer-events:none;
+}
+.form-input{
+  width:100%;padding:11px 14px 11px 40px;
+  background:var(--input-bg);border:1.5px solid var(--input-border);
+  border-radius:10px;font-size:14px;color:var(--input-text);
+  font-family:var(--font-main);transition:border-color .2s,box-shadow .2s;
+  outline:none;
+}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(229,9,20,.1)}
+.form-input.error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+.form-error{font-size:12px;color:#ef4444;display:none;margin-top:4px;align-items:center;gap:4px}
+.form-error.show{display:flex}
+
+.btn-login{
+  width:100%;padding:13px;border-radius:10px;
+  background:linear-gradient(135deg,var(--mil-dark) 0%,var(--mil-mid) 100%);
+  color:#fff;font-size:14.5px;font-weight:700;letter-spacing:.01em;
+  border:none;cursor:pointer;font-family:var(--font-main);
+  transition:all .25s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 6px 20px rgba(13,27,42,.35);
+  position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(13,27,42,.45)}
+.btn-login:active{transform:translateY(0)}
+.btn-login.loading{pointer-events:none;opacity:.8}
+.btn-login .spinner{
+  width:16px;height:16px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin .7s linear infinite;display:none;
+}
+.btn-login.loading .spinner{display:block}
+.btn-login.loading .btn-login-text{opacity:.6}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.form-note{
+  font-size:12px;color:var(--text-muted);text-align:center;
+  line-height:1.6;margin-top:16px;padding-top:16px;
+  border-top:1px solid var(--border-color);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--surface-solid);border:1px solid var(--border-color);
+  border-radius:12px;padding:12px 20px;font-size:13px;font-weight:600;
+  box-shadow:0 12px 32px rgba(0,0,0,.18);
+  display:flex;align-items:center;gap:10px;
+  opacity:0;transition:all .35s cubic-bezier(.16,1,.3,1);
+  z-index:9000;white-space:nowrap;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success .toast-icon{color:#22c55e}
+.toast.error   .toast-icon{color:#ef4444}
+
+/* ══════════ FOOTER (1:1 đồng bộ index.html) ══════════ */
+.saas-footer{
+  background:var(--surface-color);border-top:1px solid var(--border-color);
+  padding:4rem 2rem 2rem;font-family:var(--font-main);position:relative;
+}
+.saas-footer::before{
+  content:'';position:absolute;top:0;left:10%;width:80%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.6;
+}
+.footer-container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1.2fr 1.2fr 1.6fr;gap:3rem}
+.footer-brand h2{color:var(--text-main);font-size:1.25rem;font-weight:700;margin-bottom:1rem;letter-spacing:-.02em}
+.footer-brand p{color:var(--text-muted);font-size:.9rem;line-height:1.6}
+.footer-col h3{color:var(--text-main);font-size:.9rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1.25rem;position:relative}
+.footer-col h3::after{content:'';position:absolute;bottom:-6px;left:0;width:24px;height:2px;background:var(--accent)}
+.footer-col ul{list-style:none;padding:0;margin:0}
+.footer-col ul li{margin-bottom:.75rem}
+.footer-col ul li a{color:var(--text-muted);text-decoration:none;font-size:.9rem;transition:color .2s,padding-left .2s}
+.footer-col ul li a:hover{color:var(--text-main);padding-left:4px}
+.footer-contact-info{color:var(--text-muted);font-size:.875rem;line-height:1.6}
+.footer-contact-info p{margin-bottom:.75rem;display:flex;align-items:flex-start;gap:.5rem}
+.footer-bottom{max-width:1200px;margin:3rem auto 0;padding:1.25rem 0;border-top:1px solid var(--border-color);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;font-size:.8rem;color:var(--text-muted)}
+.footer-bottom-links{display:flex;gap:0;align-items:center}
+.footer-bottom-links a{color:var(--text-muted);text-decoration:none;padding:0 14px;border-right:1px solid var(--border-color);line-height:1;transition:color .2s;white-space:nowrap}
+.footer-bottom-links a:first-child{padding-left:0}
+.footer-bottom-links a:last-child{border-right:none;padding-right:0}
+.footer-bottom-links a:hover{color:var(--text-main)}
+.footer-bottom-badge{display:flex;align-items:center;justify-content:flex-end;gap:6px;font-size:.75rem;color:var(--text-muted);opacity:.7}
+
+@media(max-width:992px){.footer-container{grid-template-columns:1fr 1fr;gap:2rem}}
+@media(max-width:768px){
+  .menu-toggle{display:flex}
+  .nav-menu{
+    position:fixed;top:64px;left:0;right:0;
+    display:flex;flex-direction:column;align-items:stretch;gap:0;
+    padding:8px 16px 20px;background:var(--surface-solid);
+    border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);
+    box-shadow:0 16px 32px rgba(0,0,0,.12);
+    max-height:calc(100vh - 64px);overflow-y:auto;
+    opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);
+    transition:opacity .25s,transform .25s,visibility .25s;
+  }
+  .nav-menu.mobile-open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+  .nav-item{width:100%;padding:12px 0;border-bottom:1px solid var(--border-color)}
+  .dropdown{position:static;display:none;opacity:1;visibility:visible;transform:none;border:1px solid var(--border-color);border-radius:12px;padding:6px;margin:8px 0 0 8px;background:var(--surface-color);box-shadow:0 12px 24px rgba(0,0,0,.12)}
+  .dropdown a{color:var(--text-main);padding:10px 12px;border-radius:10px}
+  .dropdown a:hover{background:rgba(229,9,20,.08);color:var(--accent)}
+  .nav-item.open .dropdown{display:block}
+  .header-inner{grid-template-columns:auto 1fr auto}
+  #header-auth-box{justify-content:flex-end;gap:4px}
+  .header-divider{display:none}
+  #header-auth-box .btn-saas:not(.btn-primary){display:none}
+  .footer-bottom{grid-template-columns:1fr;text-align:center;gap:.75rem}
+  .footer-bottom-links{justify-content:center}
+  .footer-bottom-badge{justify-content:center}
+}
+@media(max-width:576px){.footer-container{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Logo">
+      <span>BAN CHQS BÌNH MỸ</span>
+    </a>
+    <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="main-nav" class="nav-menu">
+      <a href="index.html" class="nav-item">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item">Giới thiệu</a>
+      <div class="nav-item">
+        Tin tức ▾
+        <div class="dropdown">
+          <a href="tin-tuc.html">📰 <span>Tin tức &amp; Sự kiện</span></a>
+          <a href="tang-gia-san-xuat.html">🌿 <span>Hoạt động tăng gia</span></a>
+          <a href="hoat-dong.html">📸 <span>Hình ảnh hoạt động</span></a>
+        </div>
+      </div>
+      <div class="nav-item">
+        Dịch vụ ▾
+        <div class="dropdown">
+          <a href="tracuu.html">🔍 <span>Tra cứu CCCD</span></a>
+          <a href="tuyen-quan.html">🪖 <span>Tuyển quân</span></a>
+          <a href="tuyen-sinh.html">🎓 <span>Tuyển sinh</span></a>
+          <a href="tracuu-dieudong.html">📋 <span>QĐ Điều động</span></a>
+          <a href="tracuuvb.html" style="color:var(--accent)">📄 <span>Văn bản tuyên truyền</span></a>
+        </div>
+      </div>
+      <a href="lien-he.html" class="nav-item">Liên hệ</a>
+    </nav>
+    <div id="header-auth-box">
+      <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện">☀️</button>
+      <div class="header-divider"></div>
+      <a href="tracuuvb.html" class="btn-saas btn-primary">Tra cứu văn bản</a>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN LOGIN -->
+<main>
+  <div class="login-wrapper">
+
+    <!-- Crest -->
+    <div class="login-crest">
+      <div class="crest-seal">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
+      </div>
+      <div class="login-sys-label">Hệ thống nội bộ · Ban CHQS Xã Bình Mỹ</div>
+      <div class="login-title">Cổng Tra Cứu<br>Văn Bản Tuyên Truyền</div>
+      <div class="login-subtitle">Vui lòng xác nhận thông tin để truy cập hệ thống</div>
+    </div>
+
+    <!-- Card form -->
+    <div class="login-card">
+      <form id="login-form" novalidate>
+
+        <div class="form-group">
+          <label class="form-label" for="input-hoten">Họ và tên <span>*</span></label>
+          <div class="form-input-wrap">
+            <span class="form-icon">👤</span>
+            <input id="input-hoten" class="form-input" type="text"
+              placeholder="Nhập họ và tên đầy đủ"
+              autocomplete="name" maxlength="80">
+          </div>
+          <div class="form-error" id="err-hoten">⚠ Vui lòng nhập họ và tên</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-sdt">Số điện thoại <span>*</span></label>
+          <div class="form-input-wrap">
+            <span class="form-icon">📞</span>
+            <input id="input-sdt" class="form-input" type="tel"
+              placeholder="Ví dụ: 0912 345 678"
+              autocomplete="tel" maxlength="12">
+          </div>
+          <div class="form-error" id="err-sdt">⚠ Số điện thoại không hợp lệ</div>
+        </div>
+
+        <button type="submit" class="btn-login" id="btn-login">
+          <div class="spinner"></div>
+          <span class="btn-login-text">🛡️ &nbsp;Truy cập hệ thống</span>
+        </button>
+
+        <div class="form-note">
+          🔒 Dữ liệu được mã hóa và bảo mật theo quy định.<br>
+          Chỉ dùng để quản lý truy cập nội bộ đơn vị.
+        </div>
+      </form>
+    </div>
+
+  </div>
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon"></span>
+  <span id="toast-msg"></span>
+</div>
+
+<!-- FOOTER -->
+<footer class="saas-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2>BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ</h2>
+      <p style="margin-bottom:1rem">Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Lực lượng vũ trang Nhân dân xã Bình Mỹ, TP. Hồ Chí Minh.</p>
+      <p style="font-size:.8rem;opacity:.7">Chịu trách nhiệm nội dung: Ban Chỉ huy Quân sự xã Bình Mỹ</p>
+    </div>
+    <div class="footer-col">
+      <h3>Liên Kết Nhanh</h3>
+      <ul>
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="gioi-thieu.html">Giới thiệu</a></li>
+        <li><a href="tin-tuc.html">Tin tức &amp; Sự kiện</a></li>
+        <li><a href="lien-he.html">Liên hệ công vụ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thủ Tục &amp; Tra Cứu</h3>
+      <ul>
+        <li><a href="tracuuvb.html">Văn bản tuyên truyền</a></li>
+        <li><a href="tuyen-sinh.html">Tuyển sinh Quân sự</a></li>
+        <li><a href="dang-ky-DQTV.html">Đăng ký Dân quân tự vệ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thông Tin Đường Dây Nóng</h3>
+      <div class="footer-contact-info">
+        <p>📍 <span>149, Đường Trung An, Xã Bình Mỹ, TP. HCM</span></p>
+        <p>📞 <span>Trực ban 24/7: (028) XXXX XXXX</span></p>
+        <p>✉️ <span>bchqs.binhmy.@tphcm.gov.vn</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-copy">&copy;tri 2026 Cổng Thông Tin Ban CHQS Xã Bình Mỹ.</div>
+    <div class="footer-bottom-links">
+      <a href="chinh-sach-hau-phuong.html">Điều khoản sử dụng</a>
+      <a href="chinh-sach-bao-mat.html">Chính sách bảo mật</a>
+      <a href="so-do-website.html">Sơ đồ website</a>
+    </div>
+    <div class="footer-bottom-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Bảo mật &amp; Tin cậy</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Config ── */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxdgm9vjNHNvI92T5z4wzxWKyQkPfOz-K8fjopMl23exqajJ2P90pCpqSyt5g0ZkAIL/exec';
+const REDIRECT = 'tracuuvb.html';
+
+/* ── Theme ── */
+const themeToggle = document.getElementById('theme-toggle');
+const savedTheme = localStorage.getItem('vb_theme');
+if (savedTheme === 'dark') { document.documentElement.setAttribute('data-theme','dark'); themeToggle.textContent='🌙'; }
+themeToggle.addEventListener('click', () => {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (dark) { document.documentElement.removeAttribute('data-theme'); themeToggle.textContent='☀️'; localStorage.setItem('vb_theme','light'); }
+  else { document.documentElement.setAttribute('data-theme','dark'); themeToggle.textContent='🌙'; localStorage.setItem('vb_theme','dark'); }
+});
+
+/* ── Mobile nav ── */
+const menuToggle = document.getElementById('menu-toggle');
+const mainNav = document.getElementById('main-nav');
+const dropItems = document.querySelectorAll('.nav-item:has(.dropdown)');
+menuToggle.addEventListener('click', () => {
+  const open = mainNav.classList.toggle('mobile-open');
+  menuToggle.classList.toggle('active', open);
+  menuToggle.setAttribute('aria-expanded', String(open));
+});
+dropItems.forEach(item => {
+  item.addEventListener('click', e => {
+    if (window.innerWidth <= 768 && !e.target.closest('.dropdown')) {
+      dropItems.forEach(o => { if (o !== item) o.classList.remove('open'); });
+      item.classList.toggle('open');
+    }
+  });
+});
+
+/* ── Toast ── */
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = type === 'success' ? '✅' : '❌';
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 3200);
+}
+
+/* ── Validation ── */
+function validatePhone(v) { return /^(0[3|5|7|8|9])[0-9]{8}$/.test(v.replace(/\s/g,'')); }
+function setError(inputId, errId, show) {
+  document.getElementById(inputId).classList.toggle('error', show);
+  document.getElementById(errId).classList.toggle('show', show);
+}
+
+/* ── Get device / browser info ── */
+function getDeviceInfo() {
+  const ua = navigator.userAgent;
+  let device = 'Desktop';
+  if (/Mobi|Android/i.test(ua)) device = 'Mobile';
+  else if (/Tablet|iPad/i.test(ua)) device = 'Tablet';
+  let browser = 'Unknown';
+  if (ua.includes('Chrome') && !ua.includes('Edg')) browser = 'Chrome';
+  else if (ua.includes('Firefox')) browser = 'Firefox';
+  else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari';
+  else if (ua.includes('Edg')) browser = 'Edge';
+  return { device, browser };
+}
+
+/* ── Submit ── */
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const hoTen = document.getElementById('input-hoten').value.trim();
+  const sdt   = document.getElementById('input-sdt').value.trim();
+
+  let valid = true;
+  if (!hoTen) { setError('input-hoten','err-hoten',true); valid = false; }
+  else setError('input-hoten','err-hoten',false);
+  if (!validatePhone(sdt)) { setError('input-sdt','err-sdt',true); valid = false; }
+  else setError('input-sdt','err-sdt',false);
+  if (!valid) return;
+
+  const btn = document.getElementById('btn-login');
+  btn.classList.add('loading');
+
+  const { device, browser } = getDeviceInfo();
+  const payload = {
+    action: 'saveVisitor',
+    hoTen, soDienThoai: sdt.replace(/\s/g,''), device, browser,
+    timestamp: new Date().toISOString()
+  };
+
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    // Lưu session
+    sessionStorage.setItem('vb_user', JSON.stringify({ hoTen, sdt, ts: Date.now() }));
+    showToast(`Xin chào ${hoTen}! Đang chuyển hướng...`, 'success');
+    setTimeout(() => { window.location.href = REDIRECT; }, 1200);
+  } catch (_) {
+    // no-cors không throw, nhưng nếu GAS_URL chưa cấu hình => vẫn chuyển hướng
+    sessionStorage.setItem('vb_user', JSON.stringify({ hoTen, sdt, ts: Date.now() }));
+    setTimeout(() => { window.location.href = REDIRECT; }, 1200);
+  } finally {
+    btn.classList.remove('loading');
+  }
+});
+
+/* ── Auto-redirect nếu đã đăng nhập trong session ── */
+const sess = sessionStorage.getItem('vb_user');
+if (sess) {
+  try {
+    const u = JSON.parse(sess);
+    if (Date.now() - u.ts < 3600000) window.location.href = REDIRECT;
+  } catch(_) {}
+}
+
+/* ── Input cleanup ── */
+document.getElementById('input-hoten').addEventListener('input', () => setError('input-hoten','err-hoten',false));
+document.getElementById('input-sdt').addEventListener('input', function() {
+  this.value = this.value.replace(/[^0-9\s]/g,'');
+  setError('input-sdt','err-sdt',false);
+});
+</script>
+</body>
+</html>

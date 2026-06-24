@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hình Ảnh Hoạt Động - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════════════════
+   DESIGN TOKENS — đồng bộ tang-gia-san-xuat.html
+══════════════════════════════════════════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255,255,255,0.85);
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0,0,0,0.09);
+  --border-glow: rgba(229,9,20,0.3);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914;
+  --accent-hover: #ff1e2a;
+  --radius: 12px;
+  --card-radius: 24px;
+  --font-main: 'Inter', sans-serif;
+  --grid-gap: 16px;
+}
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(14,14,14,0.9);
+  --surface-hover: #141414;
+  --border-color: rgba(255,255,255,0.08);
+  --border-glow: rgba(229,9,20,0.5);
+  --text-main: #f0f0f0;
+  --text-muted: #888888;
+}
+
+/* ══════════════════ RESET ══════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-family:var(--font-main);background:var(--bg-color);color:var(--text-main)}
+body{overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+img{display:block;max-width:100%;height:auto}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle at 60% 0%,rgba(229,9,20,.09) 0%,transparent 55%),
+             radial-gradient(circle at 10% 80%,rgba(100,116,139,.05) 0%,transparent 40%);
+}
+
+/* ══════════════════ HEADER ══════════════════ */
+.header{
+  position:fixed;top:0;left:0;width:100%;z-index:1000;
+  background:rgba(247,242,242,.72);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--border-color);
+  transition:background .3s;
+}
+[data-theme="dark"] .header{background:rgba(8,8,8,.82)}
+.header-inner{
+  max-width:1200px;margin:0 auto;padding:0 24px;height:68px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;letter-spacing:-.02em;white-space:nowrap}
+.brand img{width:36px;height:36px;filter:drop-shadow(0 0 8px rgba(210,219,105,.45))}
+
+.nav-menu{display:flex;align-items:center;gap:4px}
+.nav-item{
+  position:relative;font-size:13.5px;font-weight:500;color:var(--text-muted);
+  padding:20px 12px;border-radius:6px;transition:color .2s;white-space:nowrap;cursor:pointer;
+}
+.nav-item:hover,.nav-item.active{color:var(--text-main)}
+.dropdown{
+  position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--surface-color);backdrop-filter:blur(20px);
+  border:1px solid var(--border-color);border-radius:var(--radius);
+  padding:8px;min-width:210px;
+  opacity:0;visibility:hidden;transition:all .3s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 20px 40px rgba(0,0,0,.18);
+}
+@media(min-width:769px){
+  .nav-item:hover .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+}
+.dropdown a{
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+  border-radius:8px;font-size:13.5px;color:var(--text-muted);transition:all .2s;
+}
+.dropdown a:hover{background:rgba(68,58,58,.06);color:var(--text-main)}
+
+.header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.btn-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:8px;
+  background:none;color:var(--text-main);font-size:18px;transition:background .2s;
+}
+.btn-icon:hover{background:var(--surface-hover)}
+.btn-saas{
+  background:var(--surface-color);color:var(--text-main);
+  padding:0 14px;height:32px;border-radius:8px;
+  font-size:13px;font-weight:600;transition:all .2s;
+  border:1px solid var(--border-color);white-space:nowrap;
+  display:inline-flex;align-items:center;
+}
+.btn-saas:hover{background:var(--border-color)}
+.btn-primary{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(229,9,20,.3)}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px)}
+
+/* ══════════════════ PAGE HERO ══════════════════ */
+.page-hero{
+  padding:130px 24px 72px;
+  text-align:center;
+  position:relative;
+}
+.page-hero-inner{max-width:780px;margin:0 auto}
+
+.badge-chip{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(229,9,20,.08);color:var(--accent);
+  padding:5px 16px;border-radius:99px;
+  font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  border:1px solid rgba(229,9,20,.16);margin-bottom:24px;
+}
+.badge-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--accent);
+  animation:pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.65)}}
+
+.page-hero h1{
+  font-size:clamp(2.4rem,5.5vw,4.2rem);
+  font-weight:900;letter-spacing:-.04em;line-height:1.1;
+  margin-bottom:18px;
+  background:linear-gradient(155deg,var(--text-main) 0%,var(--text-muted) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.page-hero p{
+  font-size:clamp(.95rem,1.6vw,1.1rem);color:var(--text-muted);
+  line-height:1.75;max-width:580px;margin:0 auto;
+}
+
+/* ══════════════════ CATEGORY FILTER ══════════════════ */
+.filter-bar{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
+  max-width:1400px;margin:0 auto 52px;padding:0 24px;
+}
+.filter-btn{
+  padding:8px 18px;border-radius:99px;font-size:13px;font-weight:600;
+  border:1px solid var(--border-color);background:var(--surface-color);
+  color:var(--text-muted);transition:all .22s cubic-bezier(.16,1,.3,1);
+  backdrop-filter:blur(8px);cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+}
+.filter-btn:hover{border-color:rgba(229,9,20,.3);color:var(--text-main)}
+.filter-btn.active{
+  background:var(--accent);color:#fff;border-color:transparent;
+  box-shadow:0 6px 18px rgba(229,9,20,.3);
+}
+.filter-btn .fi{font-size:14px}
+
+/* ══════════════════ BENTO GRID ══════════════════ */
+.bento-section{
+  max-width:1400px;margin:0 auto;padding:0 24px 100px;
+}
+
+.bento-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  grid-auto-rows:180px;
+  gap:var(--grid-gap);
+}
+
+/* Card size variants using col/row spans */
+.gc-1{ grid-column:span 4; grid-row:span 2 } /* 4 col × 2 row */
+.gc-2{ grid-column:span 6; grid-row:span 2 } /* wide */
+.gc-3{ grid-column:span 3; grid-row:span 2 } /* narrow tall */
+.gc-4{ grid-column:span 5; grid-row:span 2 }
+.gc-5{ grid-column:span 4; grid-row:span 3 } /* tall */
+.gc-6{ grid-column:span 8; grid-row:span 2 } /* hero wide */
+.gc-7{ grid-column:span 3; grid-row:span 1 } /* short */
+.gc-8{ grid-column:span 6; grid-row:span 3 } /* big square */
+
+/* ══════════════════ BENTO CARD ══════════════════ */
+.bcard{
+  position:relative;overflow:hidden;
+  border-radius:var(--card-radius);
+  background:var(--surface-color);
+  border:1px solid var(--border-color);
+  cursor:pointer;
+  transition:transform .42s cubic-bezier(.16,1,.3,1),
+             box-shadow .42s cubic-bezier(.16,1,.3,1),
+             opacity .35s ease;
+  will-change:transform;
+}
+.bcard:hover{
+  transform:scale(1.025) translateY(-4px);
+  box-shadow:0 32px 64px rgba(0,0,0,.22);
+  z-index:10;
+}
+.bcard.hidden{opacity:0;pointer-events:none;transform:scale(.96)}
+
+/* Placeholder gradient bg */
+.bcard-bg{
+  position:absolute;inset:0;
+  background:var(--grad,linear-gradient(135deg,#1a2a1a,#2e4a2e));
+  transition:transform .42s cubic-bezier(.16,1,.3,1);
+}
+.bcard:hover .bcard-bg{transform:scale(1.06)}
+
+/* Real image */
+.bcard img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;z-index:1;
+  transition:transform .42s cubic-bezier(.16,1,.3,1);
+}
+.bcard:hover img{transform:scale(1.06)}
+
+/* Dark gradient overlay */
+.bcard-overlay{
+  position:absolute;inset:0;z-index:2;
+  background:linear-gradient(to top,rgba(0,0,0,.75) 0%,rgba(0,0,0,.18) 50%,transparent 100%);
+  transition:opacity .3s;
+}
+.bcard:hover .bcard-overlay{opacity:.85}
+
+/* Label */
+.bcard-label{
+  position:absolute;bottom:0;left:0;right:0;z-index:3;
+  padding:16px 20px 20px;
+  transform:translateY(4px);
+  transition:transform .3s cubic-bezier(.16,1,.3,1);
+}
+.bcard:hover .bcard-label{transform:translateY(0)}
+.bcard-cat{
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.6);margin-bottom:4px;
+}
+.bcard-title{
+  font-size:clamp(.85rem,1.4vw,1rem);font-weight:700;
+  color:#fff;line-height:1.3;
+}
+
+/* Top-right zoom icon on hover */
+.bcard-zoom{
+  position:absolute;top:14px;right:14px;z-index:4;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.18);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .25s,transform .25s;
+  transform:scale(.8);
+}
+.bcard:hover .bcard-zoom{opacity:1;transform:scale(1)}
+.bcard-zoom svg{width:15px;height:15px;stroke:#fff}
+
+/* Category accent border */
+.bcard[data-cat="tang-gia"]     .bcard-cat{color:#6ee7a0}
+.bcard[data-cat="huan-luyen"]   .bcard-cat{color:#93c5fd}
+.bcard[data-cat="dan-van"]      .bcard-cat{color:#fca5a5}
+.bcard[data-cat="hoi-hop"]      .bcard-cat{color:#fcd34d}
+.bcard[data-cat="quoc-phong"]   .bcard-cat{color:#c4b5fd}
+.bcard[data-cat="doan-the"]     .bcard-cat{color:#fdba74}
+.bcard[data-cat="hau-can"]      .bcard-cat{color:#67e8f9}
+
+/* Empty state */
+.empty-state{
+  grid-column:1/-1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 24px;gap:12px;color:var(--text-muted);
+  font-size:15px;text-align:center;
+}
+.empty-state .ei{font-size:3rem;margin-bottom:8px}
+
+/* ══════════════════ LIGHTBOX ══════════════════ */
+.lightbox{
+  position:fixed;inset:0;z-index:9000;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.92);backdrop-filter:blur(18px);
+  opacity:0;visibility:hidden;
+  transition:opacity .35s,visibility .35s;
+  padding:24px;
+}
+.lightbox.active{opacity:1;visibility:visible}
+
+.lb-inner{
+  position:relative;max-width:1100px;width:100%;
+  display:flex;flex-direction:column;align-items:center;gap:20px;
+}
+.lb-media{
+  position:relative;width:100%;max-height:78vh;
+  border-radius:var(--card-radius);overflow:hidden;
+  background:#111;
+  box-shadow:0 40px 80px rgba(0,0,0,.7);
+}
+.lb-media img{
+  width:100%;height:100%;max-height:78vh;
+  object-fit:contain;display:block;border-radius:var(--card-radius);
+}
+.lb-media .lb-placeholder{
+  width:100%;height:60vh;
+  display:flex;align-items:center;justify-content:center;
+  font-size:6rem;
+}
+
+.lb-info{
+  display:flex;align-items:center;justify-content:space-between;width:100%;gap:16px;
+}
+.lb-meta{color:#fff}
+.lb-meta-cat{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px}
+.lb-meta-title{font-size:1.15rem;font-weight:700}
+.lb-meta-desc{font-size:13px;color:rgba(255,255,255,.55);margin-top:4px;line-height:1.5}
+
+.lb-nav{display:flex;gap:8px}
+.lb-btn{
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,.1);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);color:#fff;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,transform .2s;cursor:pointer;
+}
+.lb-btn:hover{background:rgba(255,255,255,.22);transform:scale(1.08)}
+
+.lb-close{
+  position:absolute;top:-16px;right:-16px;
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.12);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;font-size:20px;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .2s,transform .2s;z-index:10;
+}
+.lb-close:hover{background:var(--accent);transform:scale(1.1) rotate(90deg)}
+
+.lb-counter{
+  font-size:12px;font-weight:600;color:rgba(255,255,255,.4);
+  min-width:60px;text-align:center;
+}
+
+/* ══════════════════ SCROLL REVEAL ══════════════════ */
+.reveal{opacity:0;transform:translateY(28px);transition:.7s cubic-bezier(.16,1,.3,1)}
+.reveal.active{opacity:1;transform:none}
+
+/* ══════════════════ FOOTER ══════════════════ */
+.saas-footer{
+  background:rgba(255,255,255,.4);border-top:1px solid var(--border-color);
+  padding:4rem 2rem 2rem;font-size:14px;
+}
+[data-theme="dark"] .saas-footer{background:rgba(10,10,10,.8)}
+.footer-container{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:2fr 1fr 1.5fr;gap:48px;
+}
+.footer-brand h2{font-size:1.05rem;font-weight:700;margin-bottom:10px}
+.footer-brand p{color:var(--text-muted);line-height:1.6}
+.footer-col h3{
+  font-size:13px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;margin-bottom:14px;color:var(--text-main);
+}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:9px}
+.footer-col ul li a{color:var(--text-muted);transition:color .2s}
+.footer-col ul li a:hover{color:var(--accent)}
+.footer-bottom{
+  max-width:1200px;margin:3.5rem auto 0;padding-top:1.5rem;
+  border-top:1px solid var(--border-color);
+  text-align:center;color:var(--text-muted);font-size:12.5px;
+}
+
+/* ══════════════════ RESPONSIVE ══════════════════ */
+@media(max-width:1024px){
+  .bento-grid{grid-template-columns:repeat(6,1fr);grid-auto-rows:160px}
+  .gc-1,.gc-3,.gc-4,.gc-7{grid-column:span 3}
+  .gc-2,.gc-6{grid-column:span 6}
+  .gc-5,.gc-8{grid-column:span 3;grid-row:span 2}
+  .footer-container{grid-template-columns:1fr 1fr;gap:32px}
+}
+@media(max-width:768px){
+  .nav-menu{display:none}
+  .bento-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:160px}
+  .gc-1,.gc-2,.gc-3,.gc-4,.gc-5,.gc-6,.gc-7,.gc-8{grid-column:span 2;grid-row:span 2}
+  .gc-7{grid-row:span 1}
+  .footer-container{grid-template-columns:1fr;gap:24px}
+  .lb-close{top:-8px;right:-8px}
+}
+@media(max-width:480px){
+  :root{--grid-gap:10px}
+  .bento-grid{grid-auto-rows:140px}
+  .page-hero{padding:110px 16px 52px}
+}
+
+/* ══════════════════ FOCUS RING ══════════════════ */
+.bcard:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.lb-btn:focus-visible,.lb-close:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header class="header">
+  <div class="header-inner">
+
+    <a href="index.html" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy Việt Nam">
+      <span>BAN CHQS BÌNH MỸ</span>
+    </a>
+
+    <nav class="nav-menu" id="main-nav" aria-label="Điều hướng chính">
+      <a href="index.html"      class="nav-item">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item">Giới thiệu</a>
+
+      <div class="nav-item">
+        Tin tức ▾
+        <div class="dropdown">
+          <a href="tin-tuc.html">📰 <span>Tin tức &amp; Sự kiện</span></a>
+          <a href="tang-gia-san-xuat.html">🌿 <span>Hoạt động tăng gia</span></a>
+        </div>
+      </div>
+
+      <div class="nav-item active">
+        Hình ảnh ▾
+        <div class="dropdown">
+          <a href="hoat-dong.html" style="color:var(--accent);">📸 <span>Hình ảnh hoạt động</span></a>
+        </div>
+      </div>
+
+      <div class="nav-item">
+        Dịch vụ ▾
+        <div class="dropdown">
+          <a href="dang-ky-DQTV.html">🪖 <span>Đăng ký Dân quân</span></a>
+          <a href="tuyen-sinh.html">📋 <span>Tuyển sinh QS</span></a>
+          <a href="tracuu-dieudong.html">🔍 <span>Tra cứu điều động</span></a>
+        </div>
+      </div>
+
+      <a href="lien-he.html" class="nav-item">Liên hệ</a>
+    </nav>
+
+    <div class="header-actions">
+      <button id="theme-toggle" class="btn-icon" title="Đổi giao diện">☀️</button>
+      <a href="dang-ky-DQTV.html" class="btn-saas btn-primary">Đăng ký ngay</a>
+    </div>
+
+  </div>
+</header>
+
+<!-- ═══════════ PAGE HERO ═══════════ -->
+<section class="page-hero reveal">
+  <div class="page-hero-inner">
+    <div class="badge-chip"><span class="badge-dot"></span> Thư viện ảnh · Bình Mỹ</div>
+    <h1>Hình Ảnh Hoạt Động</h1>
+    <p>Ghi lại những khoảnh khắc thực tế trong công tác huấn luyện, tăng gia sản xuất, dân vận và các hoạt động đoàn thể của đơn vị.</p>
+  </div>
+</section>
+
+<!-- ═══════════ FILTER BAR ═══════════ -->
+<div class="filter-bar reveal" role="group" aria-label="Lọc theo chuyên mục">
+  <button class="filter-btn active" data-filter="all"><span class="fi">🗂️</span> Tất cả</button>
+  <button class="filter-btn" data-filter="tang-gia"><span class="fi">🌿</span> Tăng gia sản xuất</button>
+  <button class="filter-btn" data-filter="huan-luyen"><span class="fi">🪖</span> Huấn luyện</button>
+  <button class="filter-btn" data-filter="dan-van"><span class="fi">🤝</span> Dân vận</button>
+  <button class="filter-btn" data-filter="hoi-hop"><span class="fi">📋</span> Hội họp</button>
+  <button class="filter-btn" data-filter="quoc-phong"><span class="fi">🛡️</span> Quốc phòng địa phương</button>
+  <button class="filter-btn" data-filter="doan-the"><span class="fi">🎗️</span> Hoạt động đoàn thể</button>
+  <button class="filter-btn" data-filter="hau-can"><span class="fi">📦</span> Công tác hậu cần</button>
+</div>
+
+<!-- ═══════════ BENTO GRID ═══════════ -->
+<main class="bento-section">
+<div class="bento-grid" id="bento-grid" role="list" aria-label="Thư viện ảnh hoạt động">
+
+  <!-- ─── TĂNG GIA SẢN XUẤT ─── -->
+  <div class="bcard gc-6 reveal" data-cat="tang-gia" tabindex="0" role="listitem"
+       data-title="Khu Tăng Gia Tổng Hợp"
+       data-desc="Mô hình tăng gia tổng hợp kết hợp trồng trọt và chăn nuôi tại chỗ."
+       style="--grad:linear-gradient(135deg,#134e2a,#2d7a46)">
+    <div class="bcard-bg"></div>
+    <img src="images/tangia.jpg" alt="Khu tăng gia tổng hợp" loading="lazy">
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Tăng gia sản xuất</div><div class="bcard-title">Khu Tăng Gia Tổng Hợp</div></div>
+  </div>
+
+  <div class="bcard gc-3 reveal" data-cat="tang-gia" tabindex="0" role="listitem"
+       data-title="Trồng Rau Xanh"
+       data-desc="Vườn rau xanh cung cấp thực phẩm sạch cho bộ đội."
+       style="--grad:linear-gradient(135deg,#2d5a1b,#4a8c2a)">
+    <div class="bcard-bg"></div>
+    <img src="images/raucai.jpg" alt="Trồng rau xanh" loading="lazy">
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Tăng gia sản xuất</div><div class="bcard-title">Trồng Rau Xanh</div></div>
+  </div>
+
+  <div class="bcard gc-3 reveal" data-cat="tang-gia" tabindex="0" role="listitem"
+       data-title="Chăn Nuôi Gia Cầm"
+       data-desc="Đàn gia cầm được chăm sóc đúng kỹ thuật, đảm bảo an toàn thực phẩm."
+       style="--grad:linear-gradient(135deg,#5c3a00,#a36a10)">
+    <div class="bcard-bg"></div>
+    <img src="images/ga.jpg" alt="Chăn nuôi gia cầm" loading="lazy">
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Tăng gia sản xuất</div><div class="bcard-title">Chăn Nuôi Gia Cầm</div></div>
+  </div>
+
+  <div class="bcard gc-4 reveal" data-cat="tang-gia" tabindex="0" role="listitem"
+       data-title="Nuôi Cá Ao Đơn Vị"
+       data-desc="Ao cá thả nuôi theo mô hình VAC kết hợp tại đơn vị."
+       style="--grad:linear-gradient(135deg,#0f3460,#1a6fa8)">
+    <div class="bcard-bg"></div>
+    <img src="images/ca.jpg" alt="Nuôi cá" loading="lazy">
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Tăng gia sản xuất</div><div class="bcard-title">Nuôi Cá Ao Đơn Vị</div></div>
+  </div>
+
+  <div class="bcard gc-5 reveal" data-cat="tang-gia" tabindex="0" role="listitem"
+       data-title="Ươm Cây Giống"
+       data-desc="Ươm cây giống rau màu chuẩn bị cho vụ trồng tiếp theo."
+       style="--grad:linear-gradient(135deg,#134e2a,#1e8449)">
+    <div class="bcard-bg"></div>
+    <img src="images/caimoi.jpg" alt="Ươm cây giống" loading="lazy">
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Tăng gia sản xuất</div><div class="bcard-title">Ươm Cây Giống</div></div>
+  </div>
+
+  <!-- ─── HUẤN LUYỆN ─── -->
+  <div class="bcard gc-8 reveal" data-cat="huan-luyen" tabindex="0" role="listitem"
+       data-title="Huấn Luyện Chiến Thuật"
+       data-desc="Bộ đội dân quân tự vệ thực hành chiến thuật ngoài thực địa."
+       style="--grad:linear-gradient(135deg,#1e2a4a,#2d4a7a)">
+    <div class="bcard-bg"></div>
+    <img src="images/huanluyen.jpg" alt="Huấn luyện chiến thuật" loading="lazy">
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Huấn luyện</div><div class="bcard-title">Huấn Luyện Chiến Thuật</div></div>
+  </div>
+
+  <div class="bcard gc-4 reveal" data-cat="huan-luyen" tabindex="0" role="listitem"
+       data-title="Bắn Súng Thực Hành"
+       data-desc="Hội thi bắn súng thực hành cấp xã năm 2025."
+       style="--grad:linear-gradient(135deg,#2a1a1a,#6b2222)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Huấn luyện</div><div class="bcard-title">Bắn Súng Thực Hành</div></div>
+  </div>
+
+  <div class="bcard gc-4 reveal" data-cat="huan-luyen" tabindex="0" role="listitem"
+       data-title="Thể Lực & Võ Thuật"
+       data-desc="Rèn luyện thể lực và kỹ năng chiến đấu cơ bản cho dân quân."
+       style="--grad:linear-gradient(135deg,#1a2a3a,#24598a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Huấn luyện</div><div class="bcard-title">Thể Lực &amp; Võ Thuật</div></div>
+  </div>
+
+  <!-- ─── DÂN VẬN ─── -->
+  <div class="bcard gc-5 reveal" data-cat="dan-van" tabindex="0" role="listitem"
+       data-title="Thăm Hỏi Gia Đình Chính Sách"
+       data-desc="Thăm hỏi và trao quà gia đình chính sách nhân dịp lễ tết."
+       style="--grad:linear-gradient(135deg,#4a1a1a,#8b3a3a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Dân vận</div><div class="bcard-title">Thăm Hỏi Gia Đình Chính Sách</div></div>
+  </div>
+
+  <div class="bcard gc-4 reveal" data-cat="dan-van" tabindex="0" role="listitem"
+       data-title="Giúp Dân Làm Đường"
+       data-desc="Bộ đội cùng nhân dân tham gia làm đường nông thôn mới."
+       style="--grad:linear-gradient(135deg,#2a3a1a,#4a6a2a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Dân vận</div><div class="bcard-title">Giúp Dân Làm Đường</div></div>
+  </div>
+
+  <div class="bcard gc-3 reveal" data-cat="dan-van" tabindex="0" role="listitem"
+       data-title="Khám Sức Khỏe Cho Dân"
+       data-desc="Tổ chức khám sức khỏe miễn phí tại địa bàn xã Bình Mỹ."
+       style="--grad:linear-gradient(135deg,#1a2a4a,#2a4a7a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Dân vận</div><div class="bcard-title">Khám Sức Khỏe Cho Dân</div></div>
+  </div>
+
+  <!-- ─── HỘI HỌP ─── -->
+  <div class="bcard gc-6 reveal" data-cat="hoi-hop" tabindex="0" role="listitem"
+       data-title="Hội Nghị Tổng Kết Năm"
+       data-desc="Hội nghị tổng kết công tác quân sự địa phương năm 2025."
+       style="--grad:linear-gradient(135deg,#1a1a2e,#3a2a5a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Hội họp</div><div class="bcard-title">Hội Nghị Tổng Kết Năm</div></div>
+  </div>
+
+  <div class="bcard gc-3 reveal" data-cat="hoi-hop" tabindex="0" role="listitem"
+       data-title="Sơ Kết 6 Tháng"
+       data-desc="Cuộc họp sơ kết 6 tháng đầu năm của Ban Chỉ Huy."
+       style="--grad:linear-gradient(135deg,#2a1a3a,#5a2a7a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Hội họp</div><div class="bcard-title">Sơ Kết 6 Tháng</div></div>
+  </div>
+
+  <div class="bcard gc-3 reveal" data-cat="hoi-hop" tabindex="0" role="listitem"
+       data-title="Giao Ban Hàng Tuần"
+       data-desc="Buổi giao ban công tác tuần của cán bộ Ban CHQS xã."
+       style="--grad:linear-gradient(135deg,#1a2a2a,#2a5a5a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Hội họp</div><div class="bcard-title">Giao Ban Hàng Tuần</div></div>
+  </div>
+
+  <!-- ─── QUỐC PHÒNG ─── -->
+  <div class="bcard gc-5 reveal" data-cat="quoc-phong" tabindex="0" role="listitem"
+       data-title="Diễn Tập Khu Vực Phòng Thủ"
+       data-desc="Diễn tập khu vực phòng thủ cấp xã năm 2025."
+       style="--grad:linear-gradient(135deg,#0f1a2e,#1e3460)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Quốc phòng địa phương</div><div class="bcard-title">Diễn Tập Khu Vực Phòng Thủ</div></div>
+  </div>
+
+  <div class="bcard gc-4 reveal" data-cat="quoc-phong" tabindex="0" role="listitem"
+       data-title="Tuần Tra Bảo Vệ"
+       data-desc="Lực lượng dân quân tự vệ tuần tra bảo vệ địa bàn ban đêm."
+       style="--grad:linear-gradient(135deg,#0a0f1a,#162040)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Quốc phòng địa phương</div><div class="bcard-title">Tuần Tra Bảo Vệ</div></div>
+  </div>
+
+  <div class="bcard gc-3 reveal" data-cat="quoc-phong" tabindex="0" role="listitem"
+       data-title="Phòng Chống Thiên Tai"
+       data-desc="Lực lượng sẵn sàng ứng phó phòng chống thiên tai, sự cố tại địa bàn."
+       style="--grad:linear-gradient(135deg,#1a0f0a,#40201a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Quốc phòng địa phương</div><div class="bcard-title">Phòng Chống Thiên Tai</div></div>
+  </div>
+
+  <!-- ─── ĐOÀN THỂ ─── -->
+  <div class="bcard gc-6 reveal" data-cat="doan-the" tabindex="0" role="listitem"
+       data-title="Kỷ Niệm Ngày Thành Lập QĐND"
+       data-desc="Lễ kỷ niệm 80 năm ngày thành lập Quân đội Nhân dân Việt Nam 22/12."
+       style="--grad:linear-gradient(135deg,#3a0a0a,#7b1113)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Hoạt động đoàn thể</div><div class="bcard-title">Kỷ Niệm Ngày Thành Lập QĐND</div></div>
+  </div>
+
+  <div class="bcard gc-3 reveal" data-cat="doan-the" tabindex="0" role="listitem"
+       data-title="Hội Thao Dân Quân"
+       data-desc="Hội thao lực lượng vũ trang cấp xã tranh cúp mùa xuân."
+       style="--grad:linear-gradient(135deg,#2a1a0a,#6b4010)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Hoạt động đoàn thể</div><div class="bcard-title">Hội Thao Dân Quân</div></div>
+  </div>
+
+  <div class="bcard gc-3 reveal" data-cat="doan-the" tabindex="0" role="listitem"
+       data-title="Giao Lưu Văn Nghệ"
+       data-desc="Buổi giao lưu văn nghệ chào xuân của cán bộ chiến sĩ đơn vị."
+       style="--grad:linear-gradient(135deg,#1a0a2a,#4a1a6a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Hoạt động đoàn thể</div><div class="bcard-title">Giao Lưu Văn Nghệ</div></div>
+  </div>
+
+  <!-- ─── HẬU CẦN ─── -->
+  <div class="bcard gc-4 reveal" data-cat="hau-can" tabindex="0" role="listitem"
+       data-title="Bữa Cơm Tập Thể"
+       data-desc="Bếp ăn tập thể đảm bảo dinh dưỡng trong thời gian huấn luyện tập trung."
+       style="--grad:linear-gradient(135deg,#1a0a0a,#4a1a10)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Công tác hậu cần</div><div class="bcard-title">Bữa Cơm Tập Thể</div></div>
+  </div>
+
+  <div class="bcard gc-4 reveal" data-cat="hau-can" tabindex="0" role="listitem"
+       data-title="Kiểm Tra Vũ Khí Trang Bị"
+       data-desc="Kiểm tra, bảo dưỡng vũ khí trang bị định kỳ theo quy định."
+       style="--grad:linear-gradient(135deg,#0a1a0a,#1a4a1a)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Công tác hậu cần</div><div class="bcard-title">Kiểm Tra Vũ Khí Trang Bị</div></div>
+  </div>
+
+  <div class="bcard gc-4 reveal" data-cat="hau-can" tabindex="0" role="listitem"
+       data-title="Kho Quân Nhu"
+       data-desc="Hệ thống kho chứa và bảo quản quân nhu, vật tư đơn vị."
+       style="--grad:linear-gradient(135deg,#1a1a0a,#3a3a10)">
+    <div class="bcard-bg"></div>
+    <div class="bcard-overlay"></div>
+    <div class="bcard-zoom"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    <div class="bcard-label"><div class="bcard-cat">Công tác hậu cần</div><div class="bcard-title">Kho Quân Nhu</div></div>
+  </div>
+
+</div><!-- /bento-grid -->
+</main>
+
+<!-- ═══════════ LIGHTBOX ═══════════ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Xem ảnh phóng to">
+  <div class="lb-inner">
+    <button class="lb-close" id="lb-close" aria-label="Đóng">✕</button>
+    <div class="lb-media" id="lb-media">
+      <div class="lb-placeholder" id="lb-placeholder">🖼️</div>
+      <img id="lb-img" src="" alt="" style="display:none">
+    </div>
+    <div class="lb-info">
+      <div class="lb-meta">
+        <div class="lb-meta-cat" id="lb-cat"></div>
+        <div class="lb-meta-title" id="lb-title"></div>
+        <div class="lb-meta-desc" id="lb-desc"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="lb-counter" id="lb-counter"></div>
+        <div class="lb-nav">
+          <button class="lb-btn" id="lb-prev" aria-label="Ảnh trước">‹</button>
+          <button class="lb-btn" id="lb-next" aria-label="Ảnh tiếp">›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="saas-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2>BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ</h2>
+      <p>Đoàn kết · Kỷ luật · Sẵn sàng chiến đấu.</p>
+    </div>
+    <div class="footer-col">
+      <h3>Liên kết nhanh</h3>
+      <ul>
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="gioi-thieu.html">Giới thiệu</a></li>
+        <li><a href="tin-tuc.html">Tin tức công vụ</a></li>
+        <li><a href="tang-gia-san-xuat.html">Tăng gia sản xuất</a></li>
+        <li><a href="hoat-dong.html">Hình ảnh hoạt động</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thông tin liên hệ</h3>
+      <p style="color:var(--text-muted);line-height:1.7">
+        📍 149 Đường Trung An, Xã Bình Mỹ, TP.HCM<br>
+        📞 Trực ban: (028) XXXX XXXX<br>
+        🕒 Hành chính (Trực chiến 24/7)
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 Cổng Thông Tin Ban CHQS Xã Bình Mỹ. Quy chuẩn thiết kế giao diện số hóa.
+  </div>
+</footer>
+
+<!-- ═══════════ SCRIPTS ═══════════ -->
+<script>
+/* ── Scroll Reveal ── */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('active'); io.unobserve(e.target); } });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ── Theme ── */
+const themeToggle = document.getElementById('theme-toggle');
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') { document.documentElement.setAttribute('data-theme','dark'); themeToggle.textContent = '🌙'; }
+themeToggle.addEventListener('click', () => {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (dark) { document.documentElement.removeAttribute('data-theme'); themeToggle.textContent = '☀️'; localStorage.setItem('theme','light'); }
+  else { document.documentElement.setAttribute('data-theme','dark'); themeToggle.textContent = '🌙'; localStorage.setItem('theme','dark'); }
+});
+
+/* ── Filter ── */
+const cards   = Array.from(document.querySelectorAll('.bcard'));
+const filterBtns = document.querySelectorAll('.filter-btn');
+let activeFilter = 'all';
+let visibleCards = [...cards];
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    visibleCards = [];
+    cards.forEach(card => {
+      const match = activeFilter === 'all' || card.dataset.cat === activeFilter;
+      card.classList.toggle('hidden', !match);
+      if (match) visibleCards.push(card);
+    });
+  });
+});
+
+/* ── Lightbox ── */
+const lb        = document.getElementById('lightbox');
+const lbImg     = document.getElementById('lb-img');
+const lbPH      = document.getElementById('lb-placeholder');
+const lbTitle   = document.getElementById('lb-title');
+const lbCat     = document.getElementById('lb-cat');
+const lbDesc    = document.getElementById('lb-desc');
+const lbCounter = document.getElementById('lb-counter');
+let currentIdx  = 0;
+
+function openLb(card) {
+  currentIdx = visibleCards.indexOf(card);
+  renderLb();
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('lb-close').focus();
+}
+
+function renderLb() {
+  const card = visibleCards[currentIdx];
+  if (!card) return;
+  const realImg = card.querySelector('img');
+  lbTitle.textContent  = card.dataset.title  || '';
+  lbCat.textContent    = card.dataset.cat    || '';
+  lbDesc.textContent   = card.dataset.desc   || '';
+  lbCounter.textContent = `${currentIdx + 1} / ${visibleCards.length}`;
+
+  if (realImg && realImg.src && !realImg.src.endsWith('/')) {
+    lbImg.src = realImg.src;
+    lbImg.alt = realImg.alt || lbTitle.textContent;
+    lbImg.style.display = 'block';
+    lbPH.style.display  = 'none';
+  } else {
+    lbImg.style.display = 'none';
+    lbPH.style.display  = 'flex';
+    // Emoji từ card-bg
+    const bg = card.querySelector('.bcard-bg');
+    lbPH.textContent = bg ? (bg.textContent.trim() || '🖼️') : '🖼️';
+  }
+}
+
+function closeLb() {
+  lb.classList.remove('active');
+  document.body.style.overflow = '';
+  lbImg.src = '';
+}
+
+cards.forEach(card => {
+  card.addEventListener('click', () => openLb(card));
+  card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLb(card); } });
+});
+
+document.getElementById('lb-close').addEventListener('click', closeLb);
+lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+
+document.getElementById('lb-prev').addEventListener('click', () => {
+  currentIdx = (currentIdx - 1 + visibleCards.length) % visibleCards.length;
+  renderLb();
+});
+document.getElementById('lb-next').addEventListener('click', () => {
+  currentIdx = (currentIdx + 1) % visibleCards.length;
+  renderLb();
+});
+
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('active')) return;
+  if (e.key === 'Escape')      closeLb();
+  if (e.key === 'ArrowLeft')  { currentIdx = (currentIdx - 1 + visibleCards.length) % visibleCards.length; renderLb(); }
+  if (e.key === 'ArrowRight') { currentIdx = (currentIdx + 1) % visibleCards.length; renderLb(); }
+});
+
+/* ── Touch swipe cho lightbox ── */
+let tsX = 0;
+lb.addEventListener('touchstart', e => { tsX = e.changedTouches[0].clientX; }, {passive:true});
+lb.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tsX;
+  if (Math.abs(dx) < 40) return;
+  if (dx < 0) { currentIdx = (currentIdx + 1) % visibleCards.length; }
+  else         { currentIdx = (currentIdx - 1 + visibleCards.length) % visibleCards.length; }
+  renderLb();
+}, {passive:true});
+</script>
+</body>
+</html>

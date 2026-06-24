@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cổng Tra Cứu Văn Bản Tuyên Truyền - Ban CHQS Xã Bình Mỹ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════ DESIGN TOKENS (đồng bộ index.html) ══════════ */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255,255,255,0.8);
+  --surface-solid: #ffffff;
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0,0,0,0.1);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #E50914;
+  --accent-hover: #ff1e2a;
+  --input-bg: #f1f5f9;
+  --input-border: #cbd5e1;
+  --input-text: #0f172a;
+  --radius: 12px;
+  --font-main: 'Inter', sans-serif;
+  --mil-dark: #0d1b2a;
+  --mil-mid: #1b3a5c;
+  --mil-gold: #c9a84c;
+}
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(10,10,10,0.8);
+  --surface-solid: #0a0a0a;
+  --surface-hover: #141414;
+  --border-color: rgba(255,255,255,0.1);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+  --input-bg: #111111;
+  --input-border: #333333;
+  --input-text: #ffffff;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-family:var(--font-main);scroll-behavior:smooth}
+body{min-height:100vh;background:var(--bg-color);color:var(--text-main);-webkit-font-smoothing:antialiased;transition:background .4s,color .4s;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(13,27,42,.06) 0%,transparent 60%)}
+
+/* ══════════ HEADER ══════════ */
+.header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:rgba(247,242,242,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border-color);transition:background .3s}
+[data-theme="dark"] .header{background:rgba(8,8,8,.82)}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;letter-spacing:-.02em;white-space:nowrap;flex-shrink:0;color:var(--text-main)}
+.brand img{width:36px;height:36px;filter:drop-shadow(0 0 8px rgba(210,219,105,.45))}
+.nav-menu{display:flex;align-items:center;justify-content:center;gap:4px}
+.nav-item{position:relative;font-size:13.5px;font-weight:500;color:var(--text-muted);transition:color .2s;padding:20px 12px;border-radius:6px;white-space:nowrap;cursor:pointer;text-decoration:none}
+.nav-item:hover,.nav-item.active{color:var(--text-main)}
+.dropdown{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface-solid);backdrop-filter:blur(20px);border:1px solid var(--border-color);border-radius:var(--radius);padding:8px;min-width:200px;opacity:0;visibility:hidden;transition:all .3s cubic-bezier(.16,1,.3,1);box-shadow:0 20px 40px rgba(0,0,0,.2)}
+@media(min-width:769px){.nav-item:hover .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}}
+.dropdown a{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;font-size:14px;color:var(--text-muted);transition:all .2s}
+.dropdown a:hover{background:rgba(68,58,58,.05);color:var(--text-main)}
+.menu-toggle{display:none;flex-direction:column;justify-content:center;gap:4px;width:40px;height:40px;border-radius:10px;background:var(--surface-hover);border:1px solid var(--border-color);padding:8px;margin-left:8px}
+.menu-toggle span{display:block;width:100%;height:2px;background:var(--text-main);border-radius:999px;transition:transform .2s,opacity .2s}
+.menu-toggle.active span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.menu-toggle.active span:nth-child(2){opacity:0}
+.menu-toggle.active span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+#header-auth-box{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.header-divider{width:1px;height:20px;background:var(--border-color);margin:0 4px;flex-shrink:0}
+.btn-icon-header{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:none;color:var(--text-main);font-size:18px;transition:background .2s;flex-shrink:0;cursor:pointer;border:none;font-family:inherit}
+.btn-icon-header:hover{background:var(--surface-hover)}
+.btn-saas{background:var(--surface-hover);color:var(--text-main);padding:0 14px;height:32px;border-radius:8px;font-size:13px;font-weight:600;transition:all .2s;border:1px solid var(--border-color);white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;text-decoration:none}
+.btn-saas:hover{background:var(--border-color)}
+.btn-primary{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(229,9,20,.3)}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px)}
+
+/* ══════════ PAGE HEADER BANNER ══════════ */
+.page-banner{
+  padding:88px 24px 0;
+  background:linear-gradient(180deg,rgba(13,27,42,.04) 0%,transparent 100%);
+  position:relative;z-index:1;
+}
+.page-banner-inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:28px 32px;
+  background:var(--surface-solid);
+  border:1px solid var(--border-color);
+  border-radius:20px;
+  box-shadow:0 4px 24px rgba(0,0,0,.07);
+  position:relative;overflow:hidden;
+}
+.page-banner-inner::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--mil-dark),var(--accent),var(--mil-gold));
+}
+.banner-left{display:flex;align-items:center;gap:16px}
+.banner-seal{
+  width:52px;height:52px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--mil-dark),var(--mil-mid));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(13,27,42,.25);
+}
+.banner-seal img{width:32px;height:32px}
+.banner-text-sys{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
+.banner-text-title{font-size:1.15rem;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.banner-text-sub{font-size:12.5px;color:var(--text-muted);margin-top:3px}
+.banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.banner-stat{text-align:center}
+.banner-stat-num{font-size:1.5rem;font-weight:900;letter-spacing:-.03em;color:var(--text-main)}
+.banner-stat-lbl{font-size:10.5px;color:var(--text-muted);font-weight:500}
+.banner-divider{width:1px;height:40px;background:var(--border-color)}
+#user-greeting{font-size:13px;color:var(--text-muted);max-width:160px;text-align:right;line-height:1.4}
+
+/* ══════════ MAIN CONTENT ══════════ */
+.main-content{max-width:1200px;margin:0 auto;padding:28px 24px 80px;position:relative;z-index:1}
+
+/* ══════════ SEARCH + FILTER ROW ══════════ */
+.control-row{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:20px;flex-wrap:wrap;
+}
+.search-wrap{flex:1;min-width:240px;position:relative}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
+#search-input{
+  width:100%;padding:11px 14px 11px 42px;
+  background:var(--surface-solid);border:1.5px solid var(--border-color);
+  border-radius:10px;font-size:14px;color:var(--input-text);
+  font-family:var(--font-main);transition:border-color .2s,box-shadow .2s;outline:none;
+}
+#search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(229,9,20,.08)}
+#search-input::placeholder{color:var(--text-muted)}
+.search-clear{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-size:15px;color:var(--text-muted);cursor:pointer;
+  display:none;background:none;border:none;font-family:inherit;
+}
+.search-clear.show{display:block}
+
+/* ══════════ CATEGORY TABS ══════════ */
+.cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px}
+.cat-tab{
+  padding:7px 16px;border-radius:99px;
+  font-size:12.5px;font-weight:600;
+  border:1px solid var(--border-color);background:var(--surface-solid);
+  color:var(--text-muted);transition:all .2s;cursor:pointer;
+  display:flex;align-items:center;gap:5px;
+}
+.cat-tab:hover{border-color:rgba(229,9,20,.25);color:var(--text-main)}
+.cat-tab.active{background:var(--mil-dark);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(13,27,42,.3)}
+.cat-tab .tab-count{
+  background:rgba(255,255,255,.18);
+  padding:1px 6px;border-radius:99px;font-size:10.5px;
+}
+.cat-tab:not(.active) .tab-count{background:var(--surface-hover);color:var(--text-muted)}
+
+/* ══════════ SKELETON LOADING ══════════ */
+.skeleton{
+  background:linear-gradient(90deg,var(--surface-hover) 25%,var(--border-color) 50%,var(--surface-hover) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:8px;
+}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+.skeleton-card{padding:20px;background:var(--surface-solid);border:1px solid var(--border-color);border-radius:16px;display:flex;flex-direction:column;gap:10px}
+.sk-badge{height:20px;width:100px}
+.sk-title{height:18px;width:70%}
+.sk-title-sm{height:14px;width:45%}
+.sk-row{display:flex;gap:8px}
+.sk-chip{height:24px;width:80px;border-radius:99px}
+.sk-btn{height:34px;width:110px;border-radius:8px}
+
+/* ══════════ MONTH GROUP ══════════ */
+.month-group{margin-bottom:8px}
+.month-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  background:var(--surface-solid);
+  border:1px solid var(--border-color);
+  border-radius:12px;
+  cursor:pointer;
+  transition:background .2s;
+  user-select:none;
+}
+.month-header:hover{background:var(--surface-hover)}
+.month-header-left{display:flex;align-items:center;gap:10px}
+.month-label{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-main)}
+.month-count{
+  background:rgba(13,27,42,.08);color:var(--mil-mid);
+  padding:2px 10px;border-radius:99px;font-size:11.5px;font-weight:700;
+}
+[data-theme="dark"] .month-count{background:rgba(255,255,255,.08);color:var(--text-muted)}
+.month-toggle-icon{
+  font-size:13px;color:var(--text-muted);
+  transition:transform .25s cubic-bezier(.16,1,.3,1);
+}
+.month-group.open .month-toggle-icon{transform:rotate(180deg)}
+.month-body{
+  display:none;
+  padding:8px 0 4px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+  overflow:hidden;
+  max-height:0;
+  transition:max-height .4s cubic-bezier(.16,1,.3,1);
+}
+.month-group.open .month-body{max-height:2000px}
+
+/* ══════════ DOCUMENT CARD ══════════ */
+.doc-card{
+  display:flex;align-items:flex-start;gap:16px;
+  padding:16px 20px;
+  background:var(--surface-solid);
+  border:1px solid var(--border-color);
+  border-radius:14px;
+  transition:all .25s cubic-bezier(.16,1,.3,1);
+  position:relative;overflow:hidden;
+}
+.doc-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--cat-color, var(--mil-dark));
+  border-radius:0 2px 2px 0;
+}
+.doc-card:hover{
+  transform:translateX(4px);
+  box-shadow:0 8px 24px rgba(0,0,0,.1);
+  border-color:rgba(13,27,42,.15);
+}
+[data-theme="dark"] .doc-card:hover{border-color:rgba(255,255,255,.12)}
+
+.doc-icon{
+  width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  background:var(--cat-bg,rgba(13,27,42,.08));
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  margin-top:1px;
+}
+.doc-body{flex:1;min-width:0}
+.doc-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:7px}
+.badge-cat{
+  padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;
+  background:var(--cat-bg,rgba(13,27,42,.08));
+  color:var(--cat-color,var(--mil-dark));
+}
+.badge-so{
+  padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;
+  background:var(--surface-hover);color:var(--text-muted);
+}
+.doc-title{
+  font-size:14.5px;font-weight:700;line-height:1.45;color:var(--text-main);
+  margin-bottom:6px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.doc-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.doc-meta-item{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+.doc-mo-ta{font-size:12.5px;color:var(--text-muted);line-height:1.5;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+.btn-view{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;
+  background:linear-gradient(135deg,var(--mil-dark),var(--mil-mid));
+  color:#fff;white-space:nowrap;flex-shrink:0;
+  transition:all .2s;box-shadow:0 3px 10px rgba(13,27,42,.25);
+  border:none;cursor:pointer;font-family:inherit;align-self:center;
+}
+.btn-view:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(13,27,42,.35)}
+.btn-view svg{width:14px;height:14px;stroke:#fff}
+
+/* Category color palette */
+.cat-tw    {--cat-color:#1e40af;--cat-bg:rgba(30,64,175,.09)}
+.cat-btl   {--cat-color:#047857;--cat-bg:rgba(4,120,87,.09)}
+.cat-du    {--cat-color:#7c3aed;--cat-bg:rgba(124,58,237,.09)}
+.cat-ub    {--cat-color:#b45309;--cat-bg:rgba(180,83,9,.09)}
+.cat-bchqs {--cat-color:#b91c1c;--cat-bg:rgba(185,28,28,.09)}
+
+/* ══════════ EMPTY / ERROR STATE ══════════ */
+.state-box{
+  padding:60px 24px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  color:var(--text-muted);
+}
+.state-box .s-icon{font-size:2.8rem;margin-bottom:4px}
+.state-box .s-title{font-size:15px;font-weight:700;color:var(--text-main)}
+.state-box .s-desc{font-size:13px;max-width:320px;line-height:1.6}
+
+/* ══════════ FOOTER ══════════ */
+.saas-footer{background:var(--surface-color);border-top:1px solid var(--border-color);padding:4rem 2rem 2rem;font-family:var(--font-main);position:relative}
+.saas-footer::before{content:'';position:absolute;top:0;left:10%;width:80%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.6}
+.footer-container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1.2fr 1.2fr 1.6fr;gap:3rem}
+.footer-brand h2{color:var(--text-main);font-size:1.25rem;font-weight:700;margin-bottom:1rem;letter-spacing:-.02em}
+.footer-brand p{color:var(--text-muted);font-size:.9rem;line-height:1.6}
+.footer-col h3{color:var(--text-main);font-size:.9rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1.25rem;position:relative}
+.footer-col h3::after{content:'';position:absolute;bottom:-6px;left:0;width:24px;height:2px;background:var(--accent)}
+.footer-col ul{list-style:none;padding:0;margin:0}
+.footer-col ul li{margin-bottom:.75rem}
+.footer-col ul li a{color:var(--text-muted);text-decoration:none;font-size:.9rem;transition:color .2s,padding-left .2s}
+.footer-col ul li a:hover{color:var(--text-main);padding-left:4px}
+.footer-contact-info{color:var(--text-muted);font-size:.875rem;line-height:1.6}
+.footer-contact-info p{margin-bottom:.75rem;display:flex;align-items:flex-start;gap:.5rem}
+.footer-bottom{max-width:1200px;margin:3rem auto 0;padding:1.25rem 0;border-top:1px solid var(--border-color);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;font-size:.8rem;color:var(--text-muted)}
+.footer-bottom-links{display:flex;gap:0;align-items:center}
+.footer-bottom-links a{color:var(--text-muted);text-decoration:none;padding:0 14px;border-right:1px solid var(--border-color);line-height:1;transition:color .2s;white-space:nowrap}
+.footer-bottom-links a:first-child{padding-left:0}
+.footer-bottom-links a:last-child{border-right:none;padding-right:0}
+.footer-bottom-links a:hover{color:var(--text-main)}
+.footer-bottom-badge{display:flex;align-items:center;justify-content:flex-end;gap:6px;font-size:.75rem;color:var(--text-muted);opacity:.7}
+
+/* ══════════ RESPONSIVE ══════════ */
+@media(max-width:992px){.footer-container{grid-template-columns:1fr 1fr;gap:2rem}}
+@media(max-width:768px){
+  .menu-toggle{display:flex}
+  .nav-menu{position:fixed;top:64px;left:0;right:0;display:flex;flex-direction:column;align-items:stretch;gap:0;padding:8px 16px 20px;background:var(--surface-solid);border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);box-shadow:0 16px 32px rgba(0,0,0,.12);max-height:calc(100vh - 64px);overflow-y:auto;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);transition:opacity .25s,transform .25s,visibility .25s}
+  .nav-menu.mobile-open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+  .nav-item{width:100%;padding:12px 0;border-bottom:1px solid var(--border-color)}
+  .dropdown{position:static;display:none;opacity:1;visibility:visible;transform:none;border:1px solid var(--border-color);border-radius:12px;padding:6px;margin:8px 0 0 8px;background:var(--surface-color);box-shadow:0 12px 24px rgba(0,0,0,.12)}
+  .dropdown a{color:var(--text-main);padding:10px 12px;border-radius:10px}
+  .dropdown a:hover{background:rgba(229,9,20,.08);color:var(--accent)}
+  .nav-item.open .dropdown{display:block}
+  .header-inner{grid-template-columns:auto 1fr auto}
+  #header-auth-box{justify-content:flex-end;gap:4px}
+  .header-divider,.btn-saas:not(.btn-primary){display:none}
+  .page-banner-inner{flex-direction:column;gap:16px;padding:20px}
+  .banner-right{width:100%;justify-content:space-around}
+  #user-greeting{text-align:center}
+  .doc-card{flex-wrap:wrap}
+  .btn-view{width:100%}
+  .footer-bottom{grid-template-columns:1fr;text-align:center;gap:.75rem}
+  .footer-bottom-links{justify-content:center}
+  .footer-bottom-badge{justify-content:center}
+}
+@media(max-width:576px){.footer-container{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Logo">
+      <span>BAN CHQS BÌNH MỸ</span>
+    </a>
+    <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="main-nav" class="nav-menu">
+      <a href="index.html" class="nav-item">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item">Giới thiệu</a>
+      <div class="nav-item">
+        Tin tức ▾
+        <div class="dropdown">
+          <a href="tin-tuc.html">📰 <span>Tin tức &amp; Sự kiện</span></a>
+          <a href="tang-gia-san-xuat.html">🌿 <span>Hoạt động tăng gia</span></a>
+          <a href="hoat-dong.html">📸 <span>Hình ảnh hoạt động</span></a>
+        </div>
+      </div>
+      <div class="nav-item active">
+        Dịch vụ ▾
+        <div class="dropdown">
+          <a href="tracuu.html">🔍 <span>Tra cứu CCCD</span></a>
+          <a href="tuyen-quan.html">🪖 <span>Tuyển quân</span></a>
+          <a href="tuyen-sinh.html">🎓 <span>Tuyển sinh</span></a>
+          <a href="tracuu-dieudong.html">📋 <span>QĐ Điều động</span></a>
+          <a href="tracuuvb.html" style="color:var(--accent)">📄 <span>Văn bản tuyên truyền</span></a>
+        </div>
+      </div>
+      <a href="lien-he.html" class="nav-item">Liên hệ</a>
+    </nav>
+    <div id="header-auth-box">
+      <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện">☀️</button>
+      <div class="header-divider"></div>
+      <button id="btn-logout" class="btn-saas" style="display:none">Đăng xuất</button>
+      <a href="loginvb.html" class="btn-saas btn-primary" id="btn-login-link">Đăng nhập</a>
+    </div>
+  </div>
+</header>
+
+<!-- PAGE BANNER -->
+<div class="page-banner">
+  <div class="page-banner-inner">
+    <div class="banner-left">
+      <div class="banner-seal">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
+      </div>
+      <div>
+        <div class="banner-text-sys">Hệ thống nội bộ · Ban CHQS Xã Bình Mỹ</div>
+        <div class="banner-text-title">CỔNG TRA CỨU VĂN BẢN TUYÊN TRUYỀN</div>
+        <div class="banner-text-sub">Hệ thống tra cứu văn bản tuyên truyền công khai</div>
+      </div>
+    </div>
+    <div class="banner-right">
+      <div class="banner-stat">
+        <div class="banner-stat-num" id="stat-total">—</div>
+        <div class="banner-stat-lbl">Văn bản</div>
+      </div>
+      <div class="banner-divider"></div>
+      <div class="banner-stat">
+        <div class="banner-stat-num" id="stat-month">—</div>
+        <div class="banner-stat-lbl">Tháng này</div>
+      </div>
+      <div class="banner-divider"></div>
+      <div id="user-greeting">Chào mừng!<br><span id="user-name-display" style="font-weight:700;color:var(--text-main)"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content" id="main-content">
+
+  <!-- Search -->
+  <div class="control-row">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input id="search-input" type="search" placeholder="Tìm kiếm tên văn bản, số văn bản, từ khóa..." autocomplete="off">
+      <button class="search-clear" id="search-clear" aria-label="Xóa">✕</button>
+    </div>
+  </div>
+
+  <!-- Category tabs -->
+  <div class="cat-tabs" id="cat-tabs">
+    <button class="cat-tab active" data-cat="all">🗂️ Tất cả <span class="tab-count" id="cnt-all">0</span></button>
+    <button class="cat-tab" data-cat="Trung Ương">🏛️ Trung ương <span class="tab-count" id="cnt-tw">0</span></button>
+    <button class="cat-tab" data-cat="Bộ Tư Lệnh TPHCM">🏙️ BTL TP.HCM <span class="tab-count" id="cnt-btl">0</span></button>
+    <button class="cat-tab" data-cat="Đảng Uỷ">⭐ Đảng uỷ <span class="tab-count" id="cnt-du">0</span></button>
+    <button class="cat-tab" data-cat="Uỷ Ban">🏢 Uỷ ban <span class="tab-count" id="cnt-ub">0</span></button>
+    <button class="cat-tab" data-cat="Ban Chỉ Huy Quân Sự">🪖 BCHQS <span class="tab-count" id="cnt-bchqs">0</span></button>
+  </div>
+
+  <!-- Results container -->
+  <div id="results-container"></div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="saas-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2>BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ</h2>
+      <p style="margin-bottom:1rem">Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Lực lượng vũ trang Nhân dân xã Bình Mỹ, TP. Hồ Chí Minh.</p>
+      <p style="font-size:.8rem;opacity:.7">Chịu trách nhiệm nội dung: Ban Chỉ huy Quân sự xã Bình Mỹ</p>
+    </div>
+    <div class="footer-col">
+      <h3>Liên Kết Nhanh</h3>
+      <ul>
+        <li><a href="index.html">Trang chủ</a></li>
+        <li><a href="gioi-thieu.html">Giới thiệu</a></li>
+        <li><a href="tin-tuc.html">Tin tức &amp; Sự kiện</a></li>
+        <li><a href="lien-he.html">Liên hệ công vụ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thủ Tục &amp; Tra Cứu</h3>
+      <ul>
+        <li><a href="tracuuvb.html">Văn bản tuyên truyền</a></li>
+        <li><a href="tuyen-sinh.html">Tuyển sinh Quân sự</a></li>
+        <li><a href="dang-ky-DQTV.html">Đăng ký Dân quân tự vệ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Thông Tin Đường Dây Nóng</h3>
+      <div class="footer-contact-info">
+        <p>📍 <span>149, Đường Trung An, Xã Bình Mỹ, TP. HCM</span></p>
+        <p>📞 <span>Trực ban 24/7: (028) XXXX XXXX</span></p>
+        <p>✉️ <span>bchqs.binhmy.@tphcm.gov.vn</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-copy">&copy;tri 2026 Cổng Thông Tin Ban CHQS Xã Bình Mỹ.</div>
+    <div class="footer-bottom-links">
+      <a href="chinh-sach-hau-phuong.html">Điều khoản sử dụng</a>
+      <a href="chinh-sach-bao-mat.html">Chính sách bảo mật</a>
+      <a href="so-do-website.html">Sơ đồ website</a>
+    </div>
+    <div class="footer-bottom-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Bảo mật &amp; Tin cậy</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ══════════ CONFIG ══════════ */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxdgm9vjNHNvI92T5z4wzxWKyQkPfOz-K8fjopMl23exqajJ2P90pCpqSyt5g0ZkAIL/exec';
+const CAT_MAP = {
+  'Trung Ương':          { cls:'cat-tw',    icon:'🏛️', id:'tw' },
+  'Bộ Tư Lệnh TPHCM':   { cls:'cat-btl',   icon:'🏙️', id:'btl' },
+  'Đảng Uỷ':            { cls:'cat-du',    icon:'⭐', id:'du' },
+  'Uỷ Ban':             { cls:'cat-ub',    icon:'🏢', id:'ub' },
+  'Ban Chỉ Huy Quân Sự':{ cls:'cat-bchqs', icon:'🪖', id:'bchqs' },
+};
+
+let allDocs = [];
+let filteredDocs = [];
+let activeCategory = 'all';
+let searchQuery = '';
+
+/* ══════════ THEME ══════════ */
+const themeToggle = document.getElementById('theme-toggle');
+const savedTheme = localStorage.getItem('vb_theme');
+if (savedTheme === 'dark') { document.documentElement.setAttribute('data-theme','dark'); themeToggle.textContent='🌙'; }
+themeToggle.addEventListener('click', () => {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (dark) { document.documentElement.removeAttribute('data-theme'); themeToggle.textContent='☀️'; localStorage.setItem('vb_theme','light'); }
+  else { document.documentElement.setAttribute('data-theme','dark'); themeToggle.textContent='🌙'; localStorage.setItem('vb_theme','dark'); }
+});
+
+/* ══════════ MOBILE NAV ══════════ */
+const menuToggle = document.getElementById('menu-toggle');
+const mainNav = document.getElementById('main-nav');
+const dropItems = document.querySelectorAll('.nav-item:has(.dropdown)');
+menuToggle.addEventListener('click', () => {
+  const open = mainNav.classList.toggle('mobile-open');
+  menuToggle.classList.toggle('active', open);
+  menuToggle.setAttribute('aria-expanded', String(open));
+});
+dropItems.forEach(item => {
+  item.addEventListener('click', e => {
+    if (window.innerWidth <= 768 && !e.target.closest('.dropdown')) {
+      dropItems.forEach(o => { if (o !== item) o.classList.remove('open'); });
+      item.classList.toggle('open');
+    }
+  });
+});
+
+/* ══════════ SESSION ══════════ */
+function checkSession() {
+  const sess = sessionStorage.getItem('vb_user');
+  if (sess) {
+    try {
+      const u = JSON.parse(sess);
+      if (Date.now() - u.ts < 3600000) {
+        document.getElementById('user-name-display').textContent = u.hoTen;
+        document.getElementById('btn-login-link').style.display = 'none';
+        document.getElementById('btn-logout').style.display = 'inline-flex';
+        return true;
+      }
+    } catch(_){}
+  }
+  return false;
+}
+document.getElementById('btn-logout').addEventListener('click', () => {
+  sessionStorage.removeItem('vb_user');
+  window.location.href = 'loginvb.html';
+});
+checkSession();
+
+/* ══════════ SKELETON ══════════ */
+function renderSkeleton() {
+  const c = document.getElementById('results-container');
+  c.innerHTML = Array(4).fill(0).map(() => `
+    <div class="skeleton-card" style="margin-bottom:10px">
+      <div class="sk-row"><div class="skeleton sk-badge"></div><div class="skeleton sk-badge" style="width:70px"></div></div>
+      <div class="skeleton sk-title"></div>
+      <div class="skeleton sk-title-sm"></div>
+      <div class="sk-row" style="justify-content:space-between;margin-top:4px">
+        <div class="sk-row"><div class="skeleton sk-chip"></div><div class="skeleton sk-chip" style="width:60px"></div></div>
+        <div class="skeleton sk-btn"></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ══════════ FETCH DATA ══════════ */
+async function fetchDocuments() {
+  renderSkeleton();
+  try {
+    if (!GAS_URL || GAS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+      await new Promise(r => setTimeout(r, 600));
+      allDocs = getMockData();
+    } else {
+      const res = await fetch(`${GAS_URL}?action=documents`, { redirect: 'follow' });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.documents)) {
+        allDocs = data.documents;
+      } else {
+        console.warn('GAS response lỗi, dùng mock:', data);
+        allDocs = getMockData();
+      }
+    }
+  } catch(err) {
+    console.warn('fetchDocuments lỗi, dùng mock:', err.message);
+    allDocs = getMockData();
+  }
+  updateCounts();
+  applyFilters();
+}
+
+/* ══════════ MOCK DATA (fallback khi GAS lỗi) ══════════ */
+function getMockData() {
+  return [
+    {id:1,LoaiVanBan:'Trung Ương',Thang:'06/2026',TieuDe:'Nghị quyết số 45 về tăng cường quốc phòng an ninh trong tình hình mới',SoVanBan:'NQ-45/TW',MoTa:'Nghị quyết về tăng cường quốc phòng, an ninh, bảo vệ Tổ quốc trong tình hình mới đến năm 2030.',NgayCapNhat:'23/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:2,LoaiVanBan:'Trung Ương',Thang:'06/2026',TieuDe:'Chỉ thị số 12 về công tác giáo dục quốc phòng và an ninh',SoVanBan:'CT-12/TW',MoTa:'Tăng cường và đổi mới công tác giáo dục quốc phòng và an ninh trong giai đoạn mới.',NgayCapNhat:'15/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:3,LoaiVanBan:'Bộ Tư Lệnh TPHCM',Thang:'06/2026',TieuDe:'Kế hoạch huấn luyện dân quân tự vệ năm 2026',SoVanBan:'KH-08/BTL',MoTa:'Kế hoạch tổng thể về công tác huấn luyện dân quân tự vệ trên địa bàn TP.HCM.',NgayCapNhat:'10/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:4,LoaiVanBan:'Đảng Uỷ',Thang:'05/2026',TieuDe:'Nghị quyết hội nghị Đảng uỷ quý II/2026',SoVanBan:'NQ-04/ĐU',MoTa:'Nghị quyết tổng kết công tác quý I và phương hướng nhiệm vụ quý II năm 2026.',NgayCapNhat:'02/05/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:5,LoaiVanBan:'Uỷ Ban',Thang:'05/2026',TieuDe:'Hướng dẫn thực hiện chính sách hậu phương quân đội',SoVanBan:'HD-03/UB',MoTa:'Hướng dẫn các thủ tục, chính sách hỗ trợ gia đình quân nhân trên địa bàn xã.',NgayCapNhat:'20/05/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:6,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'05/2026',TieuDe:'Thông báo tuyển chọn gọi công dân nhập ngũ đợt 2/2026',SoVanBan:'TB-02/BCHQS',MoTa:'Thông báo về công tác tuyển chọn gọi công dân thực hiện nghĩa vụ quân sự đợt 2 năm 2026.',NgayCapNhat:'15/05/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:7,LoaiVanBan:'Trung Ương',Thang:'04/2026',TieuDe:'Hướng dẫn tổng kết 10 năm thực hiện Luật Quốc phòng 2018',SoVanBan:'HD-05/TW',MoTa:'Hướng dẫn các đơn vị tiến hành tổng kết 10 năm thực hiện Luật Quốc phòng 2018.',NgayCapNhat:'30/04/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:8,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'04/2026',TieuDe:'Kế hoạch phòng chống thiên tai và tìm kiếm cứu nạn năm 2026',SoVanBan:'KH-01/BCHQS',MoTa:'Xây dựng kế hoạch ứng phó với thiên tai và tổ chức lực lượng TKCN tại địa bàn xã Bình Mỹ.',NgayCapNhat:'10/04/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+  ];
+}
+
+/* ══════════ COUNTS ══════════ */
+function updateCounts() {
+  const q = searchQuery.toLowerCase();
+  const matches = (doc) => !q || doc.TieuDe.toLowerCase().includes(q) || (doc.SoVanBan||'').toLowerCase().includes(q) || (doc.MoTa||'').toLowerCase().includes(q);
+  const bySearch = allDocs.filter(matches);
+
+  document.getElementById('cnt-all').textContent   = bySearch.length;
+  Object.entries(CAT_MAP).forEach(([cat, info]) => {
+    const el = document.getElementById(`cnt-${info.id}`);
+    if (el) el.textContent = bySearch.filter(d => d.LoaiVanBan === cat).length;
+  });
+  document.getElementById('stat-total').textContent = allDocs.length;
+  const thisMonth = new Date().toLocaleDateString('vi-VN',{month:'2-digit',year:'numeric'}).replace('/','/');
+  document.getElementById('stat-month').textContent = allDocs.filter(d => (d.Thang||'').startsWith(thisMonth.split('/')[0])).length;
+}
+
+/* ══════════ FILTER & RENDER ══════════ */
+function applyFilters() {
+  const q = searchQuery.toLowerCase();
+  filteredDocs = allDocs.filter(doc => {
+    const matchCat = activeCategory === 'all' || doc.LoaiVanBan === activeCategory;
+    const matchQ   = !q || doc.TieuDe.toLowerCase().includes(q) || (doc.SoVanBan||'').toLowerCase().includes(q) || (doc.MoTa||'').toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+  renderResults();
+}
+
+function renderResults() {
+  const c = document.getElementById('results-container');
+  if (!filteredDocs.length) {
+    c.innerHTML = `<div class="state-box"><div class="s-icon">📭</div><div class="s-title">Không tìm thấy văn bản</div><div class="s-desc">Thử thay đổi từ khóa hoặc chọn danh mục khác.</div></div>`;
+    return;
+  }
+  // Group by month
+  const groups = {};
+  filteredDocs.forEach(doc => {
+    const key = doc.Thang || 'Không rõ';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(doc);
+  });
+  // Sort months descending
+  const sortedMonths = Object.keys(groups).sort((a,b) => {
+    const parse = s => { const [m,y] = s.split('/'); return new Date(+y, +m-1); };
+    return parse(b) - parse(a);
+  });
+
+  c.innerHTML = sortedMonths.map((month, idx) => {
+    const docs = groups[month];
+    const isOpen = idx === 0;
+    return `
+    <div class="month-group ${isOpen ? 'open' : ''}" style="margin-bottom:12px">
+      <div class="month-header" onclick="toggleMonth(this)">
+        <div class="month-header-left">
+          <span style="font-size:16px">📅</span>
+          <span class="month-label">Tháng ${month}</span>
+          <span class="month-count">${docs.length} văn bản</span>
+        </div>
+        <span class="month-toggle-icon">▾</span>
+      </div>
+      <div class="month-body" style="${isOpen ? 'max-height:2000px;display:grid' : 'display:none'}">
+        ${docs.map(doc => renderDocCard(doc)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDocCard(doc) {
+  const info = CAT_MAP[doc.LoaiVanBan] || { cls:'', icon:'📄', id:'' };
+  return `
+  <div class="doc-card ${info.cls}">
+    <div class="doc-icon">${info.icon}</div>
+    <div class="doc-body">
+      <div class="doc-badges">
+        <span class="badge-cat">${doc.LoaiVanBan || 'Văn bản'}</span>
+        ${doc.SoVanBan ? `<span class="badge-so">${doc.SoVanBan}</span>` : ''}
+      </div>
+      <div class="doc-title">${escHtml(doc.TieuDe)}</div>
+      ${doc.MoTa ? `<div class="doc-mo-ta">${escHtml(doc.MoTa)}</div>` : ''}
+      <div class="doc-meta" style="margin-top:8px">
+        <span class="doc-meta-item">📅 <span>${doc.Thang || ''}</span></span>
+        <span class="doc-meta-item">🔄 <span>Cập nhật: ${doc.NgayCapNhat || ''}</span></span>
+      </div>
+    </div>
+    <button class="btn-view" onclick="openDoc('${encodeURIComponent(doc.LinkDrive || '')}','${encodeURIComponent(doc.TieuDe)}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Xem văn bản
+    </button>
+  </div>`;
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function openDoc(encodedUrl, encodedTitle) {
+  const url = decodeURIComponent(encodedUrl);
+  const title = decodeURIComponent(encodedTitle);
+  if (!url || url === 'undefined') {
+    alert('Văn bản chưa có file đính kèm.');
+    return;
+  }
+  // Chuyển URL Google Drive sang embed nếu cần
+  let viewUrl = url;
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match) viewUrl = `https://drive.google.com/file/d/${match[1]}/view`;
+  window.open(viewUrl, '_blank', 'noopener,noreferrer');
+}
+
+function toggleMonth(header) {
+  const group = header.closest('.month-group');
+  const body = group.querySelector('.month-body');
+  const isOpen = group.classList.contains('open');
+  if (isOpen) {
+    group.classList.remove('open');
+    body.style.maxHeight = '0';
+    setTimeout(() => { body.style.display = 'none'; }, 300);
+  } else {
+    group.classList.add('open');
+    body.style.display = 'grid';
+    requestAnimationFrame(() => { body.style.maxHeight = '2000px'; });
+  }
+}
+
+/* ══════════ SEARCH ══════════ */
+let searchTimer;
+document.getElementById('search-input').addEventListener('input', function() {
+  searchQuery = this.value.trim();
+  document.getElementById('search-clear').classList.toggle('show', !!searchQuery);
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { updateCounts(); applyFilters(); }, 240);
+});
+document.getElementById('search-clear').addEventListener('click', () => {
+  document.getElementById('search-input').value = '';
+  searchQuery = '';
+  document.getElementById('search-clear').classList.remove('show');
+  updateCounts(); applyFilters();
+});
+
+/* ══════════ CATEGORY TABS ══════════ */
+document.querySelectorAll('.cat-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    activeCategory = this.dataset.cat;
+    applyFilters();
+  });
+});
+
+/* ══════════ INIT ══════════ */
+fetchDocuments();
+</script>
+</body>
+</html>
