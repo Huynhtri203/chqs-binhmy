@@ -116,27 +116,102 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 /* ══════════ MAIN CONTENT ══════════ */
 .main-content{max-width:1200px;margin:0 auto;padding:28px 24px 80px;position:relative;z-index:1}
 
-/* ══════════ SEARCH + FILTER ROW ══════════ */
-.control-row{
-  display:flex;align-items:center;gap:12px;
-  margin-bottom:20px;flex-wrap:wrap;
+/* ══════════ SEARCH + FILTER ROW (FIXED & UPGRADED) ══════════ */
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
-.search-wrap{flex:1;min-width:240px;position:relative}
-.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;pointer-events:none}
-#search-input{
-  width:100%;padding:11px 14px 11px 42px;
-  background:var(--surface-solid);border:1.5px solid var(--border-color);
-  border-radius:10px;font-size:14px;color:var(--input-text);
-  font-family:var(--font-main);transition:border-color .2s,box-shadow .2s;outline:none;
+.search-wrap {
+  flex: 2;
+  min-width: 280px;
+  position: relative;
 }
-#search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(229,9,20,.08)}
-#search-input::placeholder{color:var(--text-muted)}
-.search-clear{
-  position:absolute;right:12px;top:50%;transform:translateY(-50%);
-  font-size:15px;color:var(--text-muted);cursor:pointer;
-  display:none;background:none;border:none;font-family:inherit;
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
 }
-.search-clear.show{display:block}
+#search-input {
+  width: 100%;
+  padding: 12px 40px 12px 44px; /* Tăng padding để chữ không đè icon */
+  background: var(--surface-solid);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--input-text);
+  font-family: var(--font-main);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+}
+#search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(229,9,20,.08);
+}
+#search-input::placeholder {
+  color: var(--text-muted);
+}
+.search-clear {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: none;
+  background: none;
+  border: none;
+}
+.search-clear:hover {
+  color: var(--text-main);
+}
+.search-clear.show {
+  display: block;
+}
+
+/* Date Filter Group */
+.date-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1.5;
+  min-width: 320px;
+}
+.date-input-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: var(--surface-solid);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0 10px;
+}
+.date-input-wrap span {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  margin-right: 6px;
+}
+.date-input-wrap input[type="date"] {
+  border: none;
+  background: transparent;
+  padding: 11px 0;
+  font-size: 13.5px;
+  color: var(--text-main);
+  font-family: var(--font-main);
+  outline: none;
+  width: 100%;
+  cursor: pointer;
+}
 
 /* ══════════ CATEGORY TABS ══════════ */
 .cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px}
@@ -330,7 +405,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   .footer-bottom-links{justify-content:center}
   .footer-bottom-badge{justify-content:center}
 }
-@media(max-width:576px){.footer-container{grid-template-columns:1fr}}
+@media(max-width:576px){
+  .footer-container{grid-template-columns:1fr}
+  .date-filter-group { flex-direction: column; gap: 8px; width: 100%; min-width: unset; }
+  .date-input-wrap { width: 100%; }
+}
 </style>
 </head>
 <body>
@@ -379,7 +458,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 <div class="page-banner">
   <div class="page-banner-inner">
     <div class="banner-left">
-      <div class="banner-seal">
+      <div class="banner-seal" id="banner-seal-element">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
       </div>
       <div>
@@ -409,8 +488,19 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   <div class="control-row">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input id="search-input" type="search" placeholder="Tìm kiếm tên văn bản, số văn bản, từ khóa..." autocomplete="off">
+      <input id="search-input" type="search" placeholder="Tìm kiếm tên văn bản, số văn bản, từ khóa..." autocomplete="off" spellcheck="false">
       <button class="search-clear" id="search-clear" aria-label="Xóa">✕</button>
+    </div>
+    
+    <div class="date-filter-group">
+      <div class="date-input-wrap">
+        <span>Từ:</span>
+        <input type="date" id="filter-start-date">
+      </div>
+      <div class="date-input-wrap">
+        <span>Đến:</span>
+        <input type="date" id="filter-end-date">
+      </div>
     </div>
   </div>
 
@@ -491,38 +581,16 @@ let activeCategory = 'all';
 let searchQuery = '';
 
 /* ══════════ HELPER PARSE DATE ══════════ */
-// Hàm xử lý chuỗi ngày tháng bất kỳ thành đối tượng Date an toàn
-function parseToVNValidDate(dateStr) {
+function parseStringToDate(dateStr) {
   if (!dateStr) return null;
-  let d = new Date(dateStr);
-  if (isNaN(d.getTime()) && typeof dateStr === 'string') {
-    const parts = dateStr.split('/');
-    if (parts.length === 3) {
-      d = new Date(+parts[2], +parts[1] - 1, +parts[0]);
-    }
+  // Hỗ trợ định dạng "DD/MM/YYYY"
+  const parts = dateStr.split('/');
+  if (parts.length === 3) {
+    return new Date(+parts[2], +parts[1] - 1, +parts[0]);
   }
+  // Fallback chuẩn ISO nếu có
+  const d = new Date(dateStr);
   return isNaN(d.getTime()) ? null : d;
-}
-
-// Chuyển đối tượng Date thành định dạng chuỗi VN đầy đủ: DD/MM/YYYY (Múi giờ VN)
-function formatVNDate(dateObj) {
-  if (!dateObj) return '';
-  return dateObj.toLocaleDateString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    timeZone: 'Asia/Ho_Chi_Minh'
-  });
-}
-
-// Trích xuất tháng/năm MM/YYYY (Múi giờ VN) để phục vụ gom nhóm / thống kê tháng hiện tại
-function formatVNMonthOnly(dateObj) {
-  if (!dateObj) return '';
-  return dateObj.toLocaleDateString('vi-VN', {
-    month: '2-digit',
-    year: 'numeric',
-    timeZone: 'Asia/Ho_Chi_Minh'
-  });
 }
 
 /* ══════════ THEME ══════════ */
@@ -556,6 +624,7 @@ dropItems.forEach(item => {
 /* ══════════ SESSION ══════════ */
 function checkSession() {
   const sess = sessionStorage.getItem('vb_user');
+  const bannerSeal = document.getElementById('banner-seal-element');
   if (sess) {
     try {
       const u = JSON.parse(sess);
@@ -563,10 +632,14 @@ function checkSession() {
         document.getElementById('user-name-display').textContent = u.hoTen;
         document.getElementById('btn-login-link').style.display = 'none';
         document.getElementById('btn-logout').style.display = 'inline-flex';
+        
+        // Ẩn logo ở banner-seal khi đã đăng nhập
+        if (bannerSeal) bannerSeal.style.display = 'none';
         return true;
       }
     } catch(_){}
   }
+  if (bannerSeal) bannerSeal.style.display = 'flex';
   return false;
 }
 document.getElementById('btn-logout').addEventListener('click', () => {
@@ -611,36 +684,21 @@ async function fetchDocuments() {
     console.warn('fetchDocuments lỗi, dùng mock:', err.message);
     allDocs = getMockData();
   }
-
-  // Chuẩn hóa dữ liệu thô từ database thành thuộc tính hiển thị cụ thể theo chuẩn Việt Nam
-  allDocs = allDocs.map(doc => {
-    const parsedThang = parseToVNValidDate(doc.Thang);
-    const parsedCapNhat = parseToVNValidDate(doc.NgayCapNhat);
-    
-    return {
-      ...doc,
-      _originalDate: parsedThang, // Giữ lại Object ngày để phục vụ việc nhóm cha và đếm
-      ThangDisplay: parsedThang ? formatVNDate(parsedThang) : 'Không rõ', // Cột Thang có đầy đủ Ngày/Tháng/Năm
-      ThangMonthGroup: parsedThang ? formatVNMonthOnly(parsedThang) : 'Không rõ', // Phục vụ gộp tiêu đề nhóm Cha (Tháng MM/YYYY)
-      NgayCapNhatDisplay: parsedCapNhat ? formatVNDate(parsedCapNhat) : 'Không rõ' // Ngày cập nhật đầy đủ DD/MM/YYYY
-    };
-  });
-
   updateCounts();
   applyFilters();
 }
 
-/* ══════════ MOCK DATA ══════════ */
+/* ══════════ MOCK DATA (fallback khi GAS lỗi) ══════════ */
 function getMockData() {
   return [
-    {id:1,LoaiVanBan:'Trung Ương',Thang:'Sat Jun 20 2026 00:00:00 GMT+0700',TieuDe:'Nghị quyết số 45 về tăng cường quốc phòng an ninh trong tình hình mới',SoVanBan:'NQ-45/TW',MoTa:'Nghị quyết về tăng cường quốc phòng, an ninh, bảo vệ Tổ quốc trong tình hình mới đến năm 2030.',NgayCapNhat:'Sat Jun 20 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:2,LoaiVanBan:'Trung Ương',Thang:'Sat Jun 15 2026 00:00:00 GMT+0700',TieuDe:'Chỉ thị số 12 về công tác giáo dục quốc phòng và an ninh',SoVanBan:'CT-12/TW',MoTa:'Tăng cường và đổi mới công tác giáo dục quốc phòng và an ninh trong giai đoạn mới.',NgayCapNhat:'Sat Jun 15 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:3,LoaiVanBan:'Bộ Tư Lệnh TPHCM',Thang:'Sat Jun 10 2026 00:00:00 GMT+0700',TieuDe:'Kế hoạch huấn luyện dân quân tự vệ năm 2026',SoVanBan:'KH-08/BTL',MoTa:'Kế hoạch tổng thể về công tác huấn luyện dân quân tự vệ trên địa bàn TP.HCM.',NgayCapNhat:'Sat Jun 10 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:4,LoaiVanBan:'Đảng Uỷ',Thang:'Sat May 02 2026 00:00:00 GMT+0700',TieuDe:'Nghị quyết hội nghị Đảng uỷ quý II/2026',SoVanBan:'NQ-04/ĐU',MoTa:'Nghị quyết tổng kết công tác quý I và phương hướng nhiệm vụ quý II năm 2026.',NgayCapNhat:'Sat May 02 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:5,LoaiVanBan:'Uỷ Ban',Thang:'Sat May 20 2026 00:00:00 GMT+0700',TieuDe:'Hướng dẫn thực hiện chính sách hậu phương quân đội',SoVanBan:'HD-03/UB',MoTa:'Hướng dẫn các thủ tục, chính sách hỗ trợ gia đình quân nhân trên địa bàn xã.',NgayCapNhat:'Sat May 20 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:6,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'Sat May 15 2026 00:00:00 GMT+0700',TieuDe:'Thông báo tuyển chọn gọi công dân nhập ngũ đợt 2/2026',SoVanBan:'TB-02/BCHQS',MoTa:'Thông báo về công tác tuyển chọn gọi công dân thực hiện nghĩa vụ quân sự đợt 2 năm 2026.',NgayCapNhat:'Sat May 15 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:7,LoaiVanBan:'Trung Ương',Thang:'Sat Apr 30 2026 00:00:00 GMT+0700',TieuDe:'Hướng dẫn tổng kết 10 năm thực hiện Luật Quốc phòng 2018',SoVanBan:'HD-05/TW',MoTa:'Hướng dẫn các đơn vị tiến hành tổng kết 10 năm thực hiện Luật Quốc phòng 2018.',NgayCapNhat:'Sat Apr 30 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:8,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'Sat Apr 10 2026 00:00:00 GMT+0700',TieuDe:'Kế hoạch phòng chống thiên tai và tìm kiếm cứu nạn năm 2026',SoVanBan:'KH-01/BCHQS',MoTa:'Xây dựng kế hoạch ứng phó với thiên tai và tổ chức lực lượng TKCN tại địa bàn xã Bình Mỹ.',NgayCapNhat:'Sat Apr 10 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:1,LoaiVanBan:'Trung Ương',Thang:'06/2026',TieuDe:'Nghị quyết số 45 về tăng cường quốc phòng an ninh trong tình hình mới',SoVanBan:'NQ-45/TW',MoTa:'Nghị quyết về tăng cường quốc phòng, an ninh, bảo vệ Tổ quốc trong tình hình mới đến năm 2030.',NgayCapNhat:'23/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:2,LoaiVanBan:'Trung Ương',Thang:'06/2026',TieuDe:'Chỉ thị số 12 về công tác giáo dục quốc phòng và an ninh',SoVanBan:'CT-12/TW',MoTa:'Tăng cường và đổi mới công tác giáo dục quốc phòng và an ninh trong giai đoạn mới.',NgayCapNhat:'15/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:3,LoaiVanBan:'Bộ Tư Lệnh TPHCM',Thang:'06/2026',TieuDe:'Kế hoạch huấn luyện dân quân tự vệ năm 2026',SoVanBan:'KH-08/BTL',MoTa:'Kế hoạch tổng thể về công tác huấn luyện dân quân tự vệ trên địa bàn TP.HCM.',NgayCapNhat:'10/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:4,LoaiVanBan:'Đảng Uỷ',Thang:'05/2026',TieuDe:'Nghị quyết hội nghị Đảng uỷ quý II/2026',SoVanBan:'NQ-04/ĐU',MoTa:'Nghị quyết tổng kết công tác quý I và phương hướng nhiệm vụ quý II năm 2026.',NgayCapNhat:'02/05/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:5,LoaiVanBan:'Uỷ Ban',Thang:'05/2026',TieuDe:'Hướng dẫn thực hiện chính sách hậu phương quân đội',SoVanBan:'HD-03/UB',MoTa:'Hướng dẫn các thủ tục, chính sách hỗ trợ gia đình quân nhân trên địa bàn xã.',NgayCapNhat:'20/05/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:6,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'05/2026',TieuDe:'Thông báo tuyển chọn gọi công dân nhập ngũ đợt 2/2026',SoVanBan:'TB-02/BCHQS',MoTa:'Thông báo về công tác tuyển chọn gọi công dân thực hiện nghĩa vụ quân sự đợt 2 năm 2026.',NgayCapNhat:'15/05/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:7,LoaiVanBan:'Trung Ương',Thang:'04/2026',TieuDe:'Hướng dẫn tổng kết 10 năm thực hiện Luật Quốc phòng 2018',SoVanBan:'HD-05/TW',MoTa:'Hướng dẫn các đơn vị tiến hành tổng kết 10 năm thực hiện Luật Quốc phòng 2018.',NgayCapNhat:'30/04/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:8,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'04/2026',TieuDe:'Kế hoạch phòng chống thiên tai và tìm kiếm cứu nạn năm 2026',SoVanBan:'KH-01/BCHQS',MoTa:'Xây dựng kế hoạch ứng phó với thiên tai và tổ chức lực lượng TKCN tại địa bàn xã Bình Mỹ.',NgayCapNhat:'10/04/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
   ];
 }
 
@@ -650,25 +708,76 @@ function updateCounts() {
   const matches = (doc) => !q || doc.TieuDe.toLowerCase().includes(q) || (doc.SoVanBan||'').toLowerCase().includes(q) || (doc.MoTa||'').toLowerCase().includes(q);
   const bySearch = allDocs.filter(matches);
 
-  document.getElementById('cnt-all').textContent   = bySearch.length;
+  // 1. Cập nhật số lượng hiển thị ở các tab danh mục
+  document.getElementById('cnt-all').textContent = bySearch.length;
   Object.entries(CAT_MAP).forEach(([cat, info]) => {
     const el = document.getElementById(`cnt-${info.id}`);
     if (el) el.textContent = bySearch.filter(d => d.LoaiVanBan === cat).length;
   });
+  
+  // 2. Cập nhật tổng số lượng văn bản trên banner
   document.getElementById('stat-total').textContent = allDocs.length;
   
-  // So sánh tháng và năm hiện tại với trường ThangMonthGroup để đếm chính xác số văn bản phát sinh trong tháng này
-  const currentVNMonthStr = formatVNMonthOnly(new Date());
-  document.getElementById('stat-month').textContent = allDocs.filter(d => d.ThangMonthGroup === currentVNMonthStr).length;
+  // 3. SỬA LỖI ĐẾM VĂN BẢN THÁNG NÀY: Ép định dạng mm/yyyy theo múi giờ Việt Nam
+  try {
+    const now = new Date();
+    const currentMonthStr = new Intl.DateTimeFormat('vi-VN', {
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'Asia/Ho_Chi_Minh'
+    }).format(now); // Kết quả luôn là "06/2026" đúng theo giờ VN
+
+    // Hàm bổ trợ chuyển đổi bất kỳ kiểu dữ liệu Thang nào về dạng "mm/yyyy" để so sánh
+    const normalizeDocMonth = (dateVal) => {
+      if (!dateVal) return '';
+      const d = new Date(dateVal);
+      if (isNaN(d.getTime())) {
+        // Nếu là chuỗi dạng "06/2026" sẵn thì chuẩn hóa bỏ khoảng trắng
+        return String(dateVal).trim(); 
+      }
+      return new Intl.DateTimeFormat('vi-VN', {
+        month: '2-digit',
+        year: 'numeric',
+        timeZone: 'Asia/Ho_Chi_Minh'
+      }).format(d);
+    };
+
+    // Lọc và đếm chính xác số văn bản thuộc tháng hiện tại
+    const countThisMonth = allDocs.filter(d => {
+      return normalizeDocMonth(d.Thang) === currentMonthStr;
+    }).length;
+
+    document.getElementById('stat-month').textContent = countThisMonth;
+  } catch (err) {
+    console.error("Lỗi tính toán số văn bản tháng này:", err);
+    document.getElementById('stat-month').textContent = "0";
+  }
 }
 
 /* ══════════ FILTER & RENDER ══════════ */
 function applyFilters() {
   const q = searchQuery.toLowerCase();
+  const startDateVal = document.getElementById('filter-start-date').value;
+  const endDateVal = document.getElementById('filter-end-date').value;
+  
+  const startLimit = startDateVal ? new Date(startDateVal + "T00:00:00") : null;
+  const endLimit = endDateVal ? new Date(endDateVal + "T23:59:59") : null;
+
   filteredDocs = allDocs.filter(doc => {
     const matchCat = activeCategory === 'all' || doc.LoaiVanBan === activeCategory;
     const matchQ   = !q || doc.TieuDe.toLowerCase().includes(q) || (doc.SoVanBan||'').toLowerCase().includes(q) || (doc.MoTa||'').toLowerCase().includes(q);
-    return matchCat && matchQ;
+    
+    let matchDate = true;
+    if (startLimit || endLimit) {
+      const docDate = parseStringToDate(doc.NgayCapNhat);
+      if (docDate) {
+        if (startLimit && docDate < startLimit) matchDate = false;
+        if (endLimit && docDate > endLimit) matchDate = false;
+      } else {
+        matchDate = false;
+      }
+    }
+    return matchCat && matchQ && matchDate;
   });
   renderResults();
 }
@@ -676,22 +785,18 @@ function applyFilters() {
 function renderResults() {
   const c = document.getElementById('results-container');
   if (!filteredDocs.length) {
-    c.innerHTML = `<div class="state-box"><div class="s-icon">📭</div><div class="s-title">Không tìm thấy văn bản</div><div class="s-desc">Thử thay đổi từ khóa hoặc chọn danh mục khác.</div></div>`;
+    c.innerHTML = `<div class="state-box"><div class="s-icon">📭</div><div class="s-title">Không tìm thấy văn bản</div><div class="s-desc">Thử thay đổi từ khóa, khoảng ngày hoặc chọn danh mục khác.</div></div>`;
     return;
   }
-  
-  // Gom nhóm cha theo tiêu đề Tháng (MM/YYYY)
+  // Group by month
   const groups = {};
   filteredDocs.forEach(doc => {
-    const key = doc.ThangMonthGroup || 'Không rõ';
+    const key = doc.Thang || 'Không rõ';
     if (!groups[key]) groups[key] = [];
     groups[key].push(doc);
   });
-  
-  // Sắp xếp các nhóm tháng gần nhất lên trên đầu
+  // Sort months descending
   const sortedMonths = Object.keys(groups).sort((a,b) => {
-    if(a === 'Không rõ') return 1;
-    if(b === 'Không rõ') return -1;
     const parse = s => { const [m,y] = s.split('/'); return new Date(+y, +m-1); };
     return parse(b) - parse(a);
   });
@@ -718,6 +823,27 @@ function renderResults() {
 
 function renderDocCard(doc) {
   const info = CAT_MAP[doc.LoaiVanBan] || { cls:'', icon:'📄', id:'' };
+  
+  // Hàm bổ trợ định dạng ngày tháng chuẩn Việt Nam (dd/mm/yyyy hoặc mm/yyyy)
+  const formatVietnameseDate = (dateVal, isMonthOnly = false) => {
+    if (!dateVal) return '';
+    try {
+      const d = new Date(dateVal);
+      if (isNaN(d.getTime())) return dateVal; // Nếu đã là chuỗi sẵn thì giữ nguyên
+      
+      const options = isMonthOnly 
+        ? { month: '2-digit', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh' }
+        : { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh' };
+        
+      return new Intl.DateTimeFormat('vi-VN', options).format(d);
+    } catch (e) {
+      return dateVal;
+    }
+  };
+
+  const formattedThang = formatVietnameseDate(doc.Thang, true);
+  const formattedCapNhat = formatVietnameseDate(doc.NgayCapNhat, false);
+
   return `
   <div class="doc-card ${info.cls}">
     <div class="doc-icon">${info.icon}</div>
@@ -729,8 +855,8 @@ function renderDocCard(doc) {
       <div class="doc-title">${escHtml(doc.TieuDe)}</div>
       ${doc.MoTa ? `<div class="doc-mo-ta">${escHtml(doc.MoTa)}</div>` : ''}
       <div class="doc-meta" style="margin-top:8px">
-        <span class="doc-meta-item">📅 <span>Ngày: ${doc.ThangDisplay || ''}</span></span>
-        <span class="doc-meta-item">🔄 <span>Cập nhật: ${doc.NgayCapNhatDisplay || ''}</span></span>
+        <span class="doc-meta-item">📅 <span>Tháng ${formattedThang}</span></span>
+        <span class="doc-meta-item">🔄 <span>Cập nhật: ${formattedCapNhat}</span></span>
       </div>
     </div>
     <button class="btn-view" onclick="openDoc('${encodeURIComponent(doc.LinkDrive || '')}','${encodeURIComponent(doc.TieuDe)}')">
@@ -772,20 +898,32 @@ function toggleMonth(header) {
   }
 }
 
-/* ══════════ SEARCH ══════════ */
+/* ══════════ SEARCH & DATE EVENT LISTENERS ══════════ */
 let searchTimer;
+function triggerSearchFilter() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => { 
+    updateCounts(); 
+    applyFilters(); 
+  }, 240);
+}
+
 document.getElementById('search-input').addEventListener('input', function() {
   searchQuery = this.value.trim();
   document.getElementById('search-clear').classList.toggle('show', !!searchQuery);
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => { updateCounts(); applyFilters(); }, 240);
+  triggerSearchFilter();
 });
+
 document.getElementById('search-clear').addEventListener('click', () => {
   document.getElementById('search-input').value = '';
   searchQuery = '';
   document.getElementById('search-clear').classList.remove('show');
-  updateCounts(); applyFilters();
+  triggerSearchFilter();
 });
+
+// Event listener cho bộ lọc ngày tháng
+document.getElementById('filter-start-date').addEventListener('change', triggerSearchFilter);
+document.getElementById('filter-end-date').addEventListener('change', triggerSearchFilter);
 
 /* ══════════ CATEGORY TABS ══════════ */
 document.querySelectorAll('.cat-tab').forEach(tab => {
