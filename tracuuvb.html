@@ -335,7 +335,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
   <div class="header-inner">
     <a href="index.html" class="brand">
@@ -377,7 +376,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   </div>
 </header>
 
-<!-- PAGE BANNER -->
 <div class="page-banner">
   <div class="page-banner-inner">
     <div class="banner-left">
@@ -406,10 +404,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main-content" id="main-content">
 
-  <!-- Search -->
   <div class="control-row">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
@@ -418,7 +414,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     </div>
   </div>
 
-  <!-- Category tabs -->
   <div class="cat-tabs" id="cat-tabs">
     <button class="cat-tab active" data-cat="all">🗂️ Tất cả <span class="tab-count" id="cnt-all">0</span></button>
     <button class="cat-tab" data-cat="Trung Ương">🏛️ Trung ương <span class="tab-count" id="cnt-tw">0</span></button>
@@ -428,12 +423,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     <button class="cat-tab" data-cat="Ban Chỉ Huy Quân Sự">🪖 BCHQS <span class="tab-count" id="cnt-bchqs">0</span></button>
   </div>
 
-  <!-- Results container -->
   <div id="results-container"></div>
 
 </div>
 
-<!-- FOOTER -->
 <footer class="saas-footer">
   <div class="footer-container">
     <div class="footer-brand">
@@ -496,6 +489,41 @@ let allDocs = [];
 let filteredDocs = [];
 let activeCategory = 'all';
 let searchQuery = '';
+
+/* ══════════ HELPER PARSE DATE ══════════ */
+// Hàm xử lý chuỗi ngày tháng bất kỳ thành đối tượng Date an toàn
+function parseToVNValidDate(dateStr) {
+  if (!dateStr) return null;
+  let d = new Date(dateStr);
+  if (isNaN(d.getTime()) && typeof dateStr === 'string') {
+    const parts = dateStr.split('/');
+    if (parts.length === 3) {
+      d = new Date(+parts[2], +parts[1] - 1, +parts[0]);
+    }
+  }
+  return isNaN(d.getTime()) ? null : d;
+}
+
+// Chuyển đối tượng Date thành định dạng chuỗi VN đầy đủ: DD/MM/YYYY (Múi giờ VN)
+function formatVNDate(dateObj) {
+  if (!dateObj) return '';
+  return dateObj.toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'Asia/Ho_Chi_Minh'
+  });
+}
+
+// Trích xuất tháng/năm MM/YYYY (Múi giờ VN) để phục vụ gom nhóm / thống kê tháng hiện tại
+function formatVNMonthOnly(dateObj) {
+  if (!dateObj) return '';
+  return dateObj.toLocaleDateString('vi-VN', {
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'Asia/Ho_Chi_Minh'
+  });
+}
 
 /* ══════════ THEME ══════════ */
 const themeToggle = document.getElementById('theme-toggle');
@@ -583,21 +611,36 @@ async function fetchDocuments() {
     console.warn('fetchDocuments lỗi, dùng mock:', err.message);
     allDocs = getMockData();
   }
+
+  // Chuẩn hóa dữ liệu thô từ database thành thuộc tính hiển thị cụ thể theo chuẩn Việt Nam
+  allDocs = allDocs.map(doc => {
+    const parsedThang = parseToVNValidDate(doc.Thang);
+    const parsedCapNhat = parseToVNValidDate(doc.NgayCapNhat);
+    
+    return {
+      ...doc,
+      _originalDate: parsedThang, // Giữ lại Object ngày để phục vụ việc nhóm cha và đếm
+      ThangDisplay: parsedThang ? formatVNDate(parsedThang) : 'Không rõ', // Cột Thang có đầy đủ Ngày/Tháng/Năm
+      ThangMonthGroup: parsedThang ? formatVNMonthOnly(parsedThang) : 'Không rõ', // Phục vụ gộp tiêu đề nhóm Cha (Tháng MM/YYYY)
+      NgayCapNhatDisplay: parsedCapNhat ? formatVNDate(parsedCapNhat) : 'Không rõ' // Ngày cập nhật đầy đủ DD/MM/YYYY
+    };
+  });
+
   updateCounts();
   applyFilters();
 }
 
-/* ══════════ MOCK DATA (fallback khi GAS lỗi) ══════════ */
+/* ══════════ MOCK DATA ══════════ */
 function getMockData() {
   return [
-    {id:1,LoaiVanBan:'Trung Ương',Thang:'06/2026',TieuDe:'Nghị quyết số 45 về tăng cường quốc phòng an ninh trong tình hình mới',SoVanBan:'NQ-45/TW',MoTa:'Nghị quyết về tăng cường quốc phòng, an ninh, bảo vệ Tổ quốc trong tình hình mới đến năm 2030.',NgayCapNhat:'23/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:2,LoaiVanBan:'Trung Ương',Thang:'06/2026',TieuDe:'Chỉ thị số 12 về công tác giáo dục quốc phòng và an ninh',SoVanBan:'CT-12/TW',MoTa:'Tăng cường và đổi mới công tác giáo dục quốc phòng và an ninh trong giai đoạn mới.',NgayCapNhat:'15/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:3,LoaiVanBan:'Bộ Tư Lệnh TPHCM',Thang:'06/2026',TieuDe:'Kế hoạch huấn luyện dân quân tự vệ năm 2026',SoVanBan:'KH-08/BTL',MoTa:'Kế hoạch tổng thể về công tác huấn luyện dân quân tự vệ trên địa bàn TP.HCM.',NgayCapNhat:'10/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:4,LoaiVanBan:'Đảng Uỷ',Thang:'05/2026',TieuDe:'Nghị quyết hội nghị Đảng uỷ quý II/2026',SoVanBan:'NQ-04/ĐU',MoTa:'Nghị quyết tổng kết công tác quý I và phương hướng nhiệm vụ quý II năm 2026.',NgayCapNhat:'02/05/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:5,LoaiVanBan:'Uỷ Ban',Thang:'05/2026',TieuDe:'Hướng dẫn thực hiện chính sách hậu phương quân đội',SoVanBan:'HD-03/UB',MoTa:'Hướng dẫn các thủ tục, chính sách hỗ trợ gia đình quân nhân trên địa bàn xã.',NgayCapNhat:'20/05/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:6,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'05/2026',TieuDe:'Thông báo tuyển chọn gọi công dân nhập ngũ đợt 2/2026',SoVanBan:'TB-02/BCHQS',MoTa:'Thông báo về công tác tuyển chọn gọi công dân thực hiện nghĩa vụ quân sự đợt 2 năm 2026.',NgayCapNhat:'15/05/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:7,LoaiVanBan:'Trung Ương',Thang:'04/2026',TieuDe:'Hướng dẫn tổng kết 10 năm thực hiện Luật Quốc phòng 2018',SoVanBan:'HD-05/TW',MoTa:'Hướng dẫn các đơn vị tiến hành tổng kết 10 năm thực hiện Luật Quốc phòng 2018.',NgayCapNhat:'30/04/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
-    {id:8,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'04/2026',TieuDe:'Kế hoạch phòng chống thiên tai và tìm kiếm cứu nạn năm 2026',SoVanBan:'KH-01/BCHQS',MoTa:'Xây dựng kế hoạch ứng phó với thiên tai và tổ chức lực lượng TKCN tại địa bàn xã Bình Mỹ.',NgayCapNhat:'10/04/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:1,LoaiVanBan:'Trung Ương',Thang:'Sat Jun 20 2026 00:00:00 GMT+0700',TieuDe:'Nghị quyết số 45 về tăng cường quốc phòng an ninh trong tình hình mới',SoVanBan:'NQ-45/TW',MoTa:'Nghị quyết về tăng cường quốc phòng, an ninh, bảo vệ Tổ quốc trong tình hình mới đến năm 2030.',NgayCapNhat:'Sat Jun 20 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:2,LoaiVanBan:'Trung Ương',Thang:'Sat Jun 15 2026 00:00:00 GMT+0700',TieuDe:'Chỉ thị số 12 về công tác giáo dục quốc phòng và an ninh',SoVanBan:'CT-12/TW',MoTa:'Tăng cường và đổi mới công tác giáo dục quốc phòng và an ninh trong giai đoạn mới.',NgayCapNhat:'Sat Jun 15 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:3,LoaiVanBan:'Bộ Tư Lệnh TPHCM',Thang:'Sat Jun 10 2026 00:00:00 GMT+0700',TieuDe:'Kế hoạch huấn luyện dân quân tự vệ năm 2026',SoVanBan:'KH-08/BTL',MoTa:'Kế hoạch tổng thể về công tác huấn luyện dân quân tự vệ trên địa bàn TP.HCM.',NgayCapNhat:'Sat Jun 10 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:4,LoaiVanBan:'Đảng Uỷ',Thang:'Sat May 02 2026 00:00:00 GMT+0700',TieuDe:'Nghị quyết hội nghị Đảng uỷ quý II/2026',SoVanBan:'NQ-04/ĐU',MoTa:'Nghị quyết tổng kết công tác quý I và phương hướng nhiệm vụ quý II năm 2026.',NgayCapNhat:'Sat May 02 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:5,LoaiVanBan:'Uỷ Ban',Thang:'Sat May 20 2026 00:00:00 GMT+0700',TieuDe:'Hướng dẫn thực hiện chính sách hậu phương quân đội',SoVanBan:'HD-03/UB',MoTa:'Hướng dẫn các thủ tục, chính sách hỗ trợ gia đình quân nhân trên địa bàn xã.',NgayCapNhat:'Sat May 20 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:6,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'Sat May 15 2026 00:00:00 GMT+0700',TieuDe:'Thông báo tuyển chọn gọi công dân nhập ngũ đợt 2/2026',SoVanBan:'TB-02/BCHQS',MoTa:'Thông báo về công tác tuyển chọn gọi công dân thực hiện nghĩa vụ quân sự đợt 2 năm 2026.',NgayCapNhat:'Sat May 15 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:7,LoaiVanBan:'Trung Ương',Thang:'Sat Apr 30 2026 00:00:00 GMT+0700',TieuDe:'Hướng dẫn tổng kết 10 năm thực hiện Luật Quốc phòng 2018',SoVanBan:'HD-05/TW',MoTa:'Hướng dẫn các đơn vị tiến hành tổng kết 10 năm thực hiện Luật Quốc phòng 2018.',NgayCapNhat:'Sat Apr 30 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
+    {id:8,LoaiVanBan:'Ban Chỉ Huy Quân Sự',Thang:'Sat Apr 10 2026 00:00:00 GMT+0700',TieuDe:'Kế hoạch phòng chống thiên tai và tìm kiếm cứu nạn năm 2026',SoVanBan:'KH-01/BCHQS',MoTa:'Xây dựng kế hoạch ứng phó với thiên tai và tổ chức lực lượng TKCN tại địa bàn xã Bình Mỹ.',NgayCapNhat:'Sat Apr 10 2026 00:00:00 GMT+0700',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
   ];
 }
 
@@ -613,8 +656,10 @@ function updateCounts() {
     if (el) el.textContent = bySearch.filter(d => d.LoaiVanBan === cat).length;
   });
   document.getElementById('stat-total').textContent = allDocs.length;
-  const thisMonth = new Date().toLocaleDateString('vi-VN',{month:'2-digit',year:'numeric'}).replace('/','/');
-  document.getElementById('stat-month').textContent = allDocs.filter(d => (d.Thang||'').startsWith(thisMonth.split('/')[0])).length;
+  
+  // So sánh tháng và năm hiện tại với trường ThangMonthGroup để đếm chính xác số văn bản phát sinh trong tháng này
+  const currentVNMonthStr = formatVNMonthOnly(new Date());
+  document.getElementById('stat-month').textContent = allDocs.filter(d => d.ThangMonthGroup === currentVNMonthStr).length;
 }
 
 /* ══════════ FILTER & RENDER ══════════ */
@@ -634,15 +679,19 @@ function renderResults() {
     c.innerHTML = `<div class="state-box"><div class="s-icon">📭</div><div class="s-title">Không tìm thấy văn bản</div><div class="s-desc">Thử thay đổi từ khóa hoặc chọn danh mục khác.</div></div>`;
     return;
   }
-  // Group by month
+  
+  // Gom nhóm cha theo tiêu đề Tháng (MM/YYYY)
   const groups = {};
   filteredDocs.forEach(doc => {
-    const key = doc.Thang || 'Không rõ';
+    const key = doc.ThangMonthGroup || 'Không rõ';
     if (!groups[key]) groups[key] = [];
     groups[key].push(doc);
   });
-  // Sort months descending
+  
+  // Sắp xếp các nhóm tháng gần nhất lên trên đầu
   const sortedMonths = Object.keys(groups).sort((a,b) => {
+    if(a === 'Không rõ') return 1;
+    if(b === 'Không rõ') return -1;
     const parse = s => { const [m,y] = s.split('/'); return new Date(+y, +m-1); };
     return parse(b) - parse(a);
   });
@@ -680,8 +729,8 @@ function renderDocCard(doc) {
       <div class="doc-title">${escHtml(doc.TieuDe)}</div>
       ${doc.MoTa ? `<div class="doc-mo-ta">${escHtml(doc.MoTa)}</div>` : ''}
       <div class="doc-meta" style="margin-top:8px">
-        <span class="doc-meta-item">📅 <span>${doc.Thang || ''}</span></span>
-        <span class="doc-meta-item">🔄 <span>Cập nhật: ${doc.NgayCapNhat || ''}</span></span>
+        <span class="doc-meta-item">📅 <span>Ngày: ${doc.ThangDisplay || ''}</span></span>
+        <span class="doc-meta-item">🔄 <span>Cập nhật: ${doc.NgayCapNhatDisplay || ''}</span></span>
       </div>
     </div>
     <button class="btn-view" onclick="openDoc('${encodeURIComponent(doc.LinkDrive || '')}','${encodeURIComponent(doc.TieuDe)}')">
@@ -702,7 +751,6 @@ function openDoc(encodedUrl, encodedTitle) {
     alert('Văn bản chưa có file đính kèm.');
     return;
   }
-  // Chuyển URL Google Drive sang embed nếu cần
   let viewUrl = url;
   const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (match) viewUrl = `https://drive.google.com/file/d/${match[1]}/view`;
