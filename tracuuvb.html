@@ -1,413 +1,310 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cổng Tra Cứu Văn Bản Tuyên Truyền - Ban CHQS Xã Bình Mỹ</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Google Fonts: Inter & Be Vietnam Pro -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
-/* ══════════ DESIGN TOKENS (đồng bộ index.html) ══════════ */
+/* ═══════════ DESIGN SYSTEM TOKENS ═══════════ */
 :root {
-  --bg-color: #f8fafc;
-  --surface-color: rgba(255,255,255,0.8);
-  --surface-solid: #ffffff;
-  --surface-hover: #f1f5f9;
-  --border-color: rgba(0,0,0,0.1);
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --accent: #E50914;
-  --accent-hover: #ff1e2a;
-  --input-bg: #f1f5f9;
-  --input-border: #cbd5e1;
-  --input-text: #0f172a;
-  --radius: 12px;
-  --font-main: 'Inter', sans-serif;
-  --mil-dark: #0d1b2a;
-  --mil-mid: #1b3a5c;
-  --mil-gold: #c9a84c;
+  /* Color Palette (Enterprise & Military Tone) */
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-rgb: 37, 99, 235;
+  --mil-dark: #0F172A;
+  --mil-gold: #B45309;
+  
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  
+  /* Neutral Palette */
+  --bg-color: #F8FAFC;
+  --surface-solid: #FFFFFF;
+  --surface-hover: #F1F5F9;
+  --border-color: #EEF2F7;
+  --text-main: #111827;
+  --text-muted: #6B7280;
+  --input-bg: #FFFFFF;
+  
+  /* Spacing & Borders */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --font-main: 'Inter', 'Be Vietnam Pro', sans-serif;
+  --transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.03), 0 2px 4px -1px rgba(0,0,0,0.02);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.04), 0 4px 6px -2px rgba(0,0,0,0.02);
 }
+
 [data-theme="dark"] {
-  --bg-color: #000000;
-  --surface-color: rgba(10,10,10,0.8);
-  --surface-solid: #0a0a0a;
-  --surface-hover: #141414;
-  --border-color: rgba(255,255,255,0.1);
-  --text-main: #ffffff;
-  --text-muted: #888888;
-  --input-bg: #111111;
-  --input-border: #333333;
-  --input-text: #ffffff;
+  --bg-color: #09090B;
+  --surface-solid: #18181B;
+  --surface-hover: #27272A;
+  --border-color: #27272A;
+  --text-main: #FAFAFA;
+  --text-muted: #A1A1AA;
+  --input-bg: #09090B;
+  --shadow-sm: 0 0 0 1px rgba(255,255,255,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 24px rgba(0,0,0,0.4);
 }
 
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{font-family:var(--font-main);scroll-behavior:smooth}
-body{min-height:100vh;background:var(--bg-color);color:var(--text-main);-webkit-font-smoothing:antialiased;transition:background .4s,color .4s;overflow-x:hidden}
-a{text-decoration:none;color:inherit}
-button{font-family:inherit;cursor:pointer;border:none;outline:none}
+/* ═══════════ BASE RESETS ═══════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-family: var(--font-main); scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { min-height: 100vh; background: var(--bg-color); color: var(--text-main); transition: background .3s, color .3s; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; }
 
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(13,27,42,.06) 0%,transparent 60%)}
+/* Background Mesh Layer */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(circle at 50% 0%, rgba(37,99,235,0.04) 0%, transparent 50%),
+              radial-gradient(circle at 0% 100%, rgba(180,83,9,0.02) 0%, transparent 40%);
+}
 
-/* ══════════ HEADER ══════════ */
-.header{position:fixed;top:0;left:0;width:100%;z-index:1000;background:rgba(247,242,242,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border-color);transition:background .3s}
-[data-theme="dark"] .header{background:rgba(8,8,8,.82)}
-.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:0}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;letter-spacing:-.02em;white-space:nowrap;flex-shrink:0;color:var(--text-main)}
-.brand img{width:36px;height:36px;filter:drop-shadow(0 0 8px rgba(210,219,105,.45))}
-.nav-menu{display:flex;align-items:center;justify-content:center;gap:4px}
-.nav-item{position:relative;font-size:13.5px;font-weight:500;color:var(--text-muted);transition:color .2s;padding:20px 12px;border-radius:6px;white-space:nowrap;cursor:pointer;text-decoration:none}
-.nav-item:hover,.nav-item.active{color:var(--text-main)}
-.dropdown{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface-solid);backdrop-filter:blur(20px);border:1px solid var(--border-color);border-radius:var(--radius);padding:8px;min-width:200px;opacity:0;visibility:hidden;transition:all .3s cubic-bezier(.16,1,.3,1);box-shadow:0 20px 40px rgba(0,0,0,.2)}
-@media(min-width:769px){.nav-item:hover .dropdown{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}}
-.dropdown a{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;font-size:14px;color:var(--text-muted);transition:all .2s}
-.dropdown a:hover{background:rgba(68,58,58,.05);color:var(--text-main)}
-.menu-toggle{display:none;flex-direction:column;justify-content:center;gap:4px;width:40px;height:40px;border-radius:10px;background:var(--surface-hover);border:1px solid var(--border-color);padding:8px;margin-left:8px}
-.menu-toggle span{display:block;width:100%;height:2px;background:var(--text-main);border-radius:999px;transition:transform .2s,opacity .2s}
-.menu-toggle.active span:nth-child(1){transform:translateY(6px) rotate(45deg)}
-.menu-toggle.active span:nth-child(2){opacity:0}
-.menu-toggle.active span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-#header-auth-box{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.header-divider{width:1px;height:20px;background:var(--border-color);margin:0 4px;flex-shrink:0}
-.btn-icon-header{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:none;color:var(--text-main);font-size:18px;transition:background .2s;flex-shrink:0;cursor:pointer;border:none;font-family:inherit}
-.btn-icon-header:hover{background:var(--surface-hover)}
-.btn-saas{background:var(--surface-hover);color:var(--text-main);padding:0 14px;height:32px;border-radius:8px;font-size:13px;font-weight:600;transition:all .2s;border:1px solid var(--border-color);white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;text-decoration:none}
-.btn-saas:hover{background:var(--border-color)}
-.btn-primary{background:var(--accent);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(229,9,20,.3)}
-.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px)}
+/* ═══════════ STICKY HEADER (Glassmorphism) ═══════════ */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color); transition: var(--transition);
+}
+[data-theme="dark"] .header { background: rgba(24, 24, 27, 0.75); }
+.header-inner { max-width: 1340px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; color: var(--text-main); }
+.brand img { width: 34px; height: 34px; object-fit: contain; }
 
-/* ══════════ PAGE HEADER BANNER ══════════ */
-.page-banner{
-  padding:88px 24px 0;
-  background:linear-gradient(180deg,rgba(13,27,42,.04) 0%,transparent 100%);
-  position:relative;z-index:1;
-}
-.page-banner-inner{
-  max-width:1200px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;gap:24px;
-  padding:28px 32px;
-  background:var(--surface-solid);
-  border:1px solid var(--border-color);
-  border-radius:20px;
-  box-shadow:0 4px 24px rgba(0,0,0,.07);
-  position:relative;overflow:hidden;
-}
-.page-banner-inner::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,var(--mil-dark),var(--accent),var(--mil-gold));
-}
-.banner-left{display:flex;align-items:center;gap:16px}
-.banner-seal{
-  width:52px;height:52px;border-radius:50%;flex-shrink:0;
-  background:linear-gradient(135deg,var(--mil-dark),var(--mil-mid));
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 12px rgba(13,27,42,.25);
-}
-.banner-seal img{width:32px;height:32px}
-.banner-text-sys{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:3px}
-.banner-text-title{font-size:1.15rem;font-weight:800;letter-spacing:-.02em;line-height:1.2}
-.banner-text-sub{font-size:12.5px;color:var(--text-muted);margin-top:3px}
-.banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.banner-stat{text-align:center}
-.banner-stat-num{font-size:1.5rem;font-weight:900;letter-spacing:-.03em;color:var(--text-main)}
-.banner-stat-lbl{font-size:10.5px;color:var(--text-muted);font-weight:500}
-.banner-divider{width:1px;height:40px;background:var(--border-color)}
-#user-greeting{font-size:13px;color:var(--text-muted);max-width:160px;text-align:right;line-height:1.4}
+.nav-menu { display: flex; align-items: center; gap: 8px; }
+.nav-item { position: relative; font-size: 14px; font-weight: 500; color: var(--text-muted); padding: 8px 14px; border-radius: var(--radius-sm); transition: var(--transition); cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.nav-item:hover, .nav-item.active { color: var(--text-main); background: var(--surface-hover); }
 
-/* ══════════ MAIN CONTENT ══════════ */
-.main-content{max-width:1200px;margin:0 auto;padding:28px 24px 80px;position:relative;z-index:1}
+.dropdown {
+  position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(10px);
+  background: var(--surface-solid); border: 1px solid var(--border-color); border-radius: var(--radius-md);
+  padding: 6px; min-width: 230px; opacity: 0; visibility: hidden; transition: var(--transition); box-shadow: var(--shadow-lg);
+}
+@media(min-width: 769px) { .nav-item:hover .dropdown { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); } }
+.dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13.5px; color: var(--text-muted); transition: var(--transition); }
+.dropdown a:hover { background: var(--surface-hover); color: var(--text-main); }
 
-/* ══════════ SEARCH + FILTER ROW (FIXED & UPGRADED) ══════════ */
-.control-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
+.menu-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--surface-hover); padding: 10px; }
+.menu-toggle span { display: block; width: 100%; height: 2px; background: var(--text-main); border-radius: 99px; transition: var(--transition); }
+.menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+#header-auth-box { display: flex; align-items: center; gap: 12px; }
+.header-divider { width: 1px; height: 18px; background: var(--border-color); }
+.btn-icon-header { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-sm); color: var(--text-main); transition: var(--transition); }
+.btn-icon-header:hover { background: var(--surface-hover); }
+
+.btn-saas { background: var(--surface-solid); color: var(--text-main); padding: 0 16px; height: 36px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600; transition: var(--transition); border: 1px solid var(--border-color); display: inline-flex; align-items: center; gap: 6px; box-shadow: var(--shadow-sm); }
+.btn-saas:hover { background: var(--surface-hover); transform: translateY(-1px); }
+.btn-primary { background: var(--primary); color: #ffffff; border: none; box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+.btn-primary:hover { background: var(--primary-hover); box-shadow: 0 6px 16px rgba(37,99,235,0.3); }
+
+/* ═══════════ HERO HERO BANNER (Apple/Vercel Minimalist) ═══════════ */
+.page-banner { padding: 110px 24px 0; position: relative; z-index: 1; }
+.page-banner-inner {
+  max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  padding: 40px; background: var(--surface-solid); border: 1px solid var(--border-color); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); position: relative; overflow: hidden;
 }
-.search-wrap {
-  flex: 2;
-  min-width: 280px;
-  position: relative;
+.banner-left { display: flex; align-items: center; gap: 24px; }
+.banner-seal {
+  width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0;
+  background: var(--bg-color); border: 1px solid var(--border-color);
+  display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);
 }
-.search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  pointer-events: none;
-  display: inline-flex;
-  align-items: center;
-}
+.banner-seal img { width: 38px; height: 38px; }
+.banner-text-sys { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary); margin-bottom: 6px; }
+.banner-text-title { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.25; color: var(--text-main); }
+.banner-text-sub { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
+
+/* Dashboard Analytics Panel Grid */
+.banner-right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; background: var(--bg-color); padding: 16px 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); }
+.banner-stat { text-align: left; min-width: 90px; }
+.banner-stat-num { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.04em; color: var(--text-main); line-height: 1.1; }
+.banner-stat-lbl { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
+.banner-divider { width: 1px; height: 36px; background: var(--border-color); }
+#user-greeting { font-size: 13px; color: var(--text-muted); line-height: 1.5; border-left: 3px solid var(--primary); padding-left: 12px; }
+
+/* ═══════════ MAIN WRAPPER ═══════════ */
+.main-content { max-width: 1280px; margin: 0 auto; padding: 32px 24px 96px; position: relative; z-index: 1; }
+
+/* ═══════════ CONTROLS (Google Analytics Search Styled) ═══════════ */
+.control-row { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.search-wrap { flex: 2; min-width: 320px; position: relative; }
+.search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); display: inline-flex; pointer-events: none; }
 #search-input {
-  width: 100%;
-  padding: 12px 40px 12px 44px; /* Tăng padding để chữ không đè icon */
-  background: var(--surface-solid);
-  border: 1.5px solid var(--border-color);
-  border-radius: 10px;
-  font-size: 14px;
-  color: var(--input-text);
-  font-family: var(--font-main);
-  transition: border-color .2s, box-shadow .2s;
-  outline: none;
+  width: 100%; padding: 14px 44px 14px 48px; background: var(--surface-solid);
+  border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+  font-size: 14.5px; color: var(--text-main); font-family: var(--font-main);
+  box-shadow: var(--shadow-sm); transition: var(--transition); outline: none;
 }
-#search-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(229,9,20,.08);
-}
-#search-input::placeholder {
-  color: var(--text-muted);
-}
-.search-clear {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 14px;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: none;
-  background: none;
-  border: none;
-}
-.search-clear:hover {
-  color: var(--text-main);
-}
-.search-clear.show {
-  display: block;
-}
+#search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+.search-clear { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer; display: none; }
+.search-clear.show { display: block; }
 
-/* Date Filter Group */
-.date-filter-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1.5;
-  min-width: 320px;
-}
+/* Modern Range Date Inputs */
+.date-filter-group { display: flex; align-items: center; gap: 12px; flex: 1.2; min-width: 340px; }
 .date-input-wrap {
-  position: relative;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: var(--surface-solid);
-  border: 1.5px solid var(--border-color);
-  border-radius: 10px;
-  padding: 0 10px;
+  position: relative; flex: 1; display: flex; align-items: center; gap: 8px;
+  background: var(--surface-solid); border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg); padding: 0 16px; box-shadow: var(--shadow-sm); transition: var(--transition);
 }
-.date-input-wrap span {
-  font-size: 12px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  margin-right: 6px;
-}
-.date-input-wrap input[type="date"] {
-  border: none;
-  background: transparent;
-  padding: 11px 0;
-  font-size: 13.5px;
-  color: var(--text-main);
-  font-family: var(--font-main);
-  outline: none;
-  width: 100%;
-  cursor: pointer;
-}
+.date-input-wrap:focus-within { border-color: var(--primary); }
+.date-input-wrap span { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; white-space: nowrap; }
+.date-input-wrap input[type="date"] { border: none; background: transparent; padding: 13px 0; font-size: 13.5px; color: var(--text-main); font-family: var(--font-main); outline: none; width: 100%; cursor: pointer; }
 
-/* ══════════ CATEGORY TABS ══════════ */
-.cat-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px}
-.cat-tab{
-  padding:7px 16px;border-radius:99px;
-  font-size:12.5px;font-weight:600;
-  border:1px solid var(--border-color);background:var(--surface-solid);
-  color:var(--text-muted);transition:all .2s;cursor:pointer;
-  display:flex;align-items:center;gap:5px;
+/* ═══════════ CATEGORY TABS (Ant Design Pro Pills) ═══════════ */
+.cat-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
+.cat-tab {
+  padding: 8px 18px; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 500;
+  border: 1px solid var(--border-color); background: var(--surface-solid);
+  color: var(--text-muted); transition: var(--transition); display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm);
 }
-.cat-tab:hover{border-color:rgba(229,9,20,.25);color:var(--text-main)}
-.cat-tab.active{background:var(--mil-dark);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(13,27,42,.3)}
-.cat-tab .tab-count{
-  background:rgba(255,255,255,.18);
-  padding:1px 6px;border-radius:99px;font-size:10.5px;
-}
-.cat-tab:not(.active) .tab-count{background:var(--surface-hover);color:var(--text-muted)}
+.cat-tab:hover { border-color: var(--primary); color: var(--text-main); }
+.cat-tab.active { background: var(--primary); color: #ffffff; border-color: transparent; box-shadow: 0 4px 14px rgba(37,99,235,0.25); }
+.cat-tab i, .cat-tab svg { display: inline-flex; }
+.cat-tab .tab-count { background: rgba(0,0,0,0.05); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; margin-left: 4px; }
+[data-theme="dark"] .cat-tab .tab-count { background: rgba(255,255,255,0.1); }
+.cat-tab.active .tab-count { background: rgba(255,255,255,0.2); color: #ffffff; }
 
-/* ══════════ SKELETON LOADING ══════════ */
-.skeleton{
-  background:linear-gradient(90deg,var(--surface-hover) 25%,var(--border-color) 50%,var(--surface-hover) 75%);
-  background-size:200% 100%;
-  animation:shimmer 1.4s infinite;
-  border-radius:8px;
+/* ═══════════ SEGMENT/MONTH GROUPS ═══════════ */
+.month-group { margin-bottom: 16px; border-radius: var(--radius-lg); background: var(--surface-solid); border: 1px solid var(--border-color); overflow: hidden; box-shadow: var(--shadow-sm); }
+.month-header {
+  display: flex; align-items: center; justify-content: space-between; padding: 16px 24px;
+  background: var(--surface-solid); border-bottom: 1px solid transparent; cursor: pointer; transition: var(--transition); user-select: none;
 }
-@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+.month-group.open .month-header { background: var(--surface-hover); border-bottom-color: var(--border-color); }
+.month-header-left { display: flex; align-items: center; gap: 12px; color: var(--text-main); }
+.month-label { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; }
+.month-count { background: rgba(37,99,235,0.08); color: var(--primary); padding: 2px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+[data-theme="dark"] .month-count { background: rgba(255,255,255,0.08); color: var(--text-muted); }
+.month-toggle-icon { color: var(--text-muted); transition: var(--transition); display: inline-flex; }
+.month-group.open .month-toggle-icon { transform: rotate(180deg); color: var(--text-main); }
 
-.skeleton-card{padding:20px;background:var(--surface-solid);border:1px solid var(--border-color);border-radius:16px;display:flex;flex-direction:column;gap:10px}
-.sk-badge{height:20px;width:100px}
-.sk-title{height:18px;width:70%}
-.sk-title-sm{height:14px;width:45%}
-.sk-row{display:flex;gap:8px}
-.sk-chip{height:24px;width:80px;border-radius:99px}
-.sk-btn{height:34px;width:110px;border-radius:8px}
+.month-body {
+  display: none; padding: 0; grid-template-columns: 1fr; gap: 0; overflow: hidden; max-height: 0; transition: max-height 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.month-group.open .month-body { max-height: 3000px; }
 
-/* ══════════ MONTH GROUP ══════════ */
-.month-group{margin-bottom:8px}
-.month-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px;
-  background:var(--surface-solid);
-  border:1px solid var(--border-color);
-  border-radius:12px;
-  cursor:pointer;
-  transition:background .2s;
-  user-select:none;
+/* ═══════════ ENTERPRISE DOCUMENT CARDS ═══════════ */
+.doc-card {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 20px 24px; background: var(--surface-solid); border-bottom: 1px solid var(--border-color);
+  transition: var(--transition); position: relative;
 }
-.month-header:hover{background:var(--surface-hover)}
-.month-header-left{display:flex;align-items:center;gap:10px}
-.month-label{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-main)}
-.month-count{
-  background:rgba(13,27,42,.08);color:var(--mil-mid);
-  padding:2px 10px;border-radius:99px;font-size:11.5px;font-weight:700;
-}
-[data-theme="dark"] .month-count{background:rgba(255,255,255,.08);color:var(--text-muted)}
-.month-toggle-icon{
-  font-size:13px;color:var(--text-muted);
-  transition:transform .25s cubic-bezier(.16,1,.3,1);
-}
-.month-group.open .month-toggle-icon{transform:rotate(180deg)}
-.month-body{
-  display:none;
-  padding:8px 0 4px;
-  display:grid;
-  grid-template-columns:1fr;
-  gap:8px;
-  overflow:hidden;
-  max-height:0;
-  transition:max-height .4s cubic-bezier(.16,1,.3,1);
-}
-.month-group.open .month-body{max-height:2000px}
+.doc-card:last-child { border-bottom: none; }
+.doc-card:hover { background: var(--surface-hover); transform: scale(1.002); }
 
-/* ══════════ DOCUMENT CARD ══════════ */
-.doc-card{
-  display:flex;align-items:flex-start;gap:16px;
-  padding:16px 20px;
-  background:var(--surface-solid);
-  border:1px solid var(--border-color);
-  border-radius:14px;
-  transition:all .25s cubic-bezier(.16,1,.3,1);
-  position:relative;overflow:hidden;
+.doc-left { display: flex; align-items: flex-start; gap: 20px; flex: 1; min-width: 0; }
+.doc-icon {
+  width: 44px; height: 44px; border-radius: var(--radius-md); flex-shrink: 0;
+  background: var(--bg-color); border: 1px solid var(--border-color);
+  display: flex; align-items: center; justify-content: center; color: var(--primary); transition: var(--transition);
 }
-.doc-card::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
-  background:var(--cat-color, var(--mil-dark));
-  border-radius:0 2px 2px 0;
-}
-.doc-card:hover{
-  transform:translateX(4px);
-  box-shadow:0 8px 24px rgba(0,0,0,.1);
-  border-color:rgba(13,27,42,.15);
-}
-[data-theme="dark"] .doc-card:hover{border-color:rgba(255,255,255,.12)}
+.doc-card:hover .doc-icon { background: var(--surface-solid); box-shadow: var(--shadow-sm); }
+.doc-info-block { flex: 1; min-width: 0; }
+.doc-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge-cat { padding: 2px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: rgba(37,99,235,0.06); color: var(--primary); border: 1px solid rgba(37,99,235,0.1); }
+.badge-so { padding: 2px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; background: var(--bg-color); color: var(--text-muted); border: 1px solid var(--border-color); }
 
-.doc-icon{
-  width:40px;height:40px;border-radius:10px;flex-shrink:0;
-  background:var(--cat-bg,rgba(13,27,42,.08));
-  display:flex;align-items:center;justify-content:center;font-size:18px;
-  margin-top:1px;
-}
-.doc-body{flex:1;min-width:0}
-.doc-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:7px}
-.badge-cat{
-  padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;
-  background:var(--cat-bg,rgba(13,27,42,.08));
-  color:var(--cat-color,var(--mil-dark));
-}
-.badge-so{
-  padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;
-  background:var(--surface-hover);color:var(--text-muted);
-}
-.doc-title{
-  font-size:14.5px;font-weight:700;line-height:1.45;color:var(--text-main);
-  margin-bottom:6px;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-}
-.doc-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.doc-meta-item{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
-.doc-mo-ta{font-size:12.5px;color:var(--text-muted);line-height:1.5;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.doc-title { font-size: 15px; font-weight: 600; line-height: 1.5; color: var(--text-main); margin-bottom: 6px; transition: var(--transition); }
+.doc-card:hover .doc-title { color: var(--primary); }
+.doc-mo-ta { font-size: 13px; color: var(--text-muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px; }
+.doc-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.doc-meta-item { font-size: 12.5px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
 
-.btn-view{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;
-  background:linear-gradient(135deg,var(--mil-dark),var(--mil-mid));
-  color:#fff;white-space:nowrap;flex-shrink:0;
-  transition:all .2s;box-shadow:0 3px 10px rgba(13,27,42,.25);
-  border:none;cursor:pointer;font-family:inherit;align-self:center;
+/* Control Action Right Area */
+.btn-view {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 600;
+  background: var(--surface-solid); color: var(--text-main); border: 1px solid var(--border-color);
+  white-space: nowrap; flex-shrink: 0; transition: var(--transition); box-shadow: var(--shadow-sm);
 }
-.btn-view:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(13,27,42,.35)}
-.btn-view svg{width:14px;height:14px;stroke:#fff}
+.btn-view:hover { background: var(--primary); color: #ffffff; border-color: transparent; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+.btn-view svg { width: 15px; height: 15px; }
 
-/* Category color palette */
-.cat-tw    {--cat-color:#1e40af;--cat-bg:rgba(30,64,175,.09)}
-.cat-btl   {--cat-color:#047857;--cat-bg:rgba(4,120,87,.09)}
-.cat-du    {--cat-color:#7c3aed;--cat-bg:rgba(124,58,237,.09)}
-.cat-ub    {--cat-color:#b45309;--cat-bg:rgba(180,83,9,.09)}
-.cat-bchqs {--cat-color:#b91c1c;--cat-bg:rgba(185,28,28,.09)}
+/* Dynamic Theme Category Custom Accents */
+.cat-tw { --primary: #2563EB; }
+.cat-btl { --primary: #059669; }
+.cat-du { --primary: #7C3AED; }
+.cat-ub { --primary: #D97706; }
+.cat-bchqs { --primary: #DC2626; }
 
-/* ══════════ EMPTY / ERROR STATE ══════════ */
-.state-box{
-  padding:60px 24px;text-align:center;
-  display:flex;flex-direction:column;align-items:center;gap:12px;
-  color:var(--text-muted);
+/* ═══════════ STATE EMPTY UI ═══════════ */
+.state-box { padding: 80px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; color: var(--text-muted); }
+.state-box .s-icon { color: var(--text-muted); margin-bottom: 6px; opacity: 0.6; }
+.state-box .s-title { font-size: 16px; font-weight: 600; color: var(--text-main); }
+.state-box .s-desc { font-size: 13.5px; max-width: 360px; line-height: 1.6; }
+
+/* ═══════════ SKELETON PERFORMANCE LOADERS ═══════════ */
+.skeleton { background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border-color) 50%, var(--surface-hover) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.skeleton-card { padding: 24px; background: var(--surface-solid); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.sk-left { display: flex; gap: 16px; flex: 1; }
+.sk-shape { width: 44px; height: 44px; border-radius: var(--radius-md); }
+.sk-lines { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+/* ═══════════ PREMIUM FOOTER ═══════════ */
+.saas-footer { background: var(--surface-solid); border-top: 1px solid var(--border-color); padding: 64px 24px 32px; position: relative; }
+.footer-container { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; }
+.footer-brand h2 { color: var(--text-main); font-size: 15px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.01em; }
+.footer-brand p { color: var(--text-muted); font-size: 13.5px; line-height: 1.6; }
+.footer-col h3 { color: var(--text-main); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px; }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 12px; }
+.footer-col ul li a { color: var(--text-muted); font-size: 13.5px; transition: var(--transition); }
+.footer-col ul li a:hover { color: var(--primary); padding-left: 2px; }
+.footer-contact-info { color: var(--text-muted); font-size: 13.5px; line-height: 1.6; }
+.footer-contact-info p { margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px; }
+.footer-contact-info svg { flex-shrink: 0; margin-top: 3px; color: var(--text-muted); }
+
+.footer-bottom { max-width: 1280px; margin: 48px auto 0; padding-top: 24px; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--text-muted); }
+.footer-bottom-links { display: flex; gap: 20px; }
+.footer-bottom-links a:hover { color: var(--primary); }
+.footer-bottom-badge { display: flex; align-items: center; gap: 6px; opacity: 0.8; }
+
+/* ═══════════ COMPREHENSIVE RESPONSIVE GRID ═══════════ */
+@media(max-width: 1024px) { .footer-container { grid-template-columns: 1fr 1fr; gap: 32px; } }
+@media(max-width: 768px) {
+  .menu-toggle { display: flex; }
+  .nav-menu {
+    position: fixed; top: 68px; left: 0; right: 0; display: flex; flex-direction: column; align-items: stretch; gap: 0;
+    padding: 12px; background: var(--surface-solid); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-lg);
+    max-height: calc(100vh - 68px); overflow-y: auto; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: var(--transition);
+  }
+  .nav-menu.mobile-open { opacity: 1; visibility: visible; transform: translateY(0); }
+  .nav-item { width: 100%; padding: 12px; border-radius: var(--radius-sm); justify-content: space-between; }
+  .dropdown { position: static; display: none; transform: none; opacity: 1; visibility: visible; box-shadow: none; border: none; padding-left: 16px; margin-top: 4px; background: transparent; }
+  .nav-item.open .dropdown { display: block; }
+  
+  .header-divider, .btn-saas:not(.btn-primary) { display: none; }
+  .page-banner-inner { flex-direction: column; align-items: flex-start; padding: 24px; gap: 24px; }
+  .banner-right { width: 100%; justify-content: space-between; }
+  
+  .doc-card { flex-direction: column; align-items: stretch; padding: 20px; gap: 16px; }
+  .btn-view { width: 100%; }
+  
+  .footer-bottom { flex-direction: column; text-align: center; gap: 16px; }
+  .footer-bottom-links { justify-content: center; }
 }
-.state-box .s-icon{font-size:2.8rem;margin-bottom:4px}
-.state-box .s-title{font-size:15px;font-weight:700;color:var(--text-main)}
-.state-box .s-desc{font-size:13px;max-width:320px;line-height:1.6}
-
-/* ══════════ FOOTER ══════════ */
-.saas-footer{background:var(--surface-color);border-top:1px solid var(--border-color);padding:4rem 2rem 2rem;font-family:var(--font-main);position:relative}
-.saas-footer::before{content:'';position:absolute;top:0;left:10%;width:80%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.6}
-.footer-container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1.2fr 1.2fr 1.6fr;gap:3rem}
-.footer-brand h2{color:var(--text-main);font-size:1.25rem;font-weight:700;margin-bottom:1rem;letter-spacing:-.02em}
-.footer-brand p{color:var(--text-muted);font-size:.9rem;line-height:1.6}
-.footer-col h3{color:var(--text-main);font-size:.9rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1.25rem;position:relative}
-.footer-col h3::after{content:'';position:absolute;bottom:-6px;left:0;width:24px;height:2px;background:var(--accent)}
-.footer-col ul{list-style:none;padding:0;margin:0}
-.footer-col ul li{margin-bottom:.75rem}
-.footer-col ul li a{color:var(--text-muted);text-decoration:none;font-size:.9rem;transition:color .2s,padding-left .2s}
-.footer-col ul li a:hover{color:var(--text-main);padding-left:4px}
-.footer-contact-info{color:var(--text-muted);font-size:.875rem;line-height:1.6}
-.footer-contact-info p{margin-bottom:.75rem;display:flex;align-items:flex-start;gap:.5rem}
-.footer-bottom{max-width:1200px;margin:3rem auto 0;padding:1.25rem 0;border-top:1px solid var(--border-color);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;font-size:.8rem;color:var(--text-muted)}
-.footer-bottom-links{display:flex;gap:0;align-items:center}
-.footer-bottom-links a{color:var(--text-muted);text-decoration:none;padding:0 14px;border-right:1px solid var(--border-color);line-height:1;transition:color .2s;white-space:nowrap}
-.footer-bottom-links a:first-child{padding-left:0}
-.footer-bottom-links a:last-child{border-right:none;padding-right:0}
-.footer-bottom-links a:hover{color:var(--text-main)}
-.footer-bottom-badge{display:flex;align-items:center;justify-content:flex-end;gap:6px;font-size:.75rem;color:var(--text-muted);opacity:.7}
-
-/* ══════════ RESPONSIVE ══════════ */
-@media(max-width:992px){.footer-container{grid-template-columns:1fr 1fr;gap:2rem}}
-@media(max-width:768px){
-  .menu-toggle{display:flex}
-  .nav-menu{position:fixed;top:64px;left:0;right:0;display:flex;flex-direction:column;align-items:stretch;gap:0;padding:8px 16px 20px;background:var(--surface-solid);border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);box-shadow:0 16px 32px rgba(0,0,0,.12);max-height:calc(100vh - 64px);overflow-y:auto;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px);transition:opacity .25s,transform .25s,visibility .25s}
-  .nav-menu.mobile-open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
-  .nav-item{width:100%;padding:12px 0;border-bottom:1px solid var(--border-color)}
-  .dropdown{position:static;display:none;opacity:1;visibility:visible;transform:none;border:1px solid var(--border-color);border-radius:12px;padding:6px;margin:8px 0 0 8px;background:var(--surface-color);box-shadow:0 12px 24px rgba(0,0,0,.12)}
-  .dropdown a{color:var(--text-main);padding:10px 12px;border-radius:10px}
-  .dropdown a:hover{background:rgba(229,9,20,.08);color:var(--accent)}
-  .nav-item.open .dropdown{display:block}
-  .header-inner{grid-template-columns:auto 1fr auto}
-  #header-auth-box{justify-content:flex-end;gap:4px}
-  .header-divider,.btn-saas:not(.btn-primary){display:none}
-  .page-banner-inner{flex-direction:column;gap:16px;padding:20px}
-  .banner-right{width:100%;justify-content:space-around}
-  #user-greeting{text-align:center}
-  .doc-card{flex-wrap:wrap}
-  .btn-view{width:100%}
-  .footer-bottom{grid-template-columns:1fr;text-align:center;gap:.75rem}
-  .footer-bottom-links{justify-content:center}
-  .footer-bottom-badge{justify-content:center}
-}
-@media(max-width:576px){
-  .footer-container{grid-template-columns:1fr}
-  .date-filter-group { flex-direction: column; gap: 8px; width: 100%; min-width: unset; }
+@media(max-width: 576px) {
+  .footer-container { grid-template-columns: 1fr; }
+  .control-row { flex-direction: column; align-items: stretch; }
+  .date-filter-group { flex-direction: column; width: 100%; min-width: unset; }
   .date-input-wrap { width: 100%; }
 }
 </style>
@@ -427,30 +324,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       <a href="index.html" class="nav-item">Trang chủ</a>
       <a href="gioi-thieu.html" class="nav-item">Giới thiệu</a>
       <div class="nav-item">
-        Tin tức ▾
+        <span>Tin tức</span> <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
         <div class="dropdown">
-          <a href="tin-tuc.html">📰 <span>Tin tức &amp; Sự kiện</span></a>
-          <a href="tang-gia-san-xuat.html">🌿 <span>Hoạt động tăng gia</span></a>
-          <a href="hoat-dong.html">📸 <span>Hình ảnh hoạt động</span></a>
+          <a href="tin-tuc.html"><i data-lucide="newspaper" style="width:16px;height:16px;"></i> <span>Tin tức &amp; Sự kiện</span></a>
+          <a href="tang-gia-san-xuat.html"><i data-lucide="sprout" style="width:16px;height:16px;"></i> <span>Hoạt động tăng gia</span></a>
+          <a href="hoat-dong.html"><i data-lucide="image" style="width:16px;height:16px;"></i> <span>Hình ảnh hoạt động</span></a>
         </div>
       </div>
       <div class="nav-item active">
-        Dịch vụ ▾
+        <span>Dịch vụ</span> <i data-lucide="chevron-down" style="width:14px;height:14px;"></i>
         <div class="dropdown">
-          <a href="tracuu.html">🔍 <span>Tra cứu CCCD</span></a>
-          <a href="tuyen-quan.html">🪖 <span>Tuyển quân</span></a>
-          <a href="tuyen-sinh.html">🎓 <span>Tuyển sinh</span></a>
-          <a href="tracuu-dieudong.html">📋 <span>QĐ Điều động</span></a>
-          <a href="tracuuvb.html" style="color:var(--accent)">📄 <span>Văn bản tuyên truyền</span></a>
+          <a href="tracuu.html"><i data-lucide="search" style="width:16px;height:16px;"></i> <span>Tra cứu CCCD</span></a>
+          <a href="tuyen-quan.html"><i data-lucide="shield" style="width:16px;height:16px;"></i> <span>Tuyển quan</span></a>
+          <a href="tuyen-sinh.html"><i data-lucide="graduation-cap" style="width:16px;height:16px;"></i> <span>Tuyển sinh</span></a>
+          <a href="tracuu-dieudong.html"><i data-lucide="clipboard-list" style="width:16px;height:16px;"></i> <span>QĐ Điều động</span></a>
+          <a href="tracuuvb.html" style="color:var(--primary)"><i data-lucide="file-text" style="width:16px;height:16px;"></i> <span>Văn bản tuyên truyền</span></a>
         </div>
       </div>
       <a href="lien-he.html" class="nav-item">Liên hệ</a>
     </nav>
     <div id="header-auth-box">
-      <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện">☀️</button>
+      <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện"><i data-lucide="sun" style="width:18px;height:18px;"></i></button>
       <div class="header-divider"></div>
-      <button id="btn-logout" class="btn-saas" style="display:none">Đăng xuất</button>
-      <a href="loginvb.html" class="btn-saas btn-primary" id="btn-login-link">Đăng nhập</a>
+      <button id="btn-logout" class="btn-saas" style="display:none"><i data-lucide="log-out" style="width:15px;height:15px;"></i> Đăng xuất</button>
+      <a href="loginvb.html" class="btn-saas btn-primary" id="btn-login-link"><i data-lucide="log-in" style="width:15px;height:15px;"></i> Đăng nhập</a>
     </div>
   </div>
 </header>
@@ -470,15 +367,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     <div class="banner-right">
       <div class="banner-stat">
         <div class="banner-stat-num" id="stat-total">—</div>
-        <div class="banner-stat-lbl">Văn bản</div>
+        <div class="banner-stat-lbl">Tổng Văn bản</div>
       </div>
       <div class="banner-divider"></div>
       <div class="banner-stat">
         <div class="banner-stat-num" id="stat-month">—</div>
-        <div class="banner-stat-lbl">Tháng này</div>
+        <div class="banner-stat-lbl">Trong Tháng</div>
       </div>
       <div class="banner-divider"></div>
-      <div id="user-greeting">Chào mừng!<br><span id="user-name-display" style="font-weight:700;color:var(--text-main)"></span></div>
+      <div id="user-greeting">Chào mừng cấu hình!<br><span id="user-name-display" style="font-weight:700;color:var(--text-main)"></span></div>
     </div>
   </div>
 </div>
@@ -487,9 +384,9 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 
   <div class="control-row">
     <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input id="search-input" type="search" placeholder="Tìm kiếm tên văn bản, số văn bản, từ khóa..." autocomplete="off" spellcheck="false">
-      <button class="search-clear" id="search-clear" aria-label="Xóa">✕</button>
+      <span class="search-icon"><i data-lucide="search" style="width:18px;height:18px;"></i></span>
+      <input id="search-input" type="search" placeholder="Tìm kiếm tên văn bản, số ký hiệu, từ khóa..." autocomplete="off" spellcheck="false">
+      <button class="search-clear" id="search-clear" aria-label="Xóa"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
     </div>
     
     <div class="date-filter-group">
@@ -505,12 +402,12 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   </div>
 
   <div class="cat-tabs" id="cat-tabs">
-    <button class="cat-tab active" data-cat="all">🗂️ Tất cả <span class="tab-count" id="cnt-all">0</span></button>
-    <button class="cat-tab" data-cat="Trung Ương">🏛️ Trung ương <span class="tab-count" id="cnt-tw">0</span></button>
-    <button class="cat-tab" data-cat="Bộ Tư Lệnh TPHCM">🏙️ BTL TP.HCM <span class="tab-count" id="cnt-btl">0</span></button>
-    <button class="cat-tab" data-cat="Đảng Uỷ">⭐ Đảng uỷ <span class="tab-count" id="cnt-du">0</span></button>
-    <button class="cat-tab" data-cat="Uỷ Ban">🏢 Uỷ ban <span class="tab-count" id="cnt-ub">0</span></button>
-    <button class="cat-tab" data-cat="Ban Chỉ Huy Quân Sự">🪖 BCHQS <span class="tab-count" id="cnt-bchqs">0</span></button>
+    <button class="cat-tab active" data-cat="all"><i data-lucide="folder-open" style="width:16px;height:16px;"></i> Tất cả <span class="tab-count" id="cnt-all">0</span></button>
+    <button class="cat-tab" data-cat="Trung Ương"><i data-lucide="building-2" style="width:16px;height:16px;"></i> Trung ương <span class="tab-count" id="cnt-tw">0</span></button>
+    <button class="cat-tab" data-cat="Bộ Tư Lệnh TPHCM"><i data-lucide="building" style="width:16px;height:16px;"></i> BTL TP.HCM <span class="tab-count" id="cnt-btl">0</span></button>
+    <button class="cat-tab" data-cat="Đảng Uỷ"><i data-lucide="star" style="width:16px;height:16px;"></i> Đảng uỷ <span class="tab-count" id="cnt-du">0</span></button>
+    <button class="cat-tab" data-cat="Uỷ Ban"><i data-lucide="landmark" style="width:16px;height:16px;"></i> Uỷ ban <span class="tab-count" id="cnt-ub">0</span></button>
+    <button class="cat-tab" data-cat="Ban Chỉ Huy Quân Sự"><i data-lucide="shield-alert" style="width:16px;height:16px;"></i> BCHQS <span class="tab-count" id="cnt-bchqs">0</span></button>
   </div>
 
   <div id="results-container"></div>
@@ -521,8 +418,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   <div class="footer-container">
     <div class="footer-brand">
       <h2>BAN CHỈ HUY QUÂN SỰ XÃ BÌNH MỸ</h2>
-      <p style="margin-bottom:1rem">Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Lực lượng vũ trang Nhân dân xã Bình Mỹ, TP. Hồ Chí Minh.</p>
-      <p style="font-size:.8rem;opacity:.7">Chịu trách nhiệm nội dung: Ban Chỉ huy Quân sự xã Bình Mỹ</p>
+      <p style="margin-bottom:12px">Đoàn kết - Kỷ luật - Sẵn sàng chiến đấu. Lực lượng vũ trang Nhân dân xã Bình Mỹ, TP. Hồ Chí Minh.</p>
+      <p style="font-size:12px;opacity:0.6">Chịu trách nhiệm nội dung: Ban Chỉ huy Quân sự xã Bình Mỹ</p>
     </div>
     <div class="footer-col">
       <h3>Liên Kết Nhanh</h3>
@@ -538,15 +435,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       <ul>
         <li><a href="tracuuvb.html">Văn bản tuyên truyền</a></li>
         <li><a href="tuyen-sinh.html">Tuyển sinh Quân sự</a></li>
-        <li><a href="dang-ky-DQTV.html">Đăng ký Dân quân tự vệ</a></li>
+        <li><a href="dang-ky-DQTV.html">Đăng ký Dân quan tự vệ</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h3>Thông Tin Đường Dây Nóng</h3>
       <div class="footer-contact-info">
-        <p>📍 <span>149, Đường Trung An, Xã Bình Mỹ, TP. HCM</span></p>
-        <p>📞 <span>Trực ban 24/7: (028) XXXX XXXX</span></p>
-        <p>✉️ <span>bchqs.binhmy.@tphcm.gov.vn</span></p>
+        <p><i data-lucide="map-pin" style="width:16px;height:16px;"></i> <span>149, Đường Trung An, Xã Bình Mỹ, TP. HCM</span></p>
+        <p><i data-lucide="phone" style="width:16px;height:16px;"></i> <span>Trực ban 24/7: (028) XXXX XXXX</span></p>
+        <p><i data-lucide="mail" style="width:16px;height:16px;"></i> <span>bchqs.binhmy.@tphcm.gov.vn</span></p>
       </div>
     </div>
   </div>
@@ -558,7 +455,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       <a href="so-do-website.html">Sơ đồ website</a>
     </div>
     <div class="footer-bottom-badge">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <i data-lucide="shield-check" style="width:16px;height:16px;color:var(--success);"></i>
       <span>Bảo mật &amp; Tin cậy</span>
     </div>
   </div>
@@ -568,11 +465,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 /* ══════════ CONFIG ══════════ */
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbxdgm9vjNHNvI92T5z4wzxWKyQkPfOz-K8fjopMl23exqajJ2P90pCpqSyt5g0ZkAIL/exec';
 const CAT_MAP = {
-  'Trung Ương':          { cls:'cat-tw',    icon:'🏛️', id:'tw' },
-  'Bộ Tư Lệnh TPHCM':   { cls:'cat-btl',   icon:'🏙️', id:'btl' },
-  'Đảng Uỷ':            { cls:'cat-du',    icon:'⭐', id:'du' },
-  'Uỷ Ban':             { cls:'cat-ub',    icon:'🏢', id:'ub' },
-  'Ban Chỉ Huy Quân Sự':{ cls:'cat-bchqs', icon:'🪖', id:'bchqs' },
+  'Trung Ương':          { cls:'cat-tw',    icon:'building-2',   id:'tw' },
+  'Bộ Tư Lệnh TPHCM':   { cls:'cat-btl',   icon:'building',     id:'btl' },
+  'Đảng Uỷ':            { cls:'cat-du',    icon:'star',         id:'du' },
+  'Uỷ Ban':             { cls:'cat-ub',    icon:'landmark',     id:'ub' },
+  'Ban Chỉ Huy Quân Sự':{ cls:'cat-bchqs', icon:'shield-alert', id:'bchqs' },
 };
 
 let allDocs = [];
@@ -583,27 +480,36 @@ let searchQuery = '';
 /* ══════════ HELPER PARSE DATE ══════════ */
 function parseStringToDate(dateStr) {
   if (!dateStr) return null;
-  // Hỗ trợ định dạng "DD/MM/YYYY"
   const parts = dateStr.split('/');
   if (parts.length === 3) {
     return new Date(+parts[2], +parts[1] - 1, +parts[0]);
   }
-  // Fallback chuẩn ISO nếu có
   const d = new Date(dateStr);
   return isNaN(d.getTime()) ? null : d;
 }
 
-/* ══════════ THEME ══════════ */
+/* ══════════ THEME CONTROLLER ══════════ */
 const themeToggle = document.getElementById('theme-toggle');
 const savedTheme = localStorage.getItem('vb_theme');
-if (savedTheme === 'dark') { document.documentElement.setAttribute('data-theme','dark'); themeToggle.textContent='🌙'; }
+if (savedTheme === 'dark') { 
+  document.documentElement.setAttribute('data-theme','dark'); 
+  themeToggle.innerHTML = '<i data-lucide="moon" style="width:18px;height:18px;"></i>'; 
+}
 themeToggle.addEventListener('click', () => {
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  if (dark) { document.documentElement.removeAttribute('data-theme'); themeToggle.textContent='☀️'; localStorage.setItem('vb_theme','light'); }
-  else { document.documentElement.setAttribute('data-theme','dark'); themeToggle.textContent='🌙'; localStorage.setItem('vb_theme','dark'); }
+  if (dark) { 
+    document.documentElement.setAttribute('data-theme','light'); 
+    themeToggle.innerHTML = '<i data-lucide="sun" style="width:18px;height:18px;"></i>'; 
+    localStorage.setItem('vb_theme','light'); 
+  } else { 
+    document.documentElement.setAttribute('data-theme','dark'); 
+    themeToggle.innerHTML = '<i data-lucide="moon" style="width:18px;height:18px;"></i>'; 
+    localStorage.setItem('vb_theme','dark'); 
+  }
+  lucide.createIcons();
 });
 
-/* ══════════ MOBILE NAV ══════════ */
+/* ══════════ MOBILE NAV REFACTOR ══════════ */
 const menuToggle = document.getElementById('menu-toggle');
 const mainNav = document.getElementById('main-nav');
 const dropItems = document.querySelectorAll('.nav-item:has(.dropdown)');
@@ -621,7 +527,7 @@ dropItems.forEach(item => {
   });
 });
 
-/* ══════════ SESSION ══════════ */
+/* ══════════ SESSION CHECK ══════════ */
 function checkSession() {
   const sess = sessionStorage.getItem('vb_user');
   const bannerSeal = document.getElementById('banner-seal-element');
@@ -632,8 +538,6 @@ function checkSession() {
         document.getElementById('user-name-display').textContent = u.hoTen;
         document.getElementById('btn-login-link').style.display = 'none';
         document.getElementById('btn-logout').style.display = 'inline-flex';
-        
-        // Ẩn logo ở banner-seal khi đã đăng nhập
         if (bannerSeal) bannerSeal.style.display = 'none';
         return true;
       }
@@ -648,22 +552,24 @@ document.getElementById('btn-logout').addEventListener('click', () => {
 });
 checkSession();
 
-/* ══════════ SKELETON ══════════ */
+/* ══════════ PERFORMANCE SKELETON LOADERS ══════════ */
 function renderSkeleton() {
   const c = document.getElementById('results-container');
-  c.innerHTML = Array(4).fill(0).map(() => `
-    <div class="skeleton-card" style="margin-bottom:10px">
-      <div class="sk-row"><div class="skeleton sk-badge"></div><div class="skeleton sk-badge" style="width:70px"></div></div>
-      <div class="skeleton sk-title"></div>
-      <div class="skeleton sk-title-sm"></div>
-      <div class="sk-row" style="justify-content:space-between;margin-top:4px">
-        <div class="sk-row"><div class="skeleton sk-chip"></div><div class="skeleton sk-chip" style="width:60px"></div></div>
-        <div class="skeleton sk-btn"></div>
+  c.innerHTML = Array(3).fill(0).map(() => `
+    <div class="skeleton-card">
+      <div class="sk-left">
+        <div class="skeleton sk-shape"></div>
+        <div class="sk-lines">
+          <div class="skeleton" style="height:14px; width:120px;"></div>
+          <div class="skeleton" style="height:18px; width:80%;"></div>
+          <div class="skeleton" style="height:14px; width:40%;"></div>
+        </div>
       </div>
+      <div class="skeleton" style="height:38px; width:130px; border-radius:10px;"></div>
     </div>`).join('');
 }
 
-/* ══════════ FETCH DATA ══════════ */
+/* ══════════ AJAX FETCH INTERACTION ══════════ */
 async function fetchDocuments() {
   renderSkeleton();
   try {
@@ -676,19 +582,17 @@ async function fetchDocuments() {
       if (data.success && Array.isArray(data.documents)) {
         allDocs = data.documents;
       } else {
-        console.warn('GAS response lỗi, dùng mock:', data);
         allDocs = getMockData();
       }
     }
   } catch(err) {
-    console.warn('fetchDocuments lỗi, dùng mock:', err.message);
     allDocs = getMockData();
   }
   updateCounts();
   applyFilters();
 }
 
-/* ══════════ MOCK DATA (fallback khi GAS lỗi) ══════════ */
+/* ══════════ DATA FALLBACK CORE ══════════ */
 function getMockData() {
   return [
     {id:1,LoaiVanBan:'Trung Ương',Thang:'06/2026',TieuDe:'Nghị quyết số 45 về tăng cường quốc phòng an ninh trong tình hình mới',SoVanBan:'NQ-45/TW',MoTa:'Nghị quyết về tăng cường quốc phòng, an ninh, bảo vệ Tổ quốc trong tình hình mới đến năm 2030.',NgayCapNhat:'23/06/2026',LinkDrive:'https://drive.google.com/file/d/EXAMPLE/view'},
@@ -702,59 +606,43 @@ function getMockData() {
   ];
 }
 
-/* ══════════ COUNTS ══════════ */
+/* ══════════ METRICS & CALCULATIONS ══════════ */
 function updateCounts() {
   const q = searchQuery.toLowerCase();
   const matches = (doc) => !q || doc.TieuDe.toLowerCase().includes(q) || (doc.SoVanBan||'').toLowerCase().includes(q) || (doc.MoTa||'').toLowerCase().includes(q);
   const bySearch = allDocs.filter(matches);
 
-  // 1. Cập nhật số lượng hiển thị ở các tab danh mục
   document.getElementById('cnt-all').textContent = bySearch.length;
   Object.entries(CAT_MAP).forEach(([cat, info]) => {
     const el = document.getElementById(`cnt-${info.id}`);
     if (el) el.textContent = bySearch.filter(d => d.LoaiVanBan === cat).length;
   });
   
-  // 2. Cập nhật tổng số lượng văn bản trên banner
   document.getElementById('stat-total').textContent = allDocs.length;
   
-  // 3. SỬA LỖI ĐẾM VĂN BẢN THÁNG NÀY: Ép định dạng mm/yyyy theo múi giờ Việt Nam
   try {
     const now = new Date();
     const currentMonthStr = new Intl.DateTimeFormat('vi-VN', {
-      month: '2-digit',
-      year: 'numeric',
-      timeZone: 'Asia/Ho_Chi_Minh'
-    }).format(now); // Kết quả luôn là "06/2026" đúng theo giờ VN
+      month: '2-digit', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh'
+    }).format(now);
 
-    // Hàm bổ trợ chuyển đổi bất kỳ kiểu dữ liệu Thang nào về dạng "mm/yyyy" để so sánh
     const normalizeDocMonth = (dateVal) => {
       if (!dateVal) return '';
       const d = new Date(dateVal);
-      if (isNaN(d.getTime())) {
-        // Nếu là chuỗi dạng "06/2026" sẵn thì chuẩn hóa bỏ khoảng trắng
-        return String(dateVal).trim(); 
-      }
+      if (isNaN(d.getTime())) return String(dateVal).trim(); 
       return new Intl.DateTimeFormat('vi-VN', {
-        month: '2-digit',
-        year: 'numeric',
-        timeZone: 'Asia/Ho_Chi_Minh'
+        month: '2-digit', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh'
       }).format(d);
     };
 
-    // Lọc và đếm chính xác số văn bản thuộc tháng hiện tại
-    const countThisMonth = allDocs.filter(d => {
-      return normalizeDocMonth(d.Thang) === currentMonthStr;
-    }).length;
-
+    const countThisMonth = allDocs.filter(d => normalizeDocMonth(d.Thang) === currentMonthStr).length;
     document.getElementById('stat-month').textContent = countThisMonth;
   } catch (err) {
-    console.error("Lỗi tính toán số văn bản tháng này:", err);
     document.getElementById('stat-month').textContent = "0";
   }
 }
 
-/* ══════════ FILTER & RENDER ══════════ */
+/* ══════════ SEARCH CORE PIPELINE ══════════ */
 function applyFilters() {
   const q = searchQuery.toLowerCase();
   const startDateVal = document.getElementById('filter-start-date').value;
@@ -782,28 +670,29 @@ function applyFilters() {
   renderResults();
 }
 
+/* ══════════ DOM TRANSFORMATION RENDERER ══════════ */
 function renderResults() {
   const c = document.getElementById('results-container');
   if (!filteredDocs.length) {
-    c.innerHTML = `<div class="state-box"><div class="s-icon">📭</div><div class="s-title">Không tìm thấy văn bản</div><div class="s-desc">Thử thay đổi từ khóa hoặc chọn danh mục khác.</div></div>`;
+    c.innerHTML = `
+      <div class="state-box">
+        <div class="s-icon"><i data-lucide="folder-archive" style="width:48px;height:48px;"></i></div>
+        <div class="s-title">Không tìm thấy dữ liệu văn bản</div>
+        <div class="s-desc">Hệ thống không tìm thấy kết quả phù hợp. Vui lòng thay đổi từ khóa tìm kiếm hoặc bộ lọc thời gian.</div>
+      </div>`;
+    lucide.createIcons();
     return;
   }
 
-  // Hàm bổ trợ ép mọi kiểu dữ liệu tháng về định dạng chuẩn "mm/yyyy" theo giờ VN
   const normalizeMonthKey = (dateVal) => {
     if (!dateVal) return 'Không rõ';
     const d = new Date(dateVal);
-    if (isNaN(d.getTime())) {
-      return String(dateVal).trim(); // Nếu là chuỗi "06/2026" sẵn thì giữ nguyên
-    }
+    if (isNaN(d.getTime())) return String(dateVal).trim();
     return new Intl.DateTimeFormat('vi-VN', {
-      month: '2-digit',
-      year: 'numeric',
-      timeZone: 'Asia/Ho_Chi_Minh'
+      month: '2-digit', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh'
     }).format(d);
   };
 
-  // Group by month (đã chuẩn hóa key thành "mm/yyyy")
   const groups = {};
   filteredDocs.forEach(doc => {
     const key = normalizeMonthKey(doc.Thang);
@@ -811,7 +700,6 @@ function renderResults() {
     groups[key].push(doc);
   });
 
-  // Sắp xếp các tháng giảm dần (Tháng mới nhất lên đầu)
   const sortedMonths = Object.keys(groups).sort((a, b) => {
     const parse = s => { 
       const parts = s.split('/'); 
@@ -823,41 +711,39 @@ function renderResults() {
 
   c.innerHTML = sortedMonths.map((month, idx) => {
     const docs = groups[month];
-    const isOpen = idx === 0; // Tự động mở nhóm tháng đầu tiên
+    const isOpen = idx === 0; 
     return `
-    <div class="month-group ${isOpen ? 'open' : ''}" style="margin-bottom:12px">
+    <div class="month-group ${isOpen ? 'open' : ''}">
       <div class="month-header" onclick="toggleMonth(this)">
         <div class="month-header-left">
-          <span style="font-size:16px">📅</span>
-          <span class="month-label"> ${month}</span>
+          <i data-lucide="calendar-days" style="width:18px;height:18px;color:var(--primary);"></i>
+          <span class="month-label">Tháng ${month}</span>
           <span class="month-count">${docs.length} văn bản</span>
         </div>
-        <span class="month-toggle-icon">▾</span>
+        <span class="month-toggle-icon"><i data-lucide="chevron-down" style="width:16px;height:16px;"></i></span>
       </div>
-      <div class="month-body" style="${isOpen ? 'max-height:2000px;display:grid' : 'display:none'}">
+      <div class="month-body" style="${isOpen ? 'max-height:3000px;display:grid' : 'display:none'}">
         ${docs.map(doc => renderDocCard(doc)).join('')}
       </div>
     </div>`;
   }).join('');
-}
-function renderDocCard(doc) {
-  const info = CAT_MAP[doc.LoaiVanBan] || { cls:'', icon:'📄', id:'' };
   
-  // Hàm bổ trợ định dạng ngày tháng chuẩn Việt Nam (dd/mm/yyyy hoặc mm/yyyy)
+  lucide.createIcons();
+}
+
+function renderDocCard(doc) {
+  const info = CAT_MAP[doc.LoaiVanBan] || { cls:'', icon:'file-text', id:'' };
+  
   const formatVietnameseDate = (dateVal, isMonthOnly = false) => {
     if (!dateVal) return '';
     try {
       const d = new Date(dateVal);
-      if (isNaN(d.getTime())) return dateVal; // Nếu đã là chuỗi sẵn thì giữ nguyên
-      
+      if (isNaN(d.getTime())) return dateVal;
       const options = isMonthOnly 
         ? { month: '2-digit', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh' }
         : { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh' };
-        
       return new Intl.DateTimeFormat('vi-VN', options).format(d);
-    } catch (e) {
-      return dateVal;
-    }
+    } catch (e) { return dateVal; }
   };
 
   const formattedThang = formatVietnameseDate(doc.Thang, true);
@@ -865,22 +751,24 @@ function renderDocCard(doc) {
 
   return `
   <div class="doc-card ${info.cls}">
-    <div class="doc-icon">${info.icon}</div>
-    <div class="doc-body">
-      <div class="doc-badges">
-        <span class="badge-cat">${doc.LoaiVanBan || 'Văn bản'}</span>
-        ${doc.SoVanBan ? `<span class="badge-so">${doc.SoVanBan}</span>` : ''}
-      </div>
-      <div class="doc-title">${escHtml(doc.TieuDe)}</div>
-      ${doc.MoTa ? `<div class="doc-mo-ta">${escHtml(doc.MoTa)}</div>` : ''}
-      <div class="doc-meta" style="margin-top:8px">
-        <span class="doc-meta-item">📅 <span>Tháng ${formattedThang}</span></span>
-        <span class="doc-meta-item">🔄 <span>Cập nhật: ${formattedCapNhat}</span></span>
+    <div class="doc-left">
+      <div class="doc-icon"><i data-lucide="${info.icon}" style="width:20px;height:20px;"></i></div>
+      <div class="doc-info-block">
+        <div class="doc-badges">
+          <span class="badge-cat">${doc.LoaiVanBan || 'Văn bản'}</span>
+          ${doc.SoVanBan ? `<span class="badge-so">${doc.SoVanBan}</span>` : ''}
+        </div>
+        <div class="doc-title">${escHtml(doc.TieuDe)}</div>
+        ${doc.MoTa ? `<div class="doc-mo-ta">${escHtml(doc.MoTa)}</div>` : ''}
+        <div class="doc-meta">
+          <span class="doc-meta-item"><i data-lucide="calendar" style="width:14px;height:14px;"></i> Kỳ phát hành: Tháng ${formattedThang}</span>
+          <span class="doc-meta-item"><i data-lucide="clock-3" style="width:14px;height:14px;"></i> Đồng bộ: ${formattedCapNhat}</span>
+        </div>
       </div>
     </div>
     <button class="btn-view" onclick="openDoc('${encodeURIComponent(doc.LinkDrive || '')}','${encodeURIComponent(doc.TieuDe)}')">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      Xem văn bản
+      <i data-lucide="external-link"></i>
+      Xem tài liệu
     </button>
   </div>`;
 }
@@ -891,9 +779,8 @@ function escHtml(s) {
 
 function openDoc(encodedUrl, encodedTitle) {
   const url = decodeURIComponent(encodedUrl);
-  const title = decodeURIComponent(encodedTitle);
   if (!url || url === 'undefined') {
-    alert('Văn bản chưa có file đính kèm.');
+    alert('Văn bản hiện chưa đính kèm tệp cấu hình hiển thị trực tuyến.');
     return;
   }
   let viewUrl = url;
@@ -913,18 +800,18 @@ function toggleMonth(header) {
   } else {
     group.classList.add('open');
     body.style.display = 'grid';
-    requestAnimationFrame(() => { body.style.maxHeight = '2000px'; });
+    requestAnimationFrame(() => { body.style.maxHeight = '3000px'; });
   }
 }
 
-/* ══════════ SEARCH & DATE EVENT LISTENERS ══════════ */
+/* ══════════ INTERACTION DEBOUNCE TIMERS ══════════ */
 let searchTimer;
 function triggerSearchFilter() {
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => { 
     updateCounts(); 
     applyFilters(); 
-  }, 240);
+  }, 200);
 }
 
 document.getElementById('search-input').addEventListener('input', function() {
@@ -940,11 +827,9 @@ document.getElementById('search-clear').addEventListener('click', () => {
   triggerSearchFilter();
 });
 
-// Event listener cho bộ lọc ngày tháng
 document.getElementById('filter-start-date').addEventListener('change', triggerSearchFilter);
 document.getElementById('filter-end-date').addEventListener('change', triggerSearchFilter);
 
-/* ══════════ CATEGORY TABS ══════════ */
 document.querySelectorAll('.cat-tab').forEach(tab => {
   tab.addEventListener('click', function() {
     document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
@@ -954,8 +839,9 @@ document.querySelectorAll('.cat-tab').forEach(tab => {
   });
 });
 
-/* ══════════ INIT ══════════ */
+/* ══════════ LIFECYCLE INITIALIZER ══════════ */
 fetchDocuments();
+lucide.createIcons();
 </script>
 </body>
 </html>
