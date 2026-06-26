@@ -785,31 +785,51 @@ function applyFilters() {
 function renderResults() {
   const c = document.getElementById('results-container');
   if (!filteredDocs.length) {
-    c.innerHTML = `<div class="state-box"><div class="s-icon">📭</div><div class="s-title">Không tìm thấy văn bản</div><div class="s-desc">Thử thay đổi từ khóa, khoảng ngày hoặc chọn danh mục khác.</div></div>`;
+    c.innerHTML = `<div class="state-box"><div class="s-icon">📭</div><div class="s-title">Không tìm thấy văn bản</div><div class="s-desc">Thử thay đổi từ khóa hoặc chọn danh mục khác.</div></div>`;
     return;
   }
-  // Group by month
+
+  // Hàm bổ trợ ép mọi kiểu dữ liệu tháng về định dạng chuẩn "mm/yyyy" theo giờ VN
+  const normalizeMonthKey = (dateVal) => {
+    if (!dateVal) return 'Không rõ';
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) {
+      return String(dateVal).trim(); // Nếu là chuỗi "06/2026" sẵn thì giữ nguyên
+    }
+    return new Intl.DateTimeFormat('vi-VN', {
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'Asia/Ho_Chi_Minh'
+    }).format(d);
+  };
+
+  // Group by month (đã chuẩn hóa key thành "mm/yyyy")
   const groups = {};
   filteredDocs.forEach(doc => {
-    const key = doc.Thang || 'Không rõ';
+    const key = normalizeMonthKey(doc.Thang);
     if (!groups[key]) groups[key] = [];
     groups[key].push(doc);
   });
-  // Sort months descending
-  const sortedMonths = Object.keys(groups).sort((a,b) => {
-    const parse = s => { const [m,y] = s.split('/'); return new Date(+y, +m-1); };
+
+  // Sắp xếp các tháng giảm dần (Tháng mới nhất lên đầu)
+  const sortedMonths = Object.keys(groups).sort((a, b) => {
+    const parse = s => { 
+      const parts = s.split('/'); 
+      if(parts.length < 2) return new Date(0);
+      return new Date(+parts[1], +parts[0] - 1); 
+    };
     return parse(b) - parse(a);
   });
 
   c.innerHTML = sortedMonths.map((month, idx) => {
     const docs = groups[month];
-    const isOpen = idx === 0;
+    const isOpen = idx === 0; // Tự động mở nhóm tháng đầu tiên
     return `
     <div class="month-group ${isOpen ? 'open' : ''}" style="margin-bottom:12px">
       <div class="month-header" onclick="toggleMonth(this)">
         <div class="month-header-left">
           <span style="font-size:16px">📅</span>
-          <span class="month-label">Tháng ${month}</span>
+          <span class="month-label"> ${month}</span>
           <span class="month-count">${docs.length} văn bản</span>
         </div>
         <span class="month-toggle-icon">▾</span>
@@ -820,7 +840,6 @@ function renderResults() {
     </div>`;
   }).join('');
 }
-
 function renderDocCard(doc) {
   const info = CAT_MAP[doc.LoaiVanBan] || { cls:'', icon:'📄', id:'' };
   
