@@ -12,7 +12,7 @@
 const SHOWCASE_DATA = [
   {
     type: 'video',
-    src: 'images/VdHanhQuan2.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO 1 TẠI ĐÂY
+    src: 'images/Video.mp4', //VIDEO 1
     poster: 'images/video-poster.jpg',
     title: 'Kỷ Luật & Sức Mạnh',
     subtitle: 'Huấn luyện Dân quân tự vệ xã Bình Mỹ',
@@ -20,22 +20,29 @@ const SHOWCASE_DATA = [
   },
   {
     type: 'video',
-    src: 'images/VD5.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO TẠI ĐÂY
-    title: 'Công nghệ & Truyền Thông',
-    subtitle: '1',
-    desc: 'Mô phỏng'
+    src: 'images/hanhquan1.mp4', // VIDEO 2
+    title: 'Kỷ Luật & Sức Mạnh',
+    subtitle: 'Huấn luyện Dân quân tự vệ xã Bình Mỹ',
+    desc: 'Lực lượng vũ trang xã Bình Mỹ luôn tích cực học tập, rèn luyện kỹ thuật chiến đấu và nâng cao thể lực sẵn sàng ứng phó mọi tình huống.'
   },
   {
     type: 'video',
-    src: 'images/VD4.mp4', // <--- SỬA ĐƯỜNG DẪN VIDEO 2 TẠI ĐÂY
+    src: 'images/hanhquan2.mp4', //  VIDEO 3 
     poster: 'images/video-poster.jpg',
-    title: 'Công nghệ',
-    subtitle: 'Mô Phỏng',
-    desc: '2'
+    title: 'Kỷ Luật & Sức Mạnh',
+    subtitle: 'Huấn luyện Dân quân tự vệ xã Bình Mỹ',
+    desc: 'Lực lượng vũ trang xã Bình Mỹ luôn tích cực học tập, rèn luyện kỹ thuật chiến đấu và nâng cao thể lực sẵn sàng ứng phó mọi tình huống.'
   },
   {
     type: 'image',
-    src: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop', // <--- SỬA ĐƯỜNG DẪN ẢNH TẠI ĐÂY
+    src: 'images/anh3.jpg', // <--- Ảnh 1
+    title: 'Kỷ Luật & Sức Mạnh',
+    subtitle: 'Hanh quân rèn luyện',
+    desc: 'Duy trì hành quân hàng tuần nâng cao sức khỏe và tinh thần đồng đội cho lực lượng dân quân tự vệ xã Bình Mỹ.'
+  },
+  {
+    type: 'image',
+    src: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop', // Ảnh 2
     title: 'Không Gian Số Ban CHQS',
     subtitle: 'Chuyển đổi số công tác quốc phòng',
     desc: 'Ứng dụng công nghệ hiện đại nhằm số hóa hồ sơ quản lý nghĩa vụ quân sự và tuyên truyền thông tin nhanh chóng, chính xác.'

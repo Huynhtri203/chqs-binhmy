@@ -329,6 +329,30 @@ body {
 .log-item:last-child { border-bottom: none; }
 .log-time { color: var(--text-muted); font-family: monospace; font-size: 12px; white-space: nowrap; }
 
+/* ═══════════ LỊCH SỬ ĐĂNG NHẬP (LOGIN HISTORY) ═══════════ */
+.loginvb-toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+}
+.loginvb-search-wrap { position: relative; flex: 1; min-width: 220px; max-width: 360px; }
+.loginvb-search-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--text-muted); }
+.loginvb-search-wrap input {
+  width: 100%; padding: 10px 14px 10px 38px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-heavy); background: var(--card-bg); color: var(--text-main);
+  font-family: inherit; font-size: 13.5px; outline: none; transition: all 0.2s ease;
+}
+[data-theme="dark"] .loginvb-search-wrap input { border-color: var(--border-color); }
+.loginvb-search-wrap input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12); }
+
+.device-badge {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700;
+  padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.02em;
+}
+.device-badge.mobile { color: var(--blue); background: rgba(59, 130, 246, 0.1); }
+.device-badge.tablet { color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+.device-badge.desktop { color: var(--success); background: rgba(16, 185, 129, 0.1); }
+.browser-tag { font-size: 13px; color: var(--text-muted); }
+
 /* ═══════════ MAP BOX ═══════════ */
 #map-container { height: 550px; width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); overflow: hidden; }
 
@@ -414,6 +438,9 @@ body {
     </li>
     <li class="menu-item" id="menu-logs" onclick="switchTab('logs')">
       <i data-lucide="scroll"></i> Nhật ký hệ thống
+    </li>
+    <li class="menu-item" id="menu-loginvb" onclick="switchTab('loginvb')">
+      <i data-lucide="history"></i> Lịch sử đăng nhập
     </li>
     
     <li class="menu-separator"></li>
@@ -645,6 +672,43 @@ body {
       <p style="text-align: center; padding: 24px; color: var(--text-muted);">Đang tải nhật ký kiểm toán hành chính...</p>
     </div>
   </div>
+
+  <div id="sec-loginvb" class="data-section">
+    <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius-md); margin-bottom: 24px; font-size:14px; box-shadow: var(--shadow-sm); display:flex; align-items:center; gap:10px;">
+      <i data-lucide="shield-half" style="color:var(--accent); flex-shrink:0;"></i>
+      <span><b>Lịch sử đăng nhập Cổng tra cứu văn bản tuyên truyền</b>. Dữ liệu được đồng bộ trực tiếp từ Google Sheets thông qua API Google Apps Script liên kết với trang <code>loginvb.html</code>.</span>
+    </div>
+
+    <div class="loginvb-toolbar">
+      <div class="loginvb-search-wrap">
+        <i data-lucide="search"></i>
+        <input type="text" id="loginvb-search-input" placeholder="Tìm theo họ tên hoặc số điện thoại...">
+      </div>
+      <button class="btn btn-secondary" type="button" onclick="loadLoginVbData()">
+        <i data-lucide="refresh-cw"></i> Làm mới dữ liệu
+      </button>
+    </div>
+
+    <div class="data-table-container">
+      <div class="table-scroll-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Họ và tên</th>
+              <th>Số điện thoại</th>
+              <th style="width: 150px;">Thiết bị</th>
+              <th style="width: 150px;">Trình duyệt</th>
+              <th style="width: 200px;">Thời gian đăng nhập</th>
+            </tr>
+          </thead>
+          <tbody id="loginvb-table-body">
+            <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Đang đồng bộ dữ liệu từ Google Sheets...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mobile-card-list" id="loginvb-mobile-list"></div>
+    </div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="edit-post-modal">
@@ -747,6 +811,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initMap();
   loadLogsData();
   loadAdminScheduleData();
+  loadLoginVbData();
 });
 
 // 3. XÁC THỰC QUYỀN TRUY CẬP AN NINH HỆ THỐNG
@@ -795,7 +860,8 @@ function switchTab(tabId) {
     users: "Quản lý lực lượng quân số",
     map: "Bản đồ số địa bàn",
     profile: "Hồ sơ cá nhân cán bộ",
-    logs: "Nhật ký hệ thống kiểm toán"
+    logs: "Nhật ký hệ thống kiểm toán",
+    loginvb: "Lịch sử đăng nhập Cổng văn bản tuyên truyền"
   };
   document.getElementById('page-title').innerText = titles[tabId] || "Hệ Thống Chỉ Huy";
   
@@ -1403,6 +1469,109 @@ async function loadLogsData() {
     console.error(err);
   }
 }
+
+// 12.5 LỊCH SỬ ĐĂNG NHẬP CỔNG VĂN BẢN TUYÊN TRUYỀN (loginvb.html → Google Sheets/Apps Script)
+const LOGINVB_GAS_URL = 'https://script.google.com/macros/s/AKfycbxdgm9vjNHNvI92T5z4wzxWKyQkPfOz-K8fjopMl23exqajJ2P90pCpqSyt5g0ZkAIL/exec';
+let loginVbCache = [];
+
+function formatLoginVbTime(ts) {
+  if(!ts) return '—';
+  const d = new Date(ts);
+  if (isNaN(d.getTime())) return ts;
+  // Định dạng dd/mm/yyyy hh:mm theo múi giờ Việt Nam (UTC+7)
+  return d.toLocaleString('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
+function deviceBadgeHtml(device) {
+  const key = (device || '').toLowerCase();
+  const cls = key.includes('mobile') ? 'mobile' : key.includes('tablet') ? 'tablet' : 'desktop';
+  const icon = cls === 'mobile' ? 'smartphone' : cls === 'tablet' ? 'tablet' : 'monitor';
+  return `<span class="device-badge ${cls}"><i data-lucide="${icon}" style="width:12px;height:12px;"></i> ${device || 'Desktop'}</span>`;
+}
+
+async function loadLoginVbData() {
+  const tbody = document.getElementById('loginvb-table-body');
+  const mobileList = document.getElementById('loginvb-mobile-list');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Đang đồng bộ dữ liệu từ Google Sheets...</td></tr>';
+
+  try {
+    const res = await fetch(`${LOGINVB_GAS_URL}?action=loginHistory`);
+    if (!res.ok) throw new Error('Phản hồi máy chủ không hợp lệ: ' + res.status);
+    const json = await res.json();
+    if (json && json.success === false) throw new Error(json.error || 'API trả lỗi');
+    const records = json.history || json.data || (Array.isArray(json) ? json : []);
+
+    // Sắp xếp mới nhất lên đầu (API đã sắp xếp sẵn, sort lại cho chắc)
+    loginVbCache = records.slice().sort((a, b) => new Date(b.Timestamp || b.timestamp) - new Date(a.Timestamp || a.timestamp));
+    renderLoginVbTable(loginVbCache);
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--accent); padding:24px;">Không thể tải lịch sử đăng nhập. Vui lòng kiểm tra triển khai API Google Apps Script (action=loginHistory).</td></tr>`;
+    if (mobileList) mobileList.innerHTML = '';
+  }
+}
+
+function renderLoginVbTable(records) {
+  const tbody = document.getElementById('loginvb-table-body');
+  const mobileList = document.getElementById('loginvb-mobile-list');
+  tbody.innerHTML = '';
+  if (mobileList) mobileList.innerHTML = '';
+
+  if (!records || records.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:24px;">Chưa ghi nhận lượt đăng nhập nào.</td></tr>';
+    return;
+  }
+
+  records.forEach(r => {
+    const hoTen = r.HoTen || r.hoTen || r.ho_ten || 'Chưa rõ';
+    const sdt = r.SoDienThoai || r.soDienThoai || r.so_dien_thoai || '-';
+    const device = r.Device || r.device || 'Desktop';
+    const browser = r.Browser || r.browser || 'Unknown';
+    const time = formatLoginVbTime(r.Timestamp || r.timestamp);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:600; color:var(--text-main);">${hoTen}</td>
+      <td style="color:var(--text-muted); font-size:13.5px;">${sdt}</td>
+      <td>${deviceBadgeHtml(device)}</td>
+      <td class="browser-tag">${browser}</td>
+      <td style="color:var(--text-muted); font-size:13px; font-family: monospace;">${time}</td>`;
+    tbody.appendChild(tr);
+
+    if (mobileList) {
+      const card = document.createElement('div');
+      card.className = 'mobile-card';
+      card.innerHTML = `
+        <div class="mobile-card-header">
+          <div class="mobile-card-title">${hoTen}</div>
+          ${deviceBadgeHtml(device)}
+        </div>
+        <div class="mobile-card-meta">
+          <span class="mobile-meta-item"><i data-lucide="phone"></i> <b>${sdt}</b></span>
+          <span class="mobile-meta-item"><i data-lucide="globe"></i> ${browser}</span>
+          <span class="mobile-meta-item"><i data-lucide="clock"></i> ${time}</span>
+        </div>`;
+      mobileList.appendChild(card);
+    }
+  });
+  lucide.createIcons();
+}
+
+document.getElementById('loginvb-search-input')?.addEventListener('input', (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  if (!q) { renderLoginVbTable(loginVbCache); return; }
+  const filtered = loginVbCache.filter(r => {
+    const hoTen = (r.HoTen || r.hoTen || r.ho_ten || '').toLowerCase();
+    const sdt = (r.SoDienThoai || r.soDienThoai || r.so_dien_thoai || '').toLowerCase();
+    return hoTen.includes(q) || sdt.includes(q);
+  });
+  renderLoginVbTable(filtered);
+});
 
 // 13. CẬP NHẬT THÔNG TIN HỒ SƠ BIÊN CHẾ CÁN BỘ
 document.getElementById('profile-update-form').addEventListener('submit', async (e) => {
