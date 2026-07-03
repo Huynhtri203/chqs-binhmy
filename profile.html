@@ -523,25 +523,25 @@ document.getElementById('avatar-file-input').addEventListener('change', async (e
     // Bước 2: Tiến hành xóa ảnh cũ ra khỏi hệ thống Supabase Storage nếu tồn tại
     if (profile && profile.avatar_url) {
       try {
-        // Tách chuỗi URL để lấy đường dẫn file chuẩn trong bucket 'posts'
-        const urlParts = profile.avatar_url.split('/posts/');
+        // Tách chuỗi URL để lấy đường dẫn file chuẩn trong bucket 'post-covers'
+        const urlParts = profile.avatar_url.split('/post-covers/');
         if (urlParts.length > 1) {
           const oldFilePath = urlParts[1];
           // Lệnh xóa file cũ dựa vào đường dẫn thu được
-          await supabaseClient.storage.from('posts').remove([oldFilePath]);
+          await supabaseClient.storage.from('post-covers').remove([oldFilePath]);
         }
       } catch (deleteError) {
         console.warn("Không tìm thấy tệp tin cũ trên máy chủ Storage, hệ thống bỏ qua lệnh xóa:", deleteError);
       }
     }
 
-    // Bước 3: Tải ảnh mới lên Storage (Sử dụng chung bucket 'posts' đã cấu hình Policy)
+    // Bước 3: Tải ảnh mới lên Storage (Sử dụng chung bucket 'post-covers' đã cấu hình Policy)
     const fileExt = file.name.split('.').pop();
     const newFilePath = `avatars/${currentUserId}_${Date.now()}.${fileExt}`;
 
     const { data: uploadData, error: uploadError } = await supabaseClient
       .storage
-      .from('posts')
+      .from('post-covers')
       .upload(newFilePath, file, { cacheControl: '3600', upsert: true });
 
     if (uploadError) throw uploadError;
@@ -549,7 +549,7 @@ document.getElementById('avatar-file-input').addEventListener('change', async (e
     // Bước 4: Khởi tạo Public URL để hiển thị dữ liệu
     const { data: { publicUrl } } = supabaseClient
       .storage
-      .from('posts')
+      .from('post-covers')
       .getPublicUrl(newFilePath);
 
     // Bước 5: Cập nhật thông tin đường dẫn ảnh mới vào bảng dữ liệu 'profiles'
