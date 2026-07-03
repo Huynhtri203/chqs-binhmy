@@ -175,7 +175,7 @@ body::before {
 #header-auth-box {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -184,6 +184,221 @@ body::before {
   background: var(--border-color);
   margin: 0 4px;
   flex-shrink: 0;
+}
+
+.account-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(229, 9, 20, 0.08);
+  color: var(--text-main);
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease;
+  max-width: min(220px, 100%);
+  overflow: hidden;
+}
+
+.account-pill:hover,
+.account-pill:focus-visible {
+  background: rgba(229, 9, 20, 0.16);
+  outline: none;
+}
+
+.account-avatar {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.account-name {
+  display: inline-block;
+  min-width: 0;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.account-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease;
+  z-index: 1000;
+}
+
+.account-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.account-panel {
+  position: absolute;
+  right: 24px;
+  top: 74px;
+  width: 320px;
+  max-width: calc(100% - 24px);
+  padding: 18px;
+  border-radius: 24px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  z-index: 1001;
+}
+
+.account-panel.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.account-sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.account-large-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.account-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-fullname {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-role {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.account-menu {
+  display: grid;
+  gap: 10px;
+}
+
+.account-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--surface-hover);
+  color: var(--text-main);
+  font-size: 14px;
+  text-align: left;
+  transition: background 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.account-action:hover,
+.account-action:focus-visible {
+  background: rgba(229, 9, 20, 0.08);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.account-action .item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  color: var(--accent);
+}
+
+.account-logout {
+  margin-top: 16px;
+  background: rgba(229, 9, 20, 0.12);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.account-logout:hover,
+.account-logout:focus-visible {
+  background: rgba(229, 9, 20, 0.18);
+}
+
+body.panel-open {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .header-inner {
+    padding: 0 16px;
+  }
+  .account-panel {
+    position: fixed;
+    inset: auto 0 0 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 18px 16px 22px;
+    box-shadow: 0 -20px 45px rgba(15, 23, 42, 0.24);
+    transform: translateY(100%);
+    right: 0;
+    top: auto;
+    bottom: 0;
+  }
+  .account-panel.open {
+    transform: translateY(0);
+  }
+  .account-sheet-header {
+    padding-bottom: 14px;
+  }
+  .account-action {
+    min-height: 48px;
+  }
 }
 
 /* Icon buttons (theme, lang) */
@@ -1118,11 +1333,40 @@ body::before {
       <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện">☀️</button>
       <button id="lang-toggle" class="btn-lang-header">🇬🇧 EN</button>
       <div class="header-divider"></div>
-      <a href="auth.html?mode=login" class="btn-saas" data-i18n="btn_login">Đăng nhập</a>
-      <a href="auth.html?mode=register" class="btn-saas btn-primary" data-i18n="btn_register">Đăng ký</a>
+      <a href="auth.html?mode=login" id="login-action" class="btn-saas btn-primary" data-i18n="btn_login">Đăng nhập</a>
     </div>
   </div>
 </header>
+
+<div id="account-overlay" class="account-overlay"></div>
+<div id="account-panel" class="account-panel" aria-hidden="true">
+  <div class="account-sheet-header">
+    <div id="panel-avatar" class="account-large-avatar" aria-hidden="true">A</div>
+    <div class="account-info">
+      <div id="panel-fullname" class="account-fullname">Tên người dùng</div>
+      <div id="panel-role" class="account-role">Cán bộ</div>
+    </div>
+  </div>
+  <div class="account-menu">
+    <button id="account-profile-btn" type="button" class="account-action">
+      <span class="item-icon">👤</span>
+      <span>Thông tin cá nhân</span>
+    </button>
+    <button id="account-password-btn" type="button" class="account-action">
+      <span class="item-icon">🔒</span>
+      <span>Đổi mật khẩu</span>
+    </button>
+    <button id="account-history-btn" type="button" class="account-action account-history">
+      <span class="item-icon">📜</span>
+      <span>Nhật ký truy cập</span>
+    </button>
+    <button id="account-theme-btn" type="button" class="account-action">
+      <span class="item-icon">🌓</span>
+      <span>Giao diện</span>
+    </button>
+  </div>
+  <button id="signout-btn" type="button" class="account-action account-logout">Đăng xuất</button>
+</div>
 
 <section class="hero">
   <div class="hero-badges reveal">
@@ -1561,24 +1805,117 @@ document.addEventListener('DOMContentLoaded', () => {
     const userFullname = localStorage.getItem('user_fullname');
     const authBox = document.getElementById('header-auth-box');
 
-    if (userFullname && authBox) {
+    function getUserInitials(name) {
+      if (!name) return '';
+      const parts = name.trim().split(/\s+/);
+      if (parts.length === 1) return parts[0][0].toUpperCase();
+      return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+    }
+
+    function closeAccountPanel() {
+      const panel = document.getElementById('account-panel');
+      const overlay = document.getElementById('account-overlay');
+      const trigger = document.getElementById('account-trigger');
+      if (panel) panel.classList.remove('open');
+      if (overlay) overlay.classList.remove('open');
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('panel-open');
+    }
+
+    function renderAccountHeader(fullname) {
+      const initials = getUserInitials(fullname);
+      const role = localStorage.getItem('user_role') || 'Cán bộ';
+      const hasHistory = localStorage.getItem('user_access_history') === 'true';
+
+      if (!authBox) return;
       authBox.innerHTML = `
         <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện">☀️</button>
         <button id="lang-toggle" class="btn-lang-header">🇬🇧 EN</button>
         <div class="header-divider"></div>
-        <a href="profile.html" style="font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-hover)'" onmouseout="this.style.color='var(--accent)'" title="Xem thông tin cá nhân">
-          👤 ${userFullname}
-        </a>
-        <button id="logout-btn" class="btn-saas btn-primary" data-i18n="btn_logout">Đăng xuất</button>
+        <button id="account-trigger" class="account-pill" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="account-avatar">${initials}</span>
+          <span class="account-name">${fullname}</span>
+          <span class="account-chevron">▾</span>
+        </button>
       `;
 
-      document.getElementById('logout-btn').addEventListener('click', async () => {
-        if (window.supabaseApp) {
-          await window.supabaseApp.auth.signOut();
-        }
-        localStorage.removeItem('user_fullname'); 
-        window.location.reload(); 
+      document.getElementById('panel-avatar').textContent = initials;
+      document.getElementById('panel-fullname').textContent = fullname;
+      document.getElementById('panel-role').textContent = role;
+      const historyBtn = document.getElementById('account-history-btn');
+      if (historyBtn) {
+        historyBtn.style.display = hasHistory ? 'flex' : 'none';
+      }
+
+      const trigger = document.getElementById('account-trigger');
+      const overlay = document.getElementById('account-overlay');
+      const panel = document.getElementById('account-panel');
+      const logoutBtn = document.getElementById('signout-btn');
+      const profileBtn = document.getElementById('account-profile-btn');
+      const pwBtn = document.getElementById('account-password-btn');
+      const themeBtn = document.getElementById('account-theme-btn');
+
+      if (trigger && panel && overlay) {
+        trigger.addEventListener('click', () => {
+          const open = !panel.classList.contains('open');
+          panel.classList.toggle('open', open);
+          overlay.classList.toggle('open', open);
+          trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+          document.body.classList.toggle('panel-open', open);
+        });
+      }
+
+      if (overlay) {
+        overlay.addEventListener('click', closeAccountPanel);
+      }
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          if (window.supabaseApp) {
+            await window.supabaseApp.auth.signOut();
+          }
+          localStorage.removeItem('user_fullname');
+          localStorage.removeItem('user_role');
+          closeAccountPanel();
+          window.location.reload();
+        });
+      }
+
+      if (profileBtn) {
+        profileBtn.addEventListener('click', () => {
+          window.location.href = 'profile.html';
+        });
+      }
+
+      if (pwBtn) {
+        pwBtn.addEventListener('click', () => {
+          window.location.href = 'auth.html?mode=login';
+        });
+      }
+
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          document.getElementById('theme-toggle')?.click();
+          closeAccountPanel();
+        });
+      }
+
+      document.addEventListener('click', (event) => {
+        if (!panel || !trigger) return;
+        if (!panel.classList.contains('open')) return;
+        if (trigger.contains(event.target) || panel.contains(event.target) || overlay.contains(event.target)) return;
+        closeAccountPanel();
       });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeAccountPanel();
+        }
+      });
+    }
+
+    if (userFullname && authBox) {
+      renderAccountHeader(userFullname);
     }
 });
 
