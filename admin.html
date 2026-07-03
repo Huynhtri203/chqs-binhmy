@@ -152,9 +152,8 @@ body {
 .header-actions { display: flex; gap: 10px; align-items: center; }
 
 /* ═══════════ SECTIONS ═══════════ */
-/* ═══════════ SECTIONS & MAP FIXES ═══════════ */
 .data-section { 
-  display: none !important; /* Thêm !important để ép ẩn hoàn toàn các phần tử con của tab khác khi chuyển đổi */
+  display: none !important; 
   animation: fIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
 }
 .data-section.active { 
@@ -501,8 +500,7 @@ body {
             <span class="cl-sub">Nội dung</span>
           </div>
         </div>
-        <div class="chart-legend" id="chart-legend-custom">
-          </div>
+        <div class="chart-legend" id="chart-legend-custom"></div>
       </div>
     </div>
   </div>
@@ -532,10 +530,12 @@ body {
             <option value="van-ban">Văn bản quy phạm pháp luật</option>
           </select>
         </div>
+
         <div class="form-group">
-          <label class="form-label">Ảnh bìa / Poster bài viết (Link URL hình ảnh)</label>
-          <input type="url" class="form-control" id="post-image-url" placeholder="https://example.com/image.jpg hoặc để trống">
+          <label class="form-label">Ảnh bìa / Poster bài viết (Chọn từ thiết bị) <span style="color: red;">*</span></label>
+          <input type="file" class="form-control" id="post-image-file" accept="image/*" required>
         </div>
+
         <div class="form-group">
           <label class="form-label">Đường dẫn liên kết ngoài (URL đính kèm PDF)</label>
           <input type="url" class="form-control" id="post-article-url" placeholder="https://baochinhphu.vn/...">
@@ -883,7 +883,7 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', nextTheme);
   localStorage.setItem('site-theme', nextTheme);
   syncThemeBtns(nextTheme);
-  if (categoryChart) renderChart(); // Re-render chart để cập nhật màu viền động
+  if (categoryChart) renderChart();
 }
 
 function syncThemeBtns(theme) {
@@ -969,7 +969,6 @@ async function renderChart() {
   const ctx = document.getElementById('categoryPieChart').getContext('2d');
   if (categoryChart) categoryChart.destroy();
 
-  // Khởi tạo biểu đồ Donut nét đứt bo tròn siêu hiện đại
   categoryChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
@@ -980,14 +979,14 @@ async function renderChart() {
         borderWidth: 4,
         borderColor: getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim(),
         hoverOffset: 12,
-        borderRadius: 8, // Bo tròn hai đầu mỗi cung
-        spacing: 4       // Khoảng hở 4px tinh tế giữa các cung
+        borderRadius: 8,
+        spacing: 4
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      cutout: '76%', // Tăng không gian trống tâm vòng Donut
+      cutout: '76%',
       animation: {
         duration: 850,
         easing: 'easeOutCubic'
@@ -1011,7 +1010,6 @@ async function renderChart() {
     }
   });
 
-  // Render Premium Legend Interface
   const legendEl = document.getElementById('chart-legend-custom');
   if(!legendEl) return;
   legendEl.innerHTML = '';
@@ -1042,7 +1040,6 @@ async function renderChart() {
   
   lucide.createIcons();
 
-  // Đăng ký tương tác hai chiều (Hover Highlights)
   document.querySelectorAll('.legend-item').forEach(el => {
     el.addEventListener('mouseenter', function() {
       const idx = this.getAttribute('data-index');
@@ -1116,27 +1113,73 @@ async function loadPostsData() {
   }
 }
 
+// ═══════════ XỬ LÝ SỰ KIỆN PHÁT HÀNH NỘI DUNG (FILE UPLOAD & DB INSERT) ═══════════
 document.getElementById('add-post-form').addEventListener('submit', async (e) => {
   e.preventDefault();
+  
   const title = document.getElementById('post-title').value.trim();
   const category = document.getElementById('post-category').value;
-  const image_url = document.getElementById('post-image-url').value.trim();
   const article_url = document.getElementById('post-article-url').value.trim();
   const content = document.getElementById('post-content').value.trim();
   
-  const { error } = await supabaseClient.from('posts').insert([{ title, category, image_url, article_url, content }]);
-  if (error) {
-    alert("Lỗi khi phát hành văn bản: " + error.message);
-  } else {
-    alert("🎉 Đăng tải bài viết thành công!");
+  const fileInput = document.getElementById('post-image-file');
+  const file = fileInput.files[0];
+  
+  if (!file) {
+    alert("Vui lòng lựa chọn ảnh bìa / Poster từ thiết bị của đồng chí!");
+    return;
+  }
+
+  // Khóa trạng thái nút bấm tránh gửi trùng lặp dữ liệu
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerText;
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Đang tải ảnh & phát hành...";
+
+  try {
+    // 1. Tiến hành tải ảnh lên Supabase Storage (Mặc định sử dụng bucket mang tên 'posts')
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+    
+    const { data: uploadData, error: uploadError } = await supabaseClient
+      .storage
+      .from('posts')
+      .upload(fileName, file);
+
+    if (uploadError) throw uploadError;
+
+    // 2. Lấy liên kết Public URL của tệp tin vừa đẩy lên hệ thống
+    const { data: { publicUrl } } = supabaseClient
+      .storage
+      .from('posts')
+      .getPublicUrl(fileName);
+
+    const image_url = publicUrl;
+
+    // 3. Khởi tạo bản ghi lưu trữ thông tin bài viết vào Cấu trúc Database
+    const { error: insertError } = await supabaseClient
+      .from('posts')
+      .insert([{ title, category, image_url, article_url, content }]);
+    
+    if (insertError) throw insertError;
+
+    alert("🎉 Phát hành nội dung tuyên truyền & văn bản thành công!");
     document.getElementById('add-post-form').reset();
     toggleAddForm();
     loadPostsData();
     loadDashboardStats();
     
+    // Thêm log hoạt động vào Hệ thống kiểm toán hành chính
     await supabaseClient.from('activity_logs').insert([
       { user_id: currentAdminId, action: 'ADD_POST', details: `Cán bộ ${currentAdminName} đã phát hành bài viết mới: ${title}` }
     ]);
+
+  } catch (err) {
+    alert("Lỗi tiến trình phát hành văn bản: " + err.message);
+    console.error(err);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerText = originalBtnText;
   }
 });
 
@@ -1470,7 +1513,7 @@ async function loadLogsData() {
   }
 }
 
-// 12.5 LỊCH SỬ ĐĂNG NHẬP CỔNG VĂN BẢN TUYÊN TRUYỀN (loginvb.html → Google Sheets/Apps Script)
+// 12.5 LỊCH SỬ ĐĂNG NHẬP CỔNG VĂN BẢN TUYÊN TRUYỀN
 const LOGINVB_GAS_URL = 'https://script.google.com/macros/s/AKfycbxdgm9vjNHNvI92T5z4wzxWKyQkPfOz-K8fjopMl23exqajJ2P90pCpqSyt5g0ZkAIL/exec';
 let loginVbCache = [];
 
@@ -1478,7 +1521,6 @@ function formatLoginVbTime(ts) {
   if(!ts) return '—';
   const d = new Date(ts);
   if (isNaN(d.getTime())) return ts;
-  // Định dạng dd/mm/yyyy hh:mm theo múi giờ Việt Nam (UTC+7)
   return d.toLocaleString('vi-VN', {
     timeZone: 'Asia/Ho_Chi_Minh',
     day: '2-digit', month: '2-digit', year: 'numeric',
@@ -1506,7 +1548,6 @@ async function loadLoginVbData() {
     if (json && json.success === false) throw new Error(json.error || 'API trả lỗi');
     const records = json.history || json.data || (Array.isArray(json) ? json : []);
 
-    // Sắp xếp mới nhất lên đầu (API đã sắp xếp sẵn, sort lại cho chắc)
     loginVbCache = records.slice().sort((a, b) => new Date(b.Timestamp || b.timestamp) - new Date(a.Timestamp || a.timestamp));
     renderLoginVbTable(loginVbCache);
   } catch (err) {
