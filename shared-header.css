@@ -1,0 +1,470 @@
+/* ═══════════════════════════════════════════════════════════════
+   SHARED HEADER — sao chép NGUYÊN BẢN từ header của index.html
+   Dán file này vào các trang khác để header giống hệt trang chủ.
+   Không tự ý đổi tên biến/class bên trong file này.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens dùng riêng cho header (đồng bộ giá trị với index.html) ──
+   Định nghĩa đầy đủ tại đây để header giống Y HỆT index.html dù trang
+   đích đang dùng style.css với tên biến khác (--text-color, --card-bg,...) */
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: rgba(255, 255, 255, 0.8);
+  --surface-solid: #ffffff;
+  --surface-hover: #f1f5f9;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-invert: #ffffff;
+  --accent: #E50914;
+  --accent-hover: #ff1e2a;
+  --radius: 12px;
+}
+
+[data-theme="dark"] {
+  --bg-color: #000000;
+  --surface-color: rgba(10, 10, 10, 0.8);
+  --surface-solid: #0a0a0a;
+  --surface-hover: #141414;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-main: #ffffff;
+  --text-muted: #888888;
+  --text-invert: #000000;
+}
+
+/* Nếu trang dùng shared header, thêm class này vào <body> để bù chiều
+   cao header cố định (index.html không cần vì hero đã tự canh giữa) */
+.has-shared-header {
+  padding-top: 64px;
+}
+
+/* ═══════════════════ STICKY HEADER & BLUR GLASS ═══════════════════ */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(247, 242, 242, 0.72);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-color);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+[data-theme="dark"] .header { background: rgba(8, 8, 8, 0.82); }
+
+.header-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0;
+}
+
+/* ── Brand ── */
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 15px; letter-spacing: -0.02em;
+  white-space: nowrap; flex-shrink: 0;
+  text-decoration: none; color: inherit;
+}
+.brand img { width: 36px; height: 36px; filter: drop-shadow(0 0 8px rgba(210, 219, 105, 0.45)); }
+
+/* ── Nav (giữa) ── */
+.nav-menu {
+  display: flex; align-items: center; justify-content: center;
+  gap: 4px;
+}
+.nav-item {
+  position: relative; font-size: 13.5px; font-weight: 500;
+  color: var(--text-muted); transition: color 0.2s;
+  padding: 20px 12px; border-radius: 6px;
+  white-space: nowrap;
+  text-decoration: none; cursor: pointer;
+}
+.nav-item:hover { color: var(--text-main); }
+.nav-item:hover { background: transparent; }
+
+.dropdown {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(10px);
+  background: var(--surface-solid); backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color); border-radius: var(--radius);
+  padding: 8px; min-width: 200px;
+  opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+@media (min-width: 769px) {
+  .nav-item:hover .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+.dropdown a {
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+  border-radius: 8px; font-size: 14px; color: var(--text-muted); transition: all 0.2s;
+  text-decoration: none;
+}
+.dropdown a:hover { background: rgba(68, 58, 58, 0.05); color: var(--text-main); }
+
+/* ── Mobile menu toggle ── */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  margin-left: 8px;
+}
+.menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--text-main);
+  border-radius: 999px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.menu-toggle.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* ── Auth box (phải) ── */
+#header-auth-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.header-divider {
+  width: 1px; height: 20px;
+  background: var(--border-color);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* Icon buttons (theme, lang) */
+.btn-icon-header {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px;
+  background: none; color: var(--text-main);
+  font-size: 18px; transition: background 0.2s;
+  flex-shrink: 0; border: none; cursor: pointer;
+}
+.btn-icon-header:hover { background: var(--surface-hover); }
+
+/* Lang pill */
+.btn-lang-header {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 32px; padding: 0 10px; border-radius: 8px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
+  background: var(--surface-hover); color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+  cursor: pointer;
+}
+.btn-lang-header:hover { color: var(--text-main); border-color: rgba(0,0,0,0.2); }
+
+.btn-saas {
+  background: var(--surface-hover); color: var(--text-main);
+  padding: 0 14px; height: 32px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; transition: all 0.2s;
+  border: 1px solid var(--border-color);
+  white-space: nowrap; flex-shrink: 0;
+  display: inline-flex; align-items: center;
+  text-decoration: none; cursor: pointer;
+}
+.btn-saas:hover { background: var(--border-color); }
+.btn-primary { background: var(--accent); color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(229,9,20,0.3); }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+/* ═══════════════════ TÀI KHOẢN ĐÃ ĐĂNG NHẬP (pill + panel) ═══════════════════ */
+.account-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(229, 9, 20, 0.08);
+  color: var(--text-main);
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease;
+  max-width: min(220px, 100%);
+  overflow: hidden;
+  border: none; cursor: pointer;
+}
+
+.account-pill:hover,
+.account-pill:focus-visible {
+  background: rgba(229, 9, 20, 0.16);
+  outline: none;
+}
+
+.account-avatar {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.account-name {
+  display: inline-block;
+  min-width: 0;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.account-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease;
+  z-index: 1000;
+}
+
+.account-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.account-panel {
+  position: fixed;
+  right: 24px;
+  top: 74px;
+  width: 320px;
+  max-width: calc(100% - 24px);
+  padding: 18px;
+  border-radius: 24px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  z-index: 1001;
+}
+
+.account-panel.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.account-sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.account-large-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.account-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-fullname {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-role {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.account-menu {
+  display: grid;
+  gap: 10px;
+}
+
+.account-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--surface-hover);
+  color: var(--text-main);
+  font-size: 14px;
+  text-align: left;
+  transition: background 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.account-action:hover,
+.account-action:focus-visible {
+  background: rgba(229, 9, 20, 0.08);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.account-action .item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  color: var(--accent);
+}
+
+.account-logout {
+  margin-top: 16px;
+  background: rgba(229, 9, 20, 0.12);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.account-logout:hover,
+.account-logout:focus-visible {
+  background: rgba(229, 9, 20, 0.18);
+}
+
+body.panel-open {
+  overflow: hidden;
+}
+
+/* ═══════════════════ RESPONSIVE (MOBILE) ═══════════════════ */
+@media (max-width: 768px) {
+  .header-inner {
+    padding: 0 16px;
+    grid-template-columns: auto 1fr auto;
+    gap: 0;
+  }
+
+  .menu-toggle { display: flex; }
+
+  .nav-menu {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px 16px 20px;
+    background: var(--surface-solid);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  }
+  .nav-menu.mobile-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .nav-item {
+    width: 100%;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .dropdown {
+    position: static;
+    display: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 6px;
+    margin: 8px 0 0 8px;
+    background: var(--surface-color);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .dropdown a {
+    color: var(--text-main);
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+  .dropdown a:hover {
+    background: rgba(229, 9, 20, 0.08);
+    color: var(--accent);
+  }
+  .nav-item.open .dropdown { display: block; }
+
+  #header-auth-box {
+    justify-content: flex-end;
+    gap: 4px;
+  }
+  .btn-lang-header { display: none; }
+  .header-divider { display: none; }
+  #header-auth-box .btn-saas:not(.btn-primary) { display: none; }
+
+  .account-panel {
+    position: fixed;
+    inset: auto 0 0 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 18px 16px 22px;
+    box-shadow: 0 -20px 45px rgba(15, 23, 42, 0.24);
+    transform: translateY(100%);
+    right: 0;
+    top: auto;
+    bottom: 0;
+  }
+  .account-panel.open {
+    transform: translateY(0);
+  }
+  .account-sheet-header {
+    padding-bottom: 14px;
+  }
+  .account-action {
+    min-height: 48px;
+  }
+}

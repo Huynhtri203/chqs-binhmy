@@ -437,7 +437,34 @@ body.panel-open {
 /* ═══════════════════ HERO BANNER ═══════════════════ */
 .hero {
   min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
-  text-align: center; padding: 0 24px; position: relative;
+  text-align: center; padding: 0 24px; position: relative; overflow: hidden;
+}
+.hero-bg-video {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  min-width: 100%; min-height: 100%; width: auto; height: auto;
+  object-fit: cover; z-index: -2; pointer-events: none;
+  opacity: 0; animation: heroBgFadeIn 1.2s ease forwards 0.15s;
+}
+.hero-bg-overlay {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.1) 45%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+}
+[data-theme="light"] .hero-bg-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.15) 45%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+@keyframes heroBgFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .hero-title {
   font-size: clamp(3rem, 8vw, 6.5rem); 
@@ -1369,6 +1396,8 @@ body.panel-open {
 </div>
 
 <section class="hero">
+  <video class="hero-bg-video" src="images/video2.mp4" autoplay muted loop playsinline preload="auto"></video>
+  <div class="hero-bg-overlay"></div>
   <div class="hero-badges reveal">
     <span class="badge" style="background:rgba(229,9,20,0.1); padding:4px 12px; border-radius:12px; font-size:12px; margin:0 4px;" data-i18n="badge_serve">Phục vụ nhân dân</span>
     <span class="badge" style="background:rgba(229,9,20,0.1); padding:4px 12px; border-radius:12px; font-size:12px; margin:0 4px;" data-i18n="badge_protect">Bảo vệ Tổ quốc</span>

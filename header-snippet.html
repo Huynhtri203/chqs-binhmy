@@ -1,0 +1,80 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     HEADER DÙNG CHUNG — copy nguyên khối này vào các trang khác,
+     đặt ngay sau thẻ <body> (trước class="has-shared-header" nếu có).
+     Nhớ đổi href="#" của .brand thành "index.html" (vì đây KHÔNG
+     phải trang chủ), các link nav khác giữ nguyên vì đã đúng.
+     ═══════════════════════════════════════════════════════════════ -->
+
+<header class="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Logo">
+      <span data-i18n="brand_name">BAN CHQS BÌNH MỸ</span>
+    </a>
+    <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="main-nav">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav id="main-nav" class="nav-menu">
+      <a href="index.html" class="nav-item" data-i18n="nav_home">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item" data-i18n="nav_intro">Giới thiệu</a>
+      <div class="nav-item">
+        <span data-i18n="nav_news">Tin tức</span> ▾
+        <div class="dropdown">
+          <a href="tin-tuc.html">📰 <span>Tin tức & Sự kiện</span></a>
+          <a href="tang-gia-san-xuat.html">🌿 <span>Hoạt động tăng gia</span></a>
+          <a href="hoat-dong.html">📸 <span>Hình ảnh hoạt động</span></a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <span data-i18n="nav_services">Dịch vụ</span> ▾
+        <div class="dropdown">
+          <a href="tracuu.html">🔍 <span data-i18n="drop_cccd">Tra cứu CCCD</span></a>
+          <a href="tuyen-quan.html">🪖 <span data-i18n="drop_draft">Tuyển quân</span></a>
+          <a href="tuyen-sinh.html">🎓 <span data-i18n="drop_edu">Tuyển sinh</span></a>
+          <a href="tracuu-dieudong.html">📋 <span data-i18n="drop_order">QĐ Điều động</span></a>
+          <a href="loginvb.html">📄 <span>Văn bản tuyên truyền</span></a>
+        </div>
+      </div>
+      <a href="lien-he.html" class="nav-item" data-i18n="nav_contact">Liên hệ</a>
+    </nav>
+
+    <div id="header-auth-box">
+      <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện">☀️</button>
+      <button id="lang-toggle" class="btn-lang-header">🇬🇧 EN</button>
+      <div class="header-divider"></div>
+      <a href="auth.html?mode=login" id="login-action" class="btn-saas btn-primary" data-i18n="btn_login">Đăng nhập</a>
+    </div>
+  </div>
+</header>
+
+<div id="account-overlay" class="account-overlay"></div>
+<div id="account-panel" class="account-panel" aria-hidden="true">
+  <div class="account-sheet-header">
+    <div id="panel-avatar" class="account-large-avatar" aria-hidden="true">A</div>
+    <div class="account-info">
+      <div id="panel-fullname" class="account-fullname">Tên người dùng</div>
+      <div id="panel-role" class="account-role">Cán bộ</div>
+    </div>
+  </div>
+  <div class="account-menu">
+    <button id="account-profile-btn" type="button" class="account-action">
+      <span class="item-icon">👤</span>
+      <span>Thông tin cá nhân</span>
+    </button>
+    <button id="account-password-btn" type="button" class="account-action">
+      <span class="item-icon">🔒</span>
+      <span>Đổi mật khẩu</span>
+    </button>
+    <button id="account-history-btn" type="button" class="account-action account-history">
+      <span class="item-icon">📜</span>
+      <span>Nhật ký truy cập</span>
+    </button>
+    <button id="account-theme-btn" type="button" class="account-action">
+      <span class="item-icon">🌓</span>
+      <span>Giao diện</span>
+    </button>
+  </div>
+  <button id="signout-btn" type="button" class="account-action account-logout">Đăng xuất</button>
+</div>

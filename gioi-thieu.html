@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Giới thiệu - Ban CHQS Xã Bình Mỹ</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
+<link rel="stylesheet" href="shared-header.css">
 <style>
 /* ═══════════════════ DESIGN TOKENS (ĐỒNG BỘ TRANG CHỦ) ═══════════════════ */
 :root {
@@ -47,30 +47,7 @@ body::before {
   pointer-events: none;
 }
 
-/* ═══════════════════ HEADER (STICKY BLUR) ═══════════════════ */
-.header {
-  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-  background: rgba(247, 242, 242, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
-}
-.header-inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 70px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; letter-spacing: -0.03em; }
-.brand img { width: 40px; height: 40px; }
-
-.nav-menu { display: flex; align-items: center; gap: 32px; }
-.nav-item { font-size: 14px; font-weight: 500; color: var(--text-muted); transition: color 0.2s; padding: 24px 0; }
-.nav-item:hover, .nav-item.active { color: var(--text-main); }
-
-.btn-saas {
-  background: #fff; color: #000; padding: 8px 18px; border-radius: 22px;
-  font-size: 14px; font-weight: 600; transition: all 0.2s;
-  box-shadow: 0 4px 14px rgba(17, 17, 17, 0.15);
-}
-.btn-saas:hover { background: #e0e0e0; transform: scale(1.02); }
-.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 10px 10px rgba(229,9,20,0.3); }
+/* ═══════════════════ HEADER: dùng chung từ shared-header.css, không định nghĩa lại ở đây ═══════════════════ */
 
 /* ═══════════════════ HERO BANNER GIỚI THIỆU ═══════════════════ */
 .hero-intro {
@@ -166,31 +143,85 @@ body::before {
 }
 @media (max-width: 768px) {
   .grid-3 { grid-template-columns: 1fr; }
-  .nav-menu { display: none; }
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════ HEADER ═══════════════════ -->
+<!-- ═══════════════════ HEADER (dùng chung, đồng bộ với index.html) ═══════════════════ -->
 <header class="header">
   <div class="header-inner">
     <a href="index.html" class="brand">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Quốc huy">
-      <span>BAN CHQS BÌNH MỸ</span>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Emblem_of_Vietnam.svg" alt="Logo">
+      <span data-i18n="brand_name">BAN CHQS BÌNH MỸ</span>
     </a>
-    <nav class="nav-menu">
-      <a href="index.html" class="nav-item">Trang chủ</a>
-      <a href="gioi-thieu.html" class="nav-item active">Giới thiệu</a>
-      <a href="tin-tuc.html" class="nav-item">Tin tức</a>
-      <a href="lien-he.html" class="nav-item">Liên hệ</a> 
+    <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="main-nav">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav id="main-nav" class="nav-menu">
+      <a href="index.html" class="nav-item" data-i18n="nav_home">Trang chủ</a>
+      <a href="gioi-thieu.html" class="nav-item active" data-i18n="nav_intro">Giới thiệu</a>
+      <div class="nav-item">
+        <span data-i18n="nav_news">Tin tức</span> ▾
+        <div class="dropdown">
+          <a href="tin-tuc.html">📰 <span>Tin tức & Sự kiện</span></a>
+          <a href="tang-gia-san-xuat.html">🌿 <span>Hoạt động tăng gia</span></a>
+          <a href="hoat-dong.html">📸 <span>Hình ảnh hoạt động</span></a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <span data-i18n="nav_services">Dịch vụ</span> ▾
+        <div class="dropdown">
+          <a href="tracuu.html">🔍 <span data-i18n="drop_cccd">Tra cứu CCCD</span></a>
+          <a href="tuyen-quan.html">🪖 <span data-i18n="drop_draft">Tuyển quân</span></a>
+          <a href="tuyen-sinh.html">🎓 <span data-i18n="drop_edu">Tuyển sinh</span></a>
+          <a href="tracuu-dieudong.html">📋 <span data-i18n="drop_order">QĐ Điều động</span></a>
+          <a href="loginvb.html">📄 <span>Văn bản tuyên truyền</span></a>
+        </div>
+      </div>
+      <a href="lien-he.html" class="nav-item" data-i18n="nav_contact">Liên hệ</a>
     </nav>
-    <div style="display: flex; gap: 10px; align-items: center;">
-      <button id="theme-toggle" style="background:none; color:var(--text-main); font-size:24px;">☀️</button>
-      <button class="btn-saas btn-primary">Cổng Dịch Vụ</button>
+
+    <div id="header-auth-box">
+      <button id="theme-toggle" class="btn-icon-header" title="Đổi giao diện">☀️</button>
+      <button id="lang-toggle" class="btn-lang-header">🇬🇧 EN</button>
+      <div class="header-divider"></div>
+      <a href="auth.html?mode=login" id="login-action" class="btn-saas btn-primary" data-i18n="btn_login">Đăng nhập</a>
     </div>
   </div>
 </header>
+
+<div id="account-overlay" class="account-overlay"></div>
+<div id="account-panel" class="account-panel" aria-hidden="true">
+  <div class="account-sheet-header">
+    <div id="panel-avatar" class="account-large-avatar" aria-hidden="true">A</div>
+    <div class="account-info">
+      <div id="panel-fullname" class="account-fullname">Tên người dùng</div>
+      <div id="panel-role" class="account-role">Cán bộ</div>
+    </div>
+  </div>
+  <div class="account-menu">
+    <button id="account-profile-btn" type="button" class="account-action">
+      <span class="item-icon">👤</span>
+      <span>Thông tin cá nhân</span>
+    </button>
+    <button id="account-password-btn" type="button" class="account-action">
+      <span class="item-icon">🔒</span>
+      <span>Đổi mật khẩu</span>
+    </button>
+    <button id="account-history-btn" type="button" class="account-action account-history">
+      <span class="item-icon">📜</span>
+      <span>Nhật ký truy cập</span>
+    </button>
+    <button id="account-theme-btn" type="button" class="account-action">
+      <span class="item-icon">🌓</span>
+      <span>Giao diện</span>
+    </button>
+  </div>
+  <button id="signout-btn" type="button" class="account-action account-logout">Đăng xuất</button>
+</div>
 
 <!-- ═══════════════════ HERO BANNER ═══════════════════ -->
 <section class="hero-intro reveal">
@@ -343,20 +374,11 @@ const revealObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 revealElements.forEach(el => revealObserver.observe(el));
-
-// 2. GIAO DIỆN SÁNG / TỐI (THEME TOGGLE)
-const themeToggle = document.getElementById('theme-toggle');
-themeToggle.addEventListener('click', () => {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  if (currentTheme === 'dark') {
-    document.documentElement.removeAttribute('data-theme');
-    themeToggle.innerText = '☀️';
-  } else {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    themeToggle.innerText = '🌙';
-  }
-});n</script>
+</script>
 <!-- 🎯 VIDEO OPTIMIZATION: Lazy-load video khi xuất hiện trên màn hình -->
 <script src="video-optimization.js"></script>
+<script src="theme.js"></script>
+<script src="lang.js"></script>
+<script src="shared-header.js"></script>
 </body>
 </html>
