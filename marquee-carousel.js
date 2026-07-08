@@ -18,7 +18,7 @@ const MARQUEE_ITEMS = [
     quote  : '\"Hệ thống cổng thông tin giúp tôi tra cứu lịch huấn luyện và các thông báo tuyển quân rất nhanh chóng, không cần đến trực tiếp.\"',
     name   : 'Trần Trọng Tín',
     role   : 'Công dân xã Bình Mỹ',
-    avatar : 'images/tin.jpg',
+    avatar : 'images/nguyen.jpg',
   },
   {
     type   : 'image',
@@ -31,7 +31,7 @@ const MARQUEE_ITEMS = [
     quote  : '\"Việc đăng ký dân quân tự vệ qua cổng điện tử tiết kiệm rất nhiều thời gian. Giao diện rõ ràng, dễ sử dụng.\"',
     name   : 'Trần Trọng Tín',
     role   : 'Chiến sĩ DQTV xã Bình Mỹ',
-    avatar : 'images/tin.jpg',
+    avatar : 'images/nguyen.jpg',
   },
   {
     type   : 'video',
